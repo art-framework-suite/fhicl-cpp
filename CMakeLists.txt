@@ -14,12 +14,15 @@
 #  make install
 #  make package (builds distribution tarfile)
 
-cmake_minimum_required( VERSION 2.8 )  # use cmake 2.8 or later
+cmake_minimum_required( VERSION 3.2 )
 
-project(fhiclcpp)
+project(fhiclcpp VERSION 4.05.01 )
 
-# cetbuildtools contains our cmake modules
-find_package(cetbuildtools REQUIRED)
+# cetmodules contains our cmake modules
+find_package(cetmodules REQUIRED)
+
+# module path
+list(APPEND CMAKE_MODULE_PATH ${cetmodules_MODULE_PATH})
 
 include(CetCMakeEnv)
 cet_cmake_env()
@@ -34,11 +37,10 @@ cet_report_compiler_flags()
 
 
 # these are minimum required versions, not the actual product versions
-find_ups_product(cetbuildtools v4_14_01)
-find_ups_product(cetlib_except v1_00_00)
 find_ups_product(cetlib v2_01_00)
-find_ups_product(python)
-find_ups_product(sqlite v3_07_15_00)
+find_ups_product(cetlib_except v1_00_00)
+#find_ups_product(python)
+#find_ups_product(sqlite v3_07_15_00)
 find_ups_boost(v1_50_0)
 
 # Python
@@ -54,4 +56,4 @@ add_subdirectory(tools)
 add_subdirectory(ups)
 
 # packaging utility
-include(UseCPack)
+#include(UseCPack)

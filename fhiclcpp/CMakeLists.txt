@@ -2,8 +2,8 @@ include(CetMake)
 
 cet_make(
   LIBRARIES
-  cetlib
-  cetlib_except
+  ${CETLIB}
+  ${CETLIB_EXCEPT}
   ${SQLITE3}
   ${Boost_FILESYSTEM_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
@@ -18,4 +18,4 @@ cet_make(
 install_headers(SUBDIRS detail types types/detail)
 install_source(SUBDIRS detail types types/detail)
 # Testing
-add_subdirectory(test)
+#add_subdirectory(test)
