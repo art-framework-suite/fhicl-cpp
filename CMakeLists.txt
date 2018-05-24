@@ -36,19 +36,16 @@ cet_set_compiler_flags(DIAGS VIGILANT
   )
 cet_report_compiler_flags()
 
+# Find dependencies
 if(NOT APPLE)
   find_package(OpenSSL REQUIRED )
 endif()
-find_package(sqlite3)
-find_package(python)
+find_package(PythonLibs)
 find_package(cetlib)
 find_package(Boost 1.50.0 COMPONENTS program_options)
 
-# Python
-#cet_find_library(PYTHON NAMES python2.7 PATHS ENV PYTHON_LIB NO_DEFAULT_PATH)
-
 # SQLite
-#cet_find_library(SQLITE3 NAMES sqlite3_ups PATHS ENV SQLITE_LIB NO_DEFAULT_PATH)
+find_library(SQLITE3 NAMES sqlite3 REQUIRED)
 
 # source code
 add_subdirectory(fhiclcpp)

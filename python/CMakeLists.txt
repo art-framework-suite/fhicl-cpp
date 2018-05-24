@@ -1,3 +1,3 @@
-include_directories($ENV{PYTHON_INCLUDE})
-cet_make(LIBRARY_NAME fhicl LIBRARIES ${CETLIB} ${CETLIB_EXCEPT} fhiclcpp ${PYTHON})
+include_directories(${PYTHON_INCLUDE_DIR})
+cet_make(LIBRARY_NAME fhicl LIBRARIES ${CETLIB} ${CETLIB_EXCEPT} fhiclcpp ${PYTHON_LIBRARY})
 SET_TARGET_PROPERTIES(fhicl PROPERTIES PREFIX "")
