@@ -14,9 +14,13 @@
 #  make install
 #  make package (builds distribution tarfile)
 
-cmake_minimum_required( VERSION 3.2 )
+# Required to keep CMake happy.
+cmake_minimum_required(VERSION ${CMAKE_VERSION} FATAL_ERROR)
+# Actual version requirement.
+cmake_policy(VERSION 3.4)
 
-project(fhiclcpp VERSION 4.05.01 )
+# Project information.
+project(fhiclcpp VERSION 4.06.08 LANGUAGES CXX)
 
 # cetmodules contains our cmake modules
 find_package(cetmodules REQUIRED)
@@ -32,25 +36,22 @@ cet_set_compiler_flags(DIAGS VIGILANT
   )
 cet_report_compiler_flags()
 
-
-# these are minimum required versions, not the actual product versions
-find_ups_product(cetlib v2_01_00)
-find_ups_product(cetlib_except v1_00_00)
-#find_ups_product(python)
-#find_ups_product(sqlite v3_07_15_00)
-find_ups_boost(v1_50_0)
+if(NOT APPLE)
+  find_package(OpenSSL REQUIRED )
+endif()
+find_package(sqlite3)
+find_package(python)
+find_package(cetlib)
+find_package(Boost 1.50.0 COMPONENTS program_options)
 
 # Python
-cet_find_library(PYTHON NAMES python2.7 PATHS ENV PYTHON_LIB NO_DEFAULT_PATH)
+#cet_find_library(PYTHON NAMES python2.7 PATHS ENV PYTHON_LIB NO_DEFAULT_PATH)
 
 # SQLite
-cet_find_library(SQLITE3 NAMES sqlite3_ups PATHS ENV SQLITE_LIB NO_DEFAULT_PATH)
+#cet_find_library(SQLITE3 NAMES sqlite3_ups PATHS ENV SQLITE_LIB NO_DEFAULT_PATH)
 
 # source code
 add_subdirectory(fhiclcpp)
 add_subdirectory(python)
 add_subdirectory(tools)
 add_subdirectory(ups)
-
-# packaging utility
-#include(UseCPack)
