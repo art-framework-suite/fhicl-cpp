@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(GoodTuple)
   string const good{};
   auto const& validatedTable = validateConfig<TupleConfig>(good);
   BOOST_CHECK_EQUAL(validatedTable().ages.get<0>(), "David"s);
-  BOOST_CHECK_EQUAL(validatedTable().ages.get<1>(), 9);
+  BOOST_CHECK_EQUAL(validatedTable().ages.get<1>(), 9u);
 }
 
 BOOST_AUTO_TEST_CASE(BadSequence)
