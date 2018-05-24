@@ -1,13 +1,13 @@
 #define BOOST_TEST_MODULE (search allowed configuration test)
 
 #include "cetlib/quiet_unit_test.hpp"
+#include "cetlib/test_macros.h"
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/Sequence.h"
 #include "fhiclcpp/types/Table.h"
 #include "fhiclcpp/types/TableFragment.h"
 #include "fhiclcpp/types/Tuple.h"
 #include "fhiclcpp/types/detail/SearchAllowedConfiguration.h"
-#include "cetlib/test_macros.h"
 
 #include <iostream>
 #include <string>
@@ -21,23 +21,22 @@ auto supports_key = SearchAllowedConfiguration::supports_key;
 namespace {
 
   struct S {
-    Atom<int> test {Name{"atom"}};
-    Sequence<int,2> seq {Name{"sequence"}};
-    Tuple<int,double,bool> tuple {Name{"tuple"}};
+    Atom<int> test{Name{"atom"}};
+    Sequence<int, 2> seq{Name{"sequence"}};
+    Tuple<int, double, bool> tuple{Name{"tuple"}};
     struct U {
-      Atom<int> test {Name{"nested_atom"}};
+      Atom<int> test{Name{"nested_atom"}};
     };
-    Tuple<Sequence<int, 2>, bool> tuple2 {Name{"tuple2"}};
-    Table<U> table2 {Name{"table2"}};
+    Tuple<Sequence<int, 2>, bool> tuple2{Name{"tuple2"}};
+    Table<U> table2{Name{"table2"}};
   };
-
 }
 
 BOOST_AUTO_TEST_SUITE(searchAllowedConfiguration_test)
 
 BOOST_AUTO_TEST_CASE(table_t)
 {
-  Table<S> t {Name{"table"}};
+  Table<S> t{Name{"table"}};
   BOOST_CHECK(supports_key(t, "atom"));
   BOOST_CHECK(!supports_key(t, "table.atom"));
   BOOST_CHECK(!supports_key(t, "table.sequence"));
@@ -51,7 +50,7 @@ BOOST_AUTO_TEST_CASE(table_t)
 
 BOOST_AUTO_TEST_CASE(seqInSeq_t)
 {
-  Sequence<Sequence<int,2>> s {Name{"nestedSequence"}};
+  Sequence<Sequence<int, 2>> s{Name{"nestedSequence"}};
   BOOST_CHECK(supports_key(s, "[0]"));
   BOOST_CHECK(supports_key(s, "[0][0]"));
   BOOST_CHECK(supports_key(s, "[0][1]"));

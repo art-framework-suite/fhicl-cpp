@@ -3,7 +3,8 @@
 
 namespace fhicl {
   namespace detail {
-    inline std::string optional_parameter_message(bool const with_comment = true)
+    inline std::string
+    optional_parameter_message(bool const with_comment = true)
     {
       std::string result;
       if (with_comment) {

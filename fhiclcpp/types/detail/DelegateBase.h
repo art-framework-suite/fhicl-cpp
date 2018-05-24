@@ -13,15 +13,13 @@ namespace fhicl {
     //========================================================
     class DelegateBase : public ParameterBase {
     public:
-
-      DelegateBase(Name const & name,
-                   Comment const & comment,
-                   value_type const vt,
+      DelegateBase(Name const& name,
+                   Comment const& comment,
+                   par_style const vt,
                    std::function<bool()> maybeUse)
         : ParameterBase{name, comment, vt, par_type::DELEGATE, maybeUse}
       {}
     };
-
   }
 }
 

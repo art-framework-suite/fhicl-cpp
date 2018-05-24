@@ -2,7 +2,7 @@
 #define fhiclcpp_parse_shims_opts_h
 
 namespace shims {
-bool isSnippetMode(bool m = false);
+  bool isSnippetMode(bool m = false);
 }
 
 #endif /* fhiclcpp_parse_shims_opts_h */

@@ -17,67 +17,60 @@
 
 using namespace fhicl;
 
-typedef  intermediate_table::atom_t      atom_t;
-typedef  intermediate_table::complex_t   complex_t;
-typedef  intermediate_table::sequence_t  sequence_t;
-typedef  intermediate_table::table_t     table_t;
+using atom_t = intermediate_table::atom_t;
+using complex_t = intermediate_table::complex_t;
+using sequence_t = intermediate_table::sequence_t;
+using table_t = intermediate_table::table_t;
 
-typedef  ParameterSet::ps_atom_t      ps_atom_t;     // same as atom_t!
-typedef  ParameterSet::ps_sequence_t  ps_sequence_t;
+using ps_atom_t = ParameterSet::ps_atom_t; // same as atom_t!
+using ps_sequence_t = ParameterSet::ps_sequence_t;
 
 // ----------------------------------------------------------------------
 
 void
-  fhicl::make_ParameterSet( intermediate_table const & tbl
-                          , ParameterSet             & ps
-                          )
+fhicl::make_ParameterSet(intermediate_table const& tbl, ParameterSet& ps)
 {
-  typedef  intermediate_table::const_iterator  c_iter_t;
-  for( c_iter_t it = tbl.begin(), e  = tbl.end(); it != e; ++it ) {
-    if( ! it->second.in_prolog )
-      ps.put(it->first, it->second);
+  for (auto const& pr : tbl) {
+    if (!pr.second.in_prolog)
+      ps.put(pr.first, pr.second);
   }
-}  // make_ParameterSet()
+}
 
 // ----------------------------------------------------------------------
 
 void
-  fhicl::make_ParameterSet( extended_value const & xval
-                          , ParameterSet         & ps
-                          )
+fhicl::make_ParameterSet(extended_value const& xval, ParameterSet& ps)
 {
-  if( ! xval.is_a(TABLE) )
+  if (!xval.is_a(TABLE))
     throw fhicl::exception(type_mismatch, "extended value not a table");
-  table_t const & tbl = table_t(xval);
 
-  typedef  table_t::const_iterator  c_iter_t;
-  for( c_iter_t it = tbl.begin(), e  = tbl.end(); it != e; ++it ) {
-    if( ! it->second.in_prolog )
-      ps.put(it->first, it->second);
+  table_t const& tbl = table_t(xval);
+  for (auto const& pr : tbl) {
+    if (!pr.second.in_prolog)
+      ps.put(pr.first, pr.second);
   }
-}  // make_ParameterSet()
+}
 
 // ----------------------------------------------------------------------
 
 void
-  fhicl::make_ParameterSet( std::string const & str
-                          , ParameterSet      & ps
-                          )
+fhicl::make_ParameterSet(std::string const& str, ParameterSet& ps)
 {
   intermediate_table tbl;
-  parse_document(str, tbl), make_ParameterSet(tbl, ps);
-}  // make_ParameterSet()
+  parse_document(str, tbl);
+  make_ParameterSet(tbl, ps);
+}
 
 // ----------------------------------------------------------------------
 
 void
-  fhicl::make_ParameterSet( std::string const   & filename
-                          , cet::filepath_maker & maker
-                          , ParameterSet        & ps
-                          )
+fhicl::make_ParameterSet(std::string const& filename,
+                         cet::filepath_maker& maker,
+                         ParameterSet& ps)
 {
   intermediate_table tbl;
-  parse_document(filename, maker, tbl), make_ParameterSet(tbl, ps);
-}  // make_ParameterSet()
+  parse_document(filename, maker, tbl);
+  make_ParameterSet(tbl, ps);
+}
 
 // ======================================================================

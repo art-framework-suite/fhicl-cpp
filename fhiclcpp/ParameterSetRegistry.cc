@@ -1,23 +1,24 @@
 #include "fhiclcpp/ParameterSetRegistry.h"
 
-#include "fhiclcpp/ParameterSetID.h"
-#include "fhiclcpp/exception.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include "cetlib/sqlite/Transaction.h"
 #include "cetlib/sqlite/create_table.h"
 #include "cetlib/sqlite/exec.h"
 #include "cetlib/sqlite/select.h"
+#include "fhiclcpp/ParameterSetID.h"
+#include "fhiclcpp/exception.h"
+#include "fhiclcpp/make_ParameterSet.h"
 
 using fhicl::detail::throwOnSQLiteFailure;
 
 namespace {
-  sqlite3* openPrimaryDB()
+  sqlite3*
+  openPrimaryDB()
   {
     sqlite3* result = nullptr;
     sqlite3_open(":memory:", &result);
     fhicl::detail::throwOnSQLiteFailure(result);
     using namespace cet::sqlite;
-    Transaction txn {result};
+    Transaction txn{result};
     create_table(result,
                  "ParameterSets",
                  column<std::string, primary_key>{"ID"},
@@ -30,22 +31,18 @@ namespace {
 void
 fhicl::detail::throwOnSQLiteFailure(sqlite3* db, char* msg)
 {
-  std::string const msgString {msg ? msg : ""};
+  std::string const msgString{msg ? msg : ""};
   sqlite3_free(msg);
   if (db == nullptr) {
-    throw fhicl::exception(fhicl::error::cant_open_db)
-      << "Can't open DB.";
+    throw fhicl::exception(fhicl::error::cant_open_db) << "Can't open DB.";
   }
   auto errcode = sqlite3_errcode(db);
   if (errcode != SQLITE_OK) {
     // Caller's responsibility to make sure this really is an error
     // and not (say) SQLITE_ROW or SQLITE_DONE,
     throw exception(error::sql_error, "SQLite error:")
-      << sqlite3_errstr(errcode)
-      << " ("
-      << errcode
-      << "): "
-      << sqlite3_errmsg(db)
+      << sqlite3_errstr(errcode) << " (" << errcode
+      << "): " << sqlite3_errmsg(db)
       << (msgString.empty() ? "" : (std::string(". ") + msgString));
   }
 }
@@ -59,7 +56,8 @@ fhicl::ParameterSetRegistry::~ParameterSetRegistry()
   catch (fhicl::exception const& e) {
     std::cerr << e.what() << '\n';
   }
-  catch (...) {}
+  catch (...) {
+  }
   int retcode;
   do {
     retcode = sqlite3_close(primaryDB_);
@@ -70,7 +68,7 @@ void
 fhicl::ParameterSetRegistry::importFrom(sqlite3* db)
 {
   assert(db);
-  std::lock_guard<decltype(mutex_)> lock {mutex_};
+  std::lock_guard<decltype(mutex_)> lock{mutex_};
 
   // This does *not* cause anything new to be imported into the
   // registry itself, just its backing DB.
@@ -78,9 +76,12 @@ fhicl::ParameterSetRegistry::importFrom(sqlite3* db)
   sqlite3* primaryDB = instance_().primaryDB_;
 
   // Index constraint on ID will prevent duplicates via INSERT OR IGNORE.
-  sqlite3_prepare_v2(primaryDB,
-                     "INSERT OR IGNORE INTO ParameterSets(ID, PSetBlob) VALUES(?, ?);",
-                     -1, &oStmt, nullptr);
+  sqlite3_prepare_v2(
+    primaryDB,
+    "INSERT OR IGNORE INTO ParameterSets(ID, PSetBlob) VALUES(?, ?);",
+    -1,
+    &oStmt,
+    nullptr);
   throwOnSQLiteFailure(primaryDB);
 
   using namespace cet::sqlite;
@@ -92,15 +93,17 @@ fhicl::ParameterSetRegistry::importFrom(sqlite3* db)
     std::string psBlob;
     std::tie(idString, psBlob) = row;
 
-    sqlite3_bind_text(oStmt, 1, idString.c_str(), idString.size() + 1, SQLITE_STATIC);
+    sqlite3_bind_text(
+      oStmt, 1, idString.c_str(), idString.size() + 1, SQLITE_STATIC);
     throwOnSQLiteFailure(primaryDB);
-    sqlite3_bind_text(oStmt, 2, psBlob.c_str(), psBlob.size() + 1, SQLITE_STATIC);
+    sqlite3_bind_text(
+      oStmt, 2, psBlob.c_str(), psBlob.size() + 1, SQLITE_STATIC);
     throwOnSQLiteFailure(primaryDB);
     switch (sqlite3_step(oStmt)) {
-    case SQLITE_DONE:
-      break; // OK
-    default:
-      throwOnSQLiteFailure(primaryDB);
+      case SQLITE_DONE:
+        break; // OK
+      default:
+        throwOnSQLiteFailure(primaryDB);
     }
     sqlite3_reset(oStmt);
     throwOnSQLiteFailure(primaryDB);
@@ -113,35 +116,41 @@ void
 fhicl::ParameterSetRegistry::exportTo(sqlite3* db)
 {
   assert(db);
-  std::lock_guard<decltype(mutex_)> lock {mutex_};
+  std::lock_guard<decltype(mutex_)> lock{mutex_};
 
-  cet::sqlite::Transaction txn {db};
+  cet::sqlite::Transaction txn{db};
   cet::sqlite::exec(db,
                     "DROP TABLE IF EXISTS ParameterSets;"
                     "CREATE TABLE ParameterSets(ID PRIMARY KEY, PSetBlob);");
   txn.commit();
 
   sqlite3_stmt* oStmt = nullptr;
-  sqlite3_prepare_v2(db, "INSERT OR IGNORE INTO ParameterSets(ID, PSetBlob) VALUES(?, ?);", -1, &oStmt, nullptr);
+  sqlite3_prepare_v2(
+    db,
+    "INSERT OR IGNORE INTO ParameterSets(ID, PSetBlob) VALUES(?, ?);",
+    -1,
+    &oStmt,
+    nullptr);
   throwOnSQLiteFailure(db);
   for (auto const& p : instance_().registry_) {
     std::string id(p.first.to_string());
     std::string psBlob(p.second.to_compact_string());
     sqlite3_bind_text(oStmt, 1, id.c_str(), id.size() + 1, SQLITE_STATIC);
     throwOnSQLiteFailure(db);
-    sqlite3_bind_text(oStmt, 2, psBlob.c_str(), psBlob.size() + 1, SQLITE_STATIC);
+    sqlite3_bind_text(
+      oStmt, 2, psBlob.c_str(), psBlob.size() + 1, SQLITE_STATIC);
     throwOnSQLiteFailure(db);
     switch (sqlite3_step(oStmt)) {
-    case SQLITE_DONE:
-      sqlite3_reset(oStmt);
-      throwOnSQLiteFailure(db);
-      break; // OK
-    default:
-      throwOnSQLiteFailure(db);
+      case SQLITE_DONE:
+        sqlite3_reset(oStmt);
+        throwOnSQLiteFailure(db);
+        break; // OK
+      default:
+        throwOnSQLiteFailure(db);
     }
   }
 
-  sqlite3* const primaryDB {instance_().primaryDB_};
+  sqlite3* const primaryDB{instance_().primaryDB_};
   using namespace cet::sqlite;
   query_result<std::string, std::string> regPSes;
   regPSes << select("*").from(primaryDB, "ParameterSets");
@@ -150,17 +159,19 @@ fhicl::ParameterSetRegistry::exportTo(sqlite3* db)
     std::string idString;
     std::string psBlob;
     std::tie(idString, psBlob) = row;
-    sqlite3_bind_text(oStmt, 1, idString.c_str(), idString.size() + 1, SQLITE_STATIC);
+    sqlite3_bind_text(
+      oStmt, 1, idString.c_str(), idString.size() + 1, SQLITE_STATIC);
     throwOnSQLiteFailure(db);
-    sqlite3_bind_text(oStmt, 2, psBlob.c_str(), psBlob.size() + 1, SQLITE_STATIC);
+    sqlite3_bind_text(
+      oStmt, 2, psBlob.c_str(), psBlob.size() + 1, SQLITE_STATIC);
     throwOnSQLiteFailure(db);
     switch (sqlite3_step(oStmt)) {
-    case SQLITE_DONE:
-      sqlite3_reset(oStmt);
-      throwOnSQLiteFailure(db);
-      break; // OK
-    default:
-      throwOnSQLiteFailure(db);
+      case SQLITE_DONE:
+        sqlite3_reset(oStmt);
+        throwOnSQLiteFailure(db);
+        break; // OK
+      default:
+        throwOnSQLiteFailure(db);
     }
   }
   sqlite3_finalize(oStmt);
@@ -170,7 +181,7 @@ fhicl::ParameterSetRegistry::exportTo(sqlite3* db)
 void
 fhicl::ParameterSetRegistry::stageIn()
 {
-  std::lock_guard<decltype(mutex_)> lock {mutex_};
+  std::lock_guard<decltype(mutex_)> lock{mutex_};
 
   sqlite3* primaryDB = instance_().primaryDB_;
   auto& registry = instance_().registry_;
@@ -180,7 +191,7 @@ fhicl::ParameterSetRegistry::stageIn()
 
   cet::transform_all(entriesToStageIn,
                      std::inserter(registry, std::begin(registry)),
-                     [](auto const& row){
+                     [](auto const& row) {
                        std::string idString;
                        std::string psBlob;
                        std::tie(idString, psBlob) = row;
@@ -190,15 +201,14 @@ fhicl::ParameterSetRegistry::stageIn()
                      });
 }
 
-fhicl::ParameterSetRegistry::ParameterSetRegistry() :
-  primaryDB_{openPrimaryDB()}
+fhicl::ParameterSetRegistry::ParameterSetRegistry()
+  : primaryDB_{openPrimaryDB()}
 {}
 
-std::recursive_mutex fhicl::ParameterSetRegistry::mutex_ {};
+std::recursive_mutex fhicl::ParameterSetRegistry::mutex_{};
 
 auto
-fhicl::ParameterSetRegistry::find_(ParameterSetID const& id)
-  -> const_iterator
+fhicl::ParameterSetRegistry::find_(ParameterSetID const& id) -> const_iterator
 {
   // No lock here -- it was already acquired by get(...).
   auto it = registry_.find(id);
@@ -207,27 +217,29 @@ fhicl::ParameterSetRegistry::find_(ParameterSetID const& id)
     if (stmt_ == nullptr) {
       sqlite3_prepare_v2(primaryDB_,
                          "SELECT PSetBlob FROM ParameterSets WHERE ID = ?;",
-                         -1, &stmt_, nullptr);
+                         -1,
+                         &stmt_,
+                         nullptr);
       throwOnSQLiteFailure(primaryDB_);
     }
     auto idString = id.to_string();
-    auto result = sqlite3_bind_text(stmt_, 1, idString.c_str(), idString.size() + 1, SQLITE_STATIC);
+    auto result = sqlite3_bind_text(
+      stmt_, 1, idString.c_str(), idString.size() + 1, SQLITE_STATIC);
     throwOnSQLiteFailure(primaryDB_);
     result = sqlite3_step(stmt_);
     switch (result) {
-    case SQLITE_ROW: // Found the ID in the DB.
-    {
-      ParameterSet pset;
-      fhicl::make_ParameterSet(reinterpret_cast<char const*>(sqlite3_column_text(stmt_, 0)),
-                               pset);
-      // Put into the registry without triggering ParameterSet::id().
-      it = registry_.emplace(id, pset).first;
-    }
-    break;
-    case SQLITE_DONE:
-      break; // Not here.
-    default:
-      throwOnSQLiteFailure(primaryDB_);
+      case SQLITE_ROW: // Found the ID in the DB.
+      {
+        ParameterSet pset;
+        fhicl::make_ParameterSet(
+          reinterpret_cast<char const*>(sqlite3_column_text(stmt_, 0)), pset);
+        // Put into the registry without triggering ParameterSet::id().
+        it = registry_.emplace(id, pset).first;
+      } break;
+      case SQLITE_DONE:
+        break; // Not here.
+      default:
+        throwOnSQLiteFailure(primaryDB_);
     }
     sqlite3_reset(stmt_);
   }

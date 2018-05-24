@@ -15,9 +15,7 @@ namespace fhicl {
 
   namespace detail {
 
-    boost::any
-    encode( extended_value const & xval );
-
+    boost::any encode(extended_value const& xval);
   }
 }
 #endif /* fhiclcpp_detail_encode_extended_value_h */

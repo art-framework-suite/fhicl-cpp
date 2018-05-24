@@ -9,24 +9,32 @@
 namespace fhicl {
 
   template <typename T, typename KeysToIgnore>
-  Table<T, KeysToIgnore>::Table(Name&& name) : Table{std::move(name), Comment("")} {}
+  template <typename... TCARGS>
+  Table<T, KeysToIgnore>::Table(Name&& name, TCARGS && ... tcargs)
+    : Table{std::move(name), Comment(""), std::forward<TCARGS>(tcargs)...} {}
 
   template <typename T, typename KeysToIgnore>
+  template <typename... TCARGS>
   Table<T, KeysToIgnore>::Table(Name&& name,
-                                Comment&& comment)
-    : TableBase{std::move(name), std::move(comment), value_type::REQUIRED, detail::AlwaysUse()}
+                                Comment&& comment,
+                                TCARGS && ... tcargs)
+    : TableBase{std::move(name), std::move(comment), par_style::REQUIRED, detail::AlwaysUse()}
     , RegisterIfTableMember{this}
+    , value_{std::make_shared<T>(std::forward<TCARGS>(tcargs)...)}
   {
     maybe_implicitly_default();
     NameStackRegistry::end_of_ctor();
   }
 
   template <typename T, typename KeysToIgnore>
+  template <typename... TCARGS>
   Table<T, KeysToIgnore>::Table(Name&& name,
                                 Comment&& comment,
-                                std::function<bool()> maybeUse)
-    : TableBase{std::move(name), std::move(comment), value_type::REQUIRED_CONDITIONAL, maybeUse}
+                                MaybeUseFunction maybeUse,
+                                TCARGS && ... tcargs)
+    : TableBase{std::move(name), std::move(comment), par_style::REQUIRED_CONDITIONAL, maybeUse}
     , RegisterIfTableMember{this}
+    , value_{std::make_shared<T>(std::forward<TCARGS>(tcargs)...)}
   {
     maybe_implicitly_default();
     NameStackRegistry::end_of_ctor();
@@ -47,7 +55,7 @@ namespace fhicl {
 
   template <typename T, typename KeysToIgnore>
   Table<T, KeysToIgnore>::Table(ParameterSet const& pset, std::set<std::string> const& keysToIgnore, Impl)
-    : TableBase{Name("<top_level>"), Comment(""), value_type::REQUIRED, detail::AlwaysUse()}
+    : TableBase{Name("<top_level>"), Comment(""), par_style::REQUIRED, detail::AlwaysUse()}
     , RegisterIfTableMember{this}
   {
     maybe_implicitly_default();
@@ -108,7 +116,7 @@ namespace fhicl {
                                                   return p->has_default() || p->is_optional();
                                                 });
     if (implicitly_default)
-      set_value_type(value_type::DEFAULT);
+      set_par_style(par_style::DEFAULT);
   }
 
 }

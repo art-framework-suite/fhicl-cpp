@@ -19,7 +19,8 @@
 //     ParameterBase object is 'table1.table2', and the user
 //     specifies:
 //
-//       bool const result {SearchAllowedConfiguration::supports_key(pb, "atom")};
+//       bool const result {SearchAllowedConfiguration::supports_key(pb,
+//       "atom")};
 //
 //     then the searched-for key is "table.table2.atom".
 //
@@ -48,24 +49,38 @@
 namespace fhicl {
   namespace detail {
 
-    class SearchAllowedConfiguration : public ParameterWalker<tt::const_flavor::require_const> {
+    class SearchAllowedConfiguration
+      : public ParameterWalker<tt::const_flavor::require_const> {
     public:
-
-      static bool supports_key(ParameterBase const& pb, std::string const& searched_for_key);
+      static bool supports_key(ParameterBase const& pb,
+                               std::string const& searched_for_key);
 
     private:
       std::string key_;
-      bool supportsKey_ {false};
+      bool supportsKey_{false};
 
-      SearchAllowedConfiguration(ParameterBase const& pb, std::string const& searched_for_key);
+      SearchAllowedConfiguration(ParameterBase const& pb,
+                                 std::string const& searched_for_key);
 
-      bool result() const { return supportsKey_; };
+      bool
+      result() const
+      {
+        return supportsKey_;
+      };
 
-      bool before_action (ParameterBase const& pb) override;
-      void enter_table   (TableBase    const&) override {}
-      void enter_sequence(SequenceBase const&) override {}
-      void atom          (AtomBase     const&) override {}
-      void delegated_parameter(DelegateBase const&) override {}
+      bool before_action(ParameterBase const& pb) override;
+      void
+      enter_table(TableBase const&) override
+      {}
+      void
+      enter_sequence(SequenceBase const&) override
+      {}
+      void
+      atom(AtomBase const&) override
+      {}
+      void
+      delegated_parameter(DelegateBase const&) override
+      {}
 
       static std::string form_absolute(ParameterBase const& pb,
                                        std::string const& searched_for_key);

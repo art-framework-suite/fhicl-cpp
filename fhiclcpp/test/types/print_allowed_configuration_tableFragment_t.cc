@@ -15,19 +15,19 @@ namespace {
   //
 
   struct S {
-    Atom<std::string> test { Name("test"), Comment("this works") };
-    Sequence<int> sequence { Name("sequence") };
-    Sequence<double,5> array { Name("array") };
+    Atom<std::string> test{Name("test"), Comment("this works")};
+    Sequence<int> sequence{Name("sequence")};
+    Sequence<double, 5> array{Name("array")};
   };
 
   struct Config {
     TableFragment<S> test;
   };
-
 }
 
-int main()
+int
+main()
 {
-  Table<Config> pset { Name("pset") };
+  Table<Config> pset{Name("pset")};
   pset.print_allowed_configuration(std::cout);
 }

@@ -1,13 +1,14 @@
-#include "fhiclcpp/parse_shims_opts.h"
 #include "fhiclcpp/parse_shims.h"
+#include "fhiclcpp/parse_shims_opts.h"
 
-#include  <iostream>
+#include <iostream>
 
 namespace shims {
 
-bool isSnippetMode(bool m) {
-  static const auto _mode = bool{m};
-  return _mode;
-}
-
+  bool
+  isSnippetMode(bool m)
+  {
+    static const auto _mode = bool{m};
+    return _mode;
+  }
 }

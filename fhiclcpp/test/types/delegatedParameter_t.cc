@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE ( delegatedParameter test )
+#define BOOST_TEST_MODULE (delegatedParameter test)
 
 #include "cetlib/quiet_unit_test.hpp"
 #include "cetlib/test_macros.h"
@@ -13,38 +13,41 @@ using namespace std::string_literals;
 
 namespace {
   struct S {
-    DelegatedParameter da { Name("delegated_atom") };
-    OptionalDelegatedParameter oda { Name("optional_delegated_atom") };
+    DelegatedParameter da{Name("delegated_atom")};
+    OptionalDelegatedParameter oda{Name("optional_delegated_atom")};
   };
 
   struct Config {
-    DelegatedParameter dt { Name("delegated_table") };
-    DelegatedParameter ds { Name("delegated_sequence") };
-    Table<S> nested { Name("s") };
+    DelegatedParameter dt{Name("delegated_table")};
+    DelegatedParameter ds{Name("delegated_sequence")};
+    Table<S> nested{Name("s")};
   };
 
   struct Fixture : fhiclcpp_types::FixtureBase<Config> {
     Fixture() : FixtureBase("delegatedParameter_t.fcl") {}
   };
 
-  void receive_PSet(ParameterSet const& pset)
+  void
+  receive_PSet(ParameterSet const& pset)
   {
-    std::set<std::string> const ref {"everything", "everything[0]", "you", "imagine"};
+    std::set<std::string> const ref{
+      "everything", "everything[0]", "you", "imagine"};
     auto const& test = pset.get_all_keys();
     CET_CHECK_EQUAL_COLLECTIONS(test, ref);
   }
 
-  void receive_vector(std::vector<int> const& v)
+  void
+  receive_vector(std::vector<int> const& v)
   {
-    auto const ref = {1,2,3};
+    auto const ref = {1, 2, 3};
     CET_CHECK_EQUAL_COLLECTIONS(v, ref);
   }
 
-  void receive_int(int const i)
+  void
+  receive_int(int const i)
   {
     BOOST_CHECK_EQUAL(i, 3);
   }
-
 }
 
 BOOST_FIXTURE_TEST_SUITE(delegatedParameter_t, Fixture)

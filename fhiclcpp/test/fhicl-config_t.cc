@@ -8,7 +8,7 @@
 using namespace fhicl;
 
 int
-  main( int argc, char *argv[] )
+main(int argc, char* argv[])
 {
   if (argc != 2) {
     std::cerr << "ERROR: expect exactly one argument.\n";

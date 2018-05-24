@@ -38,8 +38,8 @@
 */
 
 #include "fhiclcpp/exception.h"
-#include <numeric>
 #include <iostream>
+#include <numeric>
 #include <string>
 #include <vector>
 
@@ -47,30 +47,35 @@ namespace fhicl {
 
   class NameStackRegistry {
   public:
-
     std::string full_key(std::string const& key);
 
-    bool empty() const
+    bool
+    empty() const
     {
       return names_.empty();
     }
 
-    std::string current() const
+    std::string
+    current() const
     {
       return names_.back();
     }
 
-    static void end_of_ctor()
+    static void
+    end_of_ctor()
     {
       instance().names_.pop_back();
     }
 
-    void clear()
+    void
+    clear()
     {
       names_.clear();
     }
 
-    static NameStackRegistry& instance(){
+    static NameStackRegistry&
+    instance()
+    {
       static NameStackRegistry registry;
       return registry;
     }
@@ -79,7 +84,6 @@ namespace fhicl {
     NameStackRegistry() = default;
     std::vector<std::string> names_{};
   };
-
 }
 
 #endif /* fhiclcpp_types_detail_NameStackRegistry_h */

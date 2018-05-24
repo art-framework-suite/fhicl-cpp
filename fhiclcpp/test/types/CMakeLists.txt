@@ -53,69 +53,60 @@ cet_test(searchAllowedConfiguration_t USE_BOOST_UNIT)
 
 cet_test(tupleAs_t USE_BOOST_UNIT
   DATAFILES
-  tupleAs_t.fcl
-  )
+  tupleAs_t.fcl)
 
 cet_test(conditional_t USE_BOOST_UNIT
   DATAFILES
   cond_01_t.fcl
   cond_02_t.fcl
   cond_03_t.fcl
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/conditional_t-ref.txt"
-  )
+  REF "${CMAKE_CURRENT_SOURCE_DIR}/conditional_t-ref.txt")
 
 cet_test(print_tupleAs_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_tupleAs_t-ref.txt"
-  )
+  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_tupleAs_t-ref.txt")
 
 cet_test(print_allowed_configuration_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_t-ref.txt"
-  )
+  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_t-ref.txt")
 
 cet_test(print_allowed_configuration_optionalParameters_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_optionalParameters_t-ref.txt"
-  )
+  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_optionalParameters_t-ref.txt")
 
 cet_test(print_allowed_configuration_tableFragment_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_tableFragment_t-ref.txt"
-  )
+  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_tableFragment_t-ref.txt")
 
 cet_test(print_allowed_configuration_delegatedParameter_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_delegatedParameter_t-ref.txt"
-  )
+  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_delegatedParameter_t-ref.txt")
 
 cet_test(print_allowed_configuration_conditional_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_conditional_t-ref.txt"
-  )
+  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_conditional_t-ref.txt")
 
 cet_test(print_allowed_configuration_defaults_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_defaults_t-ref.txt"
-  )
+  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_defaults_t-ref.txt")
 
 cet_test(validate_ParameterSet_t
   DATAFILES
   validate_ParameterSet_t.fcl
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/validate_ParameterSet_t-ref.txt"
-  )
+  REF "${CMAKE_CURRENT_SOURCE_DIR}/validate_ParameterSet_t-ref.txt")
 
 cet_test(delegatedParameter_t USE_BOOST_UNIT
   DATAFILES
-  delegatedParameter_t.fcl
-  )
+  delegatedParameter_t.fcl)
 
 cet_test(return_values_from_fcl_t USE_BOOST_UNIT
   DATAFILES
-  return_values_from_fcl_t.fcl
-  )
+  return_values_from_fcl_t.fcl)
 
 cet_test(return_optionalValues_from_fcl_t USE_BOOST_UNIT
   DATAFILES
-  return_optionalValues_from_fcl_t.fcl
-  )
+  return_optionalValues_from_fcl_t.fcl)
 
 cet_test(return_table_values_from_fcl_t USE_BOOST_UNIT
   DATAFILES
-  return_table_values_from_fcl_t.fcl
-  )
+  return_table_values_from_fcl_t.fcl)
 
 cet_test(table_insertionOperator_t USE_BOOST_UNIT)
+cet_test(bounded_sequences_with_defaults_t USE_BOOST_UNIT)
+
+cet_test(nestedValidation_01_t USE_BOOST_UNIT)
+cet_test(nestedValidation_02_t USE_BOOST_UNIT)
+cet_test(nestedValidation_03_t USE_BOOST_UNIT)

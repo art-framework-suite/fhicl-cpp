@@ -1,6 +1,6 @@
+#include "fhiclcpp/types/DelegatedParameter.h"
 #include "cetlib/container_algorithms.h"
 #include "fhiclcpp/types/ConfigPredicate.h"
-#include "fhiclcpp/types/DelegatedParameter.h"
 #include "fhiclcpp/types/detail/NameStackRegistry.h"
 
 namespace fhicl {
@@ -10,7 +10,10 @@ namespace fhicl {
   {}
 
   DelegatedParameter::DelegatedParameter(Name&& name, Comment&& comment)
-    : DelegateBase{std::move(name), std::move(comment), value_type::REQUIRED, detail::AlwaysUse()}
+    : DelegateBase{std::move(name),
+                   std::move(comment),
+                   par_style::REQUIRED,
+                   detail::AlwaysUse()}
     , RegisterIfTableMember{this}
   {
     NameStackRegistry::end_of_ctor();
@@ -19,10 +22,12 @@ namespace fhicl {
   DelegatedParameter::DelegatedParameter(Name&& name,
                                          Comment&& comment,
                                          std::function<bool()> maybeUse)
-    : DelegateBase{std::move(name), std::move(comment), value_type::REQUIRED_CONDITIONAL, maybeUse}
+    : DelegateBase{std::move(name),
+                   std::move(comment),
+                   par_style::REQUIRED_CONDITIONAL,
+                   maybeUse}
     , RegisterIfTableMember{this}
   {
     NameStackRegistry::end_of_ctor();
   }
-
 }

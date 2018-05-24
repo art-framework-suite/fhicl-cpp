@@ -17,7 +17,11 @@
 namespace fhicl {
   namespace detail {
 
-    inline std::string nl(std::size_t i = 1) { return std::string(i,'\n'); }
+    inline std::string
+    nl(std::size_t i = 1)
+    {
+      return std::string(i, '\n');
+    }
 
     std::string printed_suffix(std::string const& key, std::size_t const sz);
 
@@ -27,14 +31,30 @@ namespace fhicl {
                                      std::string const& cached_info);
 
     namespace table {
-      inline std::string opening_brace() { return "{"; }
-      inline std::string closing_brace() { return "}"; }
+      inline std::string
+      opening_brace()
+      {
+        return "{";
+      }
+      inline std::string
+      closing_brace()
+      {
+        return "}";
+      }
       std::string printed_prefix(std::string const& key);
     }
 
     namespace sequence {
-      inline std::string opening_brace() { return "["; }
-      inline std::string closing_brace() { return "]"; }
+      inline std::string
+      opening_brace()
+      {
+        return "[";
+      }
+      inline std::string
+      closing_brace()
+      {
+        return "]";
+      }
       std::string printed_prefix(std::string const& key);
     }
 
@@ -43,20 +63,22 @@ namespace fhicl {
       std::string value(boost::any const&);
     }
 
-    inline bool is_sequence_element(std::string const& key)
+    inline bool
+    is_sequence_element(std::string const& key)
     {
       auto pos = key.find_last_of(sequence::closing_brace());
-      return pos != std::string::npos && pos == key.size()-1;
+      return pos != std::string::npos && pos == key.size() - 1;
     }
 
-    inline bool is_table_member(std::string const& key)
+    inline bool
+    is_table_member(std::string const& key)
     {
-      auto pos1 = key.find_last_of(".") ;
-      if (pos1 == std::string::npos) return false;
+      auto pos1 = key.find_last_of(".");
+      if (pos1 == std::string::npos)
+        return false;
 
       return is_sequence_element(key) ? false : true;
     }
-
   }
 }
 

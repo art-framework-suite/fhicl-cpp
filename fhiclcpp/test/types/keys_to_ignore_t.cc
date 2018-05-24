@@ -22,7 +22,8 @@ namespace {
   // Config to test against is empty.
   struct Config {
     struct KeysToIgnore {
-      std::set<std::string> operator()()
+      std::set<std::string>
+      operator()()
       {
         return {"testing"};
       }
@@ -30,9 +31,10 @@ namespace {
   };
 
   struct KeysToIgnore2 {
-    std::set<std::string> operator()()
+    std::set<std::string>
+    operator()()
     {
-      return {"a","z"};
+      return {"a", "z"};
     }
   };
 }
@@ -41,16 +43,16 @@ BOOST_AUTO_TEST_SUITE(keys_to_ignore_t)
 
 BOOST_AUTO_TEST_CASE(simple_case)
 {
-  std::string const config {"testing: \"it works\""};
+  std::string const config{"testing: \"it works\""};
   ParameterSet pset;
   make_ParameterSet(config, pset);
-  auto test = Table<Config,Config::KeysToIgnore>{pset};
+  auto test = Table<Config, Config::KeysToIgnore>{pset};
   test.print_allowed_configuration(std::cout);
 }
 
 BOOST_AUTO_TEST_CASE(simple_case_2)
 {
-  std::string const config {"testing: { if: \"it works\" }"};
+  std::string const config{"testing: { if: \"it works\" }"};
   ParameterSet pset;
   make_ParameterSet(config, pset);
   auto test = Table<Config>{pset, Config::KeysToIgnore{}()};
@@ -67,7 +69,8 @@ BOOST_AUTO_TEST_CASE(template_test_1)
 BOOST_AUTO_TEST_CASE(template_test_2)
 {
   auto const& ref = {"a", "testing", "z"};
-  auto const& test = fhicl::KeysToIgnore<Config::KeysToIgnore, KeysToIgnore2>{}();
+  auto const& test =
+    fhicl::KeysToIgnore<Config::KeysToIgnore, KeysToIgnore2>{}();
   CET_CHECK_EQUAL_COLLECTIONS(test, ref);
 }
 

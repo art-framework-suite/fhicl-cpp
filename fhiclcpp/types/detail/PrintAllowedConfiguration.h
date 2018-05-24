@@ -15,30 +15,29 @@
 namespace fhicl {
   namespace detail {
 
-    class PrintAllowedConfiguration : public ParameterWalker<tt::const_flavor::require_const> {
+    class PrintAllowedConfiguration
+      : public ParameterWalker<tt::const_flavor::require_const> {
     public:
-
       PrintAllowedConfiguration(std::ostream& os,
                                 bool const showParents = false,
-                                std::string const& prefix = std::string(3,' '),
+                                std::string const& prefix = std::string(3, ' '),
                                 bool const stlf = false);
 
     private:
-
       std::ostream& buffer_;
       Indentation indent_;
       bool suppressTopLevelFormatting_;
-      std::string cachedTopLevelParameter_ {};
-      std::stack<MaybeDisplayParent> mps_ {};
-      std::unordered_set<std::string> keysWithCommas_ {};
-      std::unordered_set<std::string> keysWithEllipses_ {};
+      std::string cachedTopLevelParameter_{};
+      std::stack<MaybeDisplayParent> mps_{};
+      std::unordered_set<std::string> keysWithCommas_{};
+      std::unordered_set<std::string> keysWithEllipses_{};
       bool showParentsForFirstParam_;
 
       bool before_action(ParameterBase const&) override;
       void after_action(ParameterBase const&) override;
 
       void enter_table(TableBase const&) override;
-      void exit_table (TableBase const&) override;
+      void exit_table(TableBase const&) override;
 
       void enter_sequence(SequenceBase const&) override;
       void exit_sequence(SequenceBase const&) override;
@@ -47,25 +46,26 @@ namespace fhicl {
 
       void delegated_parameter(DelegateBase const&) override;
 
-      void cacheTopLevelParameter(ParameterBase const& p)
+      void
+      cacheTopLevelParameter(ParameterBase const& p)
       {
         if (cachedTopLevelParameter_ == "")
           cachedTopLevelParameter_ = p.key();
       }
 
-      void maybeReleaseTopLevelParameter(ParameterBase const& p)
+      void
+      maybeReleaseTopLevelParameter(ParameterBase const& p)
       {
         if (p.key() == cachedTopLevelParameter_)
           cachedTopLevelParameter_ = "";
       }
 
-      bool suppressFormat(ParameterBase const& p)
+      bool
+      suppressFormat(ParameterBase const& p)
       {
         return p.key() == cachedTopLevelParameter_;
       }
-
     };
-
   }
 }
 

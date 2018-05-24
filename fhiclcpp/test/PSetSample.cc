@@ -8,8 +8,8 @@
 #include <fstream>
 #include <string>
 
-
-int main()
+int
+main()
 {
   putenv(const_cast<char*>("FHICL_FILE_PATH=./test:."));
   cet::filepath_lookup policy("FHICL_FILE_PATH");
@@ -35,14 +35,16 @@ int main()
   assert(pset.get<std::string>("f").compare("32") == 0);
   assert(pset.get<int>("f") == 32);
 
-  assert(pset.get<std::vector<int> >("g")[2] == 3);
+  assert(pset.get<std::vector<int>>("g")[2] == 3);
 
-  assert(pset.get<std::vector<fhicl::ParameterSet> >("h")[1]
-             .get<std::string>("h2").compare("h2") == 0);
+  assert(pset.get<std::vector<fhicl::ParameterSet>>("h")[1]
+           .get<std::string>("h2")
+           .compare("h2") == 0);
 
   assert(pset.get<fhicl::ParameterSet>("i")
-             .get<fhicl::ParameterSet>("i1")
-             .get<std::string>("i1_1").compare("test") == 0);
+           .get<fhicl::ParameterSet>("i1")
+           .get<std::string>("i1_1")
+           .compare("test") == 0);
 
   return 0;
 }

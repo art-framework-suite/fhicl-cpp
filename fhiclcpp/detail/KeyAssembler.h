@@ -62,34 +62,35 @@
 #include "fhiclcpp/ParameterSetWalker.h"
 #include "fhiclcpp/coding.h"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace fhicl {
   namespace detail {
 
-    using key_t  = std::string;
+    using key_t = std::string;
     using name_t = std::string;
 
     class KeyAssembler : public ParameterSetWalker {
     public:
-
-      std::vector<key_t> const& result() { return keys_; }
+      std::vector<key_t> const&
+      result()
+      {
+        return keys_;
+      }
 
     private:
-
-      void enter_table   (key_t const&, any_t const&) override;
-      void exit_table    (key_t const&, any_t const&) override;
+      void enter_table(key_t const&, any_t const&) override;
+      void exit_table(key_t const&, any_t const&) override;
 
       void enter_sequence(key_t const&, any_t const&) override;
-      void atom          (key_t const&, any_t const&) override;
+      void atom(key_t const&, any_t const&) override;
 
       std::string full_key_(name_t const&) const;
 
       std::vector<key_t> keys_{};
       std::vector<name_t> name_stack_{};
     };
-
   }
 }
 

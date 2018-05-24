@@ -5,27 +5,36 @@
 
 namespace fhicl {
 
-  enum class par_type {ATOM, TABLE, SEQ_VECTOR, SEQ_ARRAY, TUPLE, DELEGATE, NTYPES};
+  enum class par_type {
+    ATOM,
+    TABLE,
+    SEQ_VECTOR,
+    SEQ_ARRAY,
+    TUPLE,
+    DELEGATE,
+    NTYPES
+  };
 
-  inline bool is_table(par_type const pt)
+  inline bool
+  is_table(par_type const pt)
   {
     return pt == par_type::TABLE;
   }
 
-  inline bool is_sequence(par_type const pt)
+  inline bool
+  is_sequence(par_type const pt)
   {
-    return
-      pt == par_type::SEQ_VECTOR ||
-      pt == par_type::SEQ_ARRAY ||
-      pt == par_type::TUPLE;
+    return pt == par_type::SEQ_VECTOR || pt == par_type::SEQ_ARRAY ||
+           pt == par_type::TUPLE;
   }
 
-  inline bool is_atom(par_type const pt)
+  inline bool
+  is_atom(par_type const pt)
   {
     return pt == par_type::ATOM;
   }
 
-  enum class value_type {
+  enum class par_style {
     REQUIRED,
     REQUIRED_CONDITIONAL,
     DEFAULT,
@@ -34,7 +43,6 @@ namespace fhicl {
     OPTIONAL_CONDITIONAL,
     NTYPES
   };
-
 }
 
 #endif /* fhiclcpp_types_detail_ParameterArgumentTypes_h */

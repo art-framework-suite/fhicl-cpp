@@ -5,9 +5,6 @@ cet_make(
   ${CETLIB}
   ${CETLIB_EXCEPT}
   ${SQLITE3}
-  ${Boost_FILESYSTEM_LIBRARY}
-  ${Boost_SYSTEM_LIBRARY}
-  ${Boost_REGEX_LIBRARY}
   WITH_STATIC_LIBRARY
   SUBDIRS
   detail

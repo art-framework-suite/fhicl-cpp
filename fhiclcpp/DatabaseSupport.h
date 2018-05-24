@@ -5,13 +5,11 @@
 #include <vector>
 
 #include "cetlib/filepath_maker.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/ParameterSet.h"
+#include "fhiclcpp/make_ParameterSet.h"
 #include "sqlite3.h"
 
-
-namespace fhicl
-{
+namespace fhicl {
   // Given a ParameterSet, return two vectors of strings:
   //
   //   records: will contain the "database form" of top, and of all
@@ -32,12 +30,8 @@ namespace fhicl
   // Read the file 'filename', creating a ParameterSet, and then fill
   // the given empty sqlite3 database with all the ParameterSets created
   // by the parsing.
-  void parse_file_and_fill_db(std::string const& filename,
-                              sqlite3* db);
+  void parse_file_and_fill_db(std::string const& filename, sqlite3* db);
 }
-
-
-
 
 #endif /* fhiclcpp_DatabaseSupport_h */
 

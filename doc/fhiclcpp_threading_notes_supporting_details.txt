@@ -1393,7 +1393,7 @@ class NameStackRegistry
 -----
 
 enum class par_type { ATOM, TABLE, SEQ_VECTOR, SEQ_ARRAY, TUPLE, DELEGATE, NTYPES }
-enum class value_type { REQUIRED, REQUIRED_CONDITIONAL, DEFAULT, DEFAULT_CONDITIONAL, OPTIONAL, OPTIONAL_CONDITIONAL, NTYPES }
+enum class par_style { REQUIRED, REQUIRED_CONDITIONAL, DEFAULT, DEFAULT_CONDITIONAL, OPTIONAL, OPTIONAL_CONDITIONAL, NTYPES }
 
 inline bool is_atom(par_type const pt) { return pt == par_type::ATOM; }
 inline bool is_sequence(par_type const pt) { return pt == par_type::SEQ_VECTOR || pt == par_type::SEQ_ARRAY || pt == par_type::TUPLE; }
@@ -1406,19 +1406,19 @@ class ParameterMetadata
   - key_ : string {}
   - name_ : string {}
   - comment_ : string {}
-  - valType_ : value_type {value_type::NTYPES}
+  - parStyle_ : par_style {par_style::NTYPES}
   - parType_ : par_type {par_type::NTYPES}
 
   + ParameterMetadata() = default
 
   + ParameterMetadata(Name const& name = Name(),
                       Comment const& comment = Comment(""),
-                      value_type const valType = value_type::NTYPES,
+                      par_style const parStyle = par_style::NTYPES,
                       par_type const parType = par_type::NTYPES)
       : key_{NameStackRegistry::instance().full_key(name.value)}
       , name_{name.value}
       , comment_{comment.value}
-      , valType_{valType}
+      , parStyle_{parStyle}
       , parType_{parType}
     {
     }
@@ -1426,12 +1426,12 @@ class ParameterMetadata
   + key() const : string { return key_; }
   + name() const : string { return name_; }
   + comment() const : string { return comment_; }
-  + has_default() const : bool { return valType_ == value_type::DEFAULT || valType_ == value_type::DEFAULT_CONDITIONAL; } 
-  + is_optional() const : bool { return valType_ == value_type::OPTIONAL || valType_ == value_type::OPTIONAL_CONDITIONAL; }
-  + is_conditional() const : bool { return valType_ == value_type::REQUIRED_CONDITIONAL || valType_ == value_type::OPTIONAL_CONDITIONAL || valType_ == value_type::DEFAULT_CONDITIONAL; }
+  + has_default() const : bool { return parStyle_ == par_style::DEFAULT || parStyle_ == par_style::DEFAULT_CONDITIONAL; } 
+  + is_optional() const : bool { return parStyle_ == par_style::OPTIONAL || parStyle_ == par_style::OPTIONAL_CONDITIONAL; }
+  + is_conditional() const : bool { return parStyle_ == par_style::REQUIRED_CONDITIONAL || parStyle_ == par_style::OPTIONAL_CONDITIONAL || parStyle_ == par_style::DEFAULT_CONDITIONAL; }
   + type() const : par_type { return parType_; }
   + set_key(string const& key) : void { key_ = key; name_ = detail::strip_all_containing_names(key); }
-  + set_value_type(value_type const vt) : void { valType_ = vt; }
+  + set_par_style(par_style const vt) : void { parStyle_ = vt; }
 
 -----
 
@@ -1446,7 +1446,7 @@ public:
 
   + ~ParameterBase() virtual = default
 
-  + ParameterBase(Name const& name, Comment const& comment, value_type const vt, par_type const type, function<bool()> maybeUse = AlwaysUse())
+  + ParameterBase(Name const& name, Comment const& comment, par_style const vt, par_type const type, function<bool()> maybeUse = AlwaysUse())
       : mdata_{name, comment, vt, type}
       , maybeUse_{maybeUse}
     {
@@ -1461,14 +1461,14 @@ public:
   + parameter_type() const : par_type { return mdata_.type(); }
   + should_use() const : bool { return maybeUse_(); }
   + set_value(ParameterSet const& ps, bool trimParents) : void { do_set_value(ps, trimParents); }
-  + set_value_type(value_type const vt) : void { mdata_.set_value_type(vt); }
+  + set_par_style(par_style const vt) : void { mdata_.set_par_style(vt); }
   + set_key(string const& key) : void { mdata_.set_key(key); }
 
 -----
 
 class AtomBase : public ParameterBase
 
-  + AtomBase(Name const& name, Comment const& comment, value_type const vt, function<bool()> maybeUse)
+  + AtomBase(Name const& name, Comment const& comment, par_style const vt, function<bool()> maybeUse)
       : ParameterBase{name, comment, vt, par_type::ATOM, maybeUse}
     {
     }
@@ -1525,7 +1525,7 @@ class Atom final : public  detail::AtomBase, private detail::RegisterIfTableMemb
 
 public:
 
-  + using dtype : T;
+  + using default_type : T;
   + using rtype : T;
 
   - value_ : shared_ptr<T> - THREADING -
@@ -1536,7 +1536,7 @@ public:
     {}
 
   + Atom(Name&& name, Comment&& comment) explicit
-      : AtomBase{move(name), move(comment), value_type::REQUIRED, detail::AlwaysUse()}
+      : AtomBase{move(name), move(comment), par_style::REQUIRED, detail::AlwaysUse()}
       , RegisterIfTableMember{this}
       , value_{make_shared<T>()}
     { 
@@ -1544,7 +1544,7 @@ public:
     }
 
   + Atom(Name&& name, Comment&& comment, function<bool()> maybeUse) explicit
-      : AtomBase{move(name), move(comment), value_type::REQUIRED_CONDITIONAL, maybeUse}
+      : AtomBase{move(name), move(comment), par_style::REQUIRED_CONDITIONAL, maybeUse}
       , RegisterIfTableMember{this}
       , value_{make_shared<T>()}
     {
@@ -1558,7 +1558,7 @@ public:
     {}
 
   + Atom(Name&& name, Comment&& comment, T const& dflt_value) explicit
-      : AtomBase{move(name), move(comment), value_type::DEFAULT, detail::AlwaysUse()}
+      : AtomBase{move(name), move(comment), par_style::DEFAULT, detail::AlwaysUse()}
       , RegisterIfTableMember{this}
       , value_{make_shared<T>(dflt_value)}
     {
@@ -1566,7 +1566,7 @@ public:
     }
 
   + Atom(Name&& name, Comment&& comment, function<bool()> maybeUse, T const& dflt_value) explicit
-      : AtomBase{move(name), move(comment), value_type::DEFAULT_CONDITIONAL, maybeUse}
+      : AtomBase{move(name), move(comment), par_style::DEFAULT_CONDITIONAL, maybeUse}
       , RegisterIfTableMember{this}
       , value_{make_shared<T>(dflt_value)}
     {

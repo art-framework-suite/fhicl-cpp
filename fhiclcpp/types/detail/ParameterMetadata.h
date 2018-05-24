@@ -3,8 +3,8 @@
 
 #include "fhiclcpp/types/Comment.h"
 #include "fhiclcpp/types/Name.h"
-#include "fhiclcpp/types/detail/ParameterArgumentTypes.h"
 #include "fhiclcpp/types/detail/NameStackRegistry.h"
+#include "fhiclcpp/types/detail/ParameterArgumentTypes.h"
 #include "fhiclcpp/types/detail/strip_containing_names.h"
 
 #include <string>
@@ -16,70 +16,88 @@ namespace fhicl {
 
     class ParameterMetadata {
     public:
-
       ParameterMetadata() = default;
 
       ParameterMetadata(Name const& name = Name(),
                         Comment const& comment = Comment(""),
-                        value_type const valType = value_type::NTYPES,
+                        par_style const parStyle = par_style::NTYPES,
                         par_type const parType = par_type::NTYPES)
         : key_{NameStackRegistry::instance().full_key(name.value)}
         , name_{name.value}
         , comment_{comment.value}
-        , valType_{valType}
+        , parStyle_{parStyle}
         , parType_{parType}
       {}
 
-      std::string key()         const { return key_; }
-      std::string name()        const { return name_; }
-      std::string comment()     const { return comment_;}
-
-      bool has_default() const
+      std::string
+      key() const
       {
-        return
-          valType_ == value_type::DEFAULT ||
-          valType_ == value_type::DEFAULT_CONDITIONAL;
+        return key_;
+      }
+      std::string
+      name() const
+      {
+        return name_;
+      }
+      std::string
+      comment() const
+      {
+        return comment_;
       }
 
-      bool is_optional() const
+      bool
+      has_default() const
       {
-        return
-          valType_ == value_type::OPTIONAL ||
-          valType_ == value_type::OPTIONAL_CONDITIONAL;
+        return parStyle_ == par_style::DEFAULT ||
+               parStyle_ == par_style::DEFAULT_CONDITIONAL;
       }
 
-      bool is_conditional() const
+      bool
+      is_optional() const
       {
-        return
-          valType_ == value_type::REQUIRED_CONDITIONAL ||
-          valType_ == value_type::OPTIONAL_CONDITIONAL ||
-          valType_ == value_type::DEFAULT_CONDITIONAL;
+        return parStyle_ == par_style::OPTIONAL ||
+               parStyle_ == par_style::OPTIONAL_CONDITIONAL;
       }
 
-      par_type type() const { return parType_; }
+      bool
+      is_conditional() const
+      {
+        return parStyle_ == par_style::REQUIRED_CONDITIONAL ||
+               parStyle_ == par_style::OPTIONAL_CONDITIONAL ||
+               parStyle_ == par_style::DEFAULT_CONDITIONAL;
+      }
 
-      void set_key(std::string const& key)
+      par_type
+      type() const
+      {
+        return parType_;
+      }
+
+      void
+      set_key(std::string const& key)
       {
         key_ = key;
         name_ = detail::strip_all_containing_names(key);
       }
 
-      void set_value_type(value_type const vt) { valType_ = vt; }
+      void
+      set_par_style(par_style const vt)
+      {
+        parStyle_ = vt;
+      }
 
     private:
-      std::string key_ {};
-      std::string name_ {};
-      std::string comment_ {};
-      value_type  valType_ {value_type::NTYPES};
-      par_type    parType_ {par_type::NTYPES};
-
+      std::string key_{};
+      std::string name_{};
+      std::string comment_{};
+      par_style parStyle_{par_style::NTYPES};
+      par_type parType_{par_type::NTYPES};
     };
-
   }
 }
 
 #endif /* fhiclcpp_types_detail_ParameterMetadata_h */
 
-  // Local variables:
-  // mode: c++
-  // End:
+// Local variables:
+// mode: c++
+// End:

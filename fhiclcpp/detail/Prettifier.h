@@ -75,8 +75,8 @@
 
 #include "fhiclcpp/ParameterSetWalker.h"
 #include "fhiclcpp/coding.h"
-#include "fhiclcpp/fwd.h"
 #include "fhiclcpp/detail/Indentation.h"
+#include "fhiclcpp/fwd.h"
 
 #include <sstream>
 #include <stack>
@@ -87,36 +87,38 @@ namespace fhicl {
 
     class Prettifier : public ParameterSetWalker {
     public:
-
       Prettifier(unsigned initial_indent_level = 0);
 
-      std::string result() const { return buffer_.str(); }
+      std::string
+      result() const
+      {
+        return buffer_.str();
+      }
 
     private:
-
-      void enter_table   (key_t const&, any_t const&) override;
+      void enter_table(key_t const&, any_t const&) override;
       void enter_sequence(key_t const&, any_t const&) override;
 
-      void exit_table    (key_t const&, any_t const&) override;
-      void exit_sequence (key_t const&, any_t const&) override;
+      void exit_table(key_t const&, any_t const&) override;
+      void exit_sequence(key_t const&, any_t const&) override;
 
       void atom(key_t const&, any_t const&) override;
 
-      void before_action(key_t const&, any_t const&, ParameterSet const*) override;
+      void before_action(key_t const&,
+                         any_t const&,
+                         ParameterSet const*) override;
 
       void push_size_(any_t const&);
       void pop_size_();
       std::string maybe_indent_(std::size_t);
       std::string maybe_nl_(std::size_t);
 
-      std::ostringstream buffer_;
+      std::ostringstream buffer_{};
       Indentation indent_;
       std::stack<std::size_t> sequence_sizes_;
       std::size_t seq_size_;
       std::size_t table_size_;
-
     };
-
   }
 }
 

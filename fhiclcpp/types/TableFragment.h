@@ -38,31 +38,34 @@
   ParameterBase, nor is it registered anywhere.
 */
 
-#include "fhiclcpp/types/detail/type_traits_error_msgs.h"
 #include "fhiclcpp/type_traits.h"
+#include "fhiclcpp/types/detail/type_traits_error_msgs.h"
 
 namespace fhicl {
 
   //========================================================
-  template<typename T>
+  template <typename T>
   class TableFragment final {
   public:
-
     static_assert(!tt::is_sequence_type<T>::value, NO_STD_CONTAINERS);
     static_assert(!tt::is_fhicl_type<T>::value, NO_NESTED_FHICL_TYPES_IN_TABLE);
     static_assert(!tt::is_table_fragment<T>::value, NO_NESTED_TABLE_FRAGMENTS);
     static_assert(std::is_class<T>::value, REQUIRE_CLASS_TABLE_FRAGMENT);
-    static_assert(!tt::is_delegated_parameter<T>::value, NO_DELEGATED_PARAMETERS);
+    static_assert(!tt::is_delegated_parameter<T>::value,
+                  NO_DELEGATED_PARAMETERS);
 
     // Compiler-produced default c'tor (and friends) is fine since 'T'
     // is of class type.
 
-    auto const& operator()() const { return value_; }
+    auto const&
+    operator()() const
+    {
+      return value_;
+    }
 
   private:
     T value_;
   };
-
 }
 
 #endif /* fhiclcpp_types_TableFragment_h */

@@ -8,20 +8,23 @@
 
 #include <regex>
 
-using std::string;
 using boost::any_cast;
+using std::string;
 
 // ----------------------------------------------------------------------
 
 std::string
-  fhicl::extended_value::to_string( ) const
+fhicl::extended_value::to_string() const
 {
-  if( in_prolog && !shims::isSnippetMode())
+  if (in_prolog && !shims::isSnippetMode())
     return "";
 
-  switch( tag )  {
+  switch (tag) {
 
-    case NIL: case BOOL: case NUMBER: case STRING: {
+    case NIL:
+    case BOOL:
+    case NUMBER:
+    case STRING: {
       return any_cast<atom_t>(value);
     }
 
@@ -34,11 +37,10 @@ std::string
       sequence_t q = any_cast<sequence_t>(value);
       string s("[");
       string sep;
-      for( sequence_t::const_iterator b  = q.begin()
-                                    , e  = q.end()
-                                    , it = b; it != e; ++it ) {
-        s.append(sep)
-         .append( it->to_string() );
+      for (sequence_t::const_iterator b = q.begin(), e = q.end(), it = b;
+           it != e;
+           ++it) {
+        s.append(sep).append(it->to_string());
         sep = ",";
       }
       return s + ']';
@@ -48,11 +50,10 @@ std::string
       table_t t = any_cast<table_t>(value);
       string s("{");
       string sep;
-      for( table_t::const_iterator b  = t.cbegin()
-                                 , e  = t.cend()
-                                 , it = b; it != e; ++it ) {
-        s.append(sep)
-         .append( it->first + ':' + it->second.to_string() );
+      for (table_t::const_iterator b = t.cbegin(), e = t.cend(), it = b;
+           it != e;
+           ++it) {
+        s.append(sep).append(it->first + ':' + it->second.to_string());
         sep = " ";
       }
       return s + '}';
@@ -62,62 +63,67 @@ std::string
       return string("@id::") + any_cast<atom_t>(value);
     }
 
-    case UNKNOWN: default: {
+    case UNKNOWN:
+    default: {
       return "";
     }
 
-  };  // switch
+  }; // switch
 
-}  // to_string()
+} // to_string()
 
 // ----------------------------------------------------------------------
 
 void
-  fhicl::extended_value::set_prolog( bool new_prolog_state )
+fhicl::extended_value::set_prolog(bool new_prolog_state)
 {
   in_prolog = new_prolog_state;
 
-  switch( tag )  {
+  switch (tag) {
 
-  case NIL: case BOOL: case NUMBER: case STRING: case COMPLEX: case TABLEID: {
+    case NIL:
+    case BOOL:
+    case NUMBER:
+    case STRING:
+    case COMPLEX:
+    case TABLEID: {
       break;
     }
 
     case SEQUENCE: {
-      sequence_t & q = any_cast<sequence_t &>(value);
-      for( sequence_t::iterator it = q.begin()
-                              , e  = q.end(); it != e; ++it ) {
+      sequence_t& q = any_cast<sequence_t&>(value);
+      for (sequence_t::iterator it = q.begin(), e = q.end(); it != e; ++it) {
         it->set_prolog(new_prolog_state);
       }
       break;
     }
 
     case TABLE: {
-      table_t & t = any_cast<table_t &>(value);
-      for( table_t::iterator it = t.begin()
-                           , e  = t.end(); it != e; ++it ) {
+      table_t& t = any_cast<table_t&>(value);
+      for (table_t::iterator it = t.begin(), e = t.end(); it != e; ++it) {
         it->second.set_prolog(new_prolog_state);
       }
       break;
     }
 
-    case UNKNOWN: default: {
+    case UNKNOWN:
+    default: {
       break;
     }
 
-  };  // switch
+  }; // switch
 
-}  // set_prolog()
+} // set_prolog()
 
 std::string
-fhicl::extended_value::
-pretty_src_info() const
+fhicl::extended_value::pretty_src_info() const
 {
   std::string result;
   static std::regex const splitRE("(.*):([0-9-]*)");
   std::smatch m;
   if (std::regex_match(src_info, m, splitRE)) {
-    result = std::string("line ") + m[2].str() + " of file \"" + m[1].str() + '"';
+    result =
+      std::string("line ") + m[2].str() + " of file \"" + m[1].str() + '"';
   } else {
     result = "<unknown>";
   }

@@ -13,25 +13,22 @@ namespace fhicl {
     //========================================================
     class AtomBase : public ParameterBase {
     public:
-
-      AtomBase(Name const & name,
-               Comment const & comment,
-               value_type const vt,
+      AtomBase(Name const& name,
+               Comment const& comment,
+               par_style const vt,
                std::function<bool()> maybeUse)
         : ParameterBase{name, comment, vt, par_type::ATOM, maybeUse}
       {}
 
-      std::string stringified_value() const
+      std::string
+      stringified_value() const
       {
         return get_stringified_value();
       }
 
     private:
-
       virtual std::string get_stringified_value() const = 0;
-
     };
-
   }
 }
 

@@ -6,13 +6,13 @@
 std::string
 fhicl::detail::strip_first_containing_name(std::string const& key)
 {
-  auto const pos = key.find_first_of(".")+1;
+  auto const pos = key.find_first_of(".") + 1;
   return key.substr(pos);
 }
 
 std::string
 fhicl::detail::strip_all_containing_names(std::string const& key)
 {
-  auto const pos = key.find_last_of(".")+1;
+  auto const pos = key.find_last_of(".") + 1;
   return key.substr(pos);
 }

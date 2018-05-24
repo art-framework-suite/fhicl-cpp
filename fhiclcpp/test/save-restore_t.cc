@@ -13,7 +13,8 @@
 using namespace fhicl;
 using namespace std;
 
-int main(int argc, char **argv)
+int
+main(int argc, char** argv)
 {
   if (argc != 2) {
     std::cerr << "ERROR: expect exactly one filename!\n";
@@ -22,11 +23,9 @@ int main(int argc, char **argv)
   intermediate_table tbl_ref;
   cet::filepath_lookup policy(".:");
   try {
-    parse_document(argv[1],
-                   policy,
-                   tbl_ref);
+    parse_document(argv[1], policy, tbl_ref);
   }
-  catch (std::exception & e) {
+  catch (std::exception& e) {
     std::cerr << "ERROR: unable to parse FHiCL file "
               << "\"" << argv[1] << "\"\n"
               << e.what();

@@ -6,7 +6,7 @@ namespace fhicl {
   template <typename T>
   Atom<T>::Atom(Name&& name,
                 Comment&& comment)
-    : AtomBase{std::move(name), std::move(comment), value_type::REQUIRED, detail::AlwaysUse()}
+    : AtomBase{std::move(name), std::move(comment), par_style::REQUIRED, detail::AlwaysUse()}
     , RegisterIfTableMember{this}
     , value_{std::make_shared<T>()}
   {
@@ -17,7 +17,7 @@ namespace fhicl {
   Atom<T>::Atom(Name&& name,
                 Comment&& comment,
                 std::function<bool()> maybeUse)
-    : AtomBase{std::move(name), std::move(comment), value_type::REQUIRED_CONDITIONAL, maybeUse}
+    : AtomBase{std::move(name), std::move(comment), par_style::REQUIRED_CONDITIONAL, maybeUse}
     , RegisterIfTableMember{this}
     , value_{std::make_shared<T>()}
   {
@@ -28,7 +28,7 @@ namespace fhicl {
   Atom<T>::Atom(Name&& name,
                 Comment&& comment,
                 T const& dflt_value)
-    : AtomBase{std::move(name), std::move(comment), value_type::DEFAULT, detail::AlwaysUse()}
+    : AtomBase{std::move(name), std::move(comment), par_style::DEFAULT, detail::AlwaysUse()}
     , RegisterIfTableMember{this}
     , value_{std::make_shared<T>(dflt_value)}
   {
@@ -40,7 +40,7 @@ namespace fhicl {
                 Comment&& comment,
                 std::function<bool()> maybeUse,
                 T const& dflt_value)
-    : AtomBase{std::move(name), std::move(comment), value_type::DEFAULT_CONDITIONAL, maybeUse}
+    : AtomBase{std::move(name), std::move(comment), par_style::DEFAULT_CONDITIONAL, maybeUse}
     , RegisterIfTableMember{this}
     , value_{std::make_shared<T>(dflt_value)}
   {

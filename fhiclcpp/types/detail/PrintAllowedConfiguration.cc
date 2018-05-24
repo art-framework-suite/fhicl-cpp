@@ -1,22 +1,22 @@
+#include "fhiclcpp/types/detail/PrintAllowedConfiguration.h"
 #include "cetlib/container_algorithms.h"
 #include "cetlib/trim.h"
 #include "fhiclcpp/detail/printing_helpers.h"
 #include "fhiclcpp/types/detail/AtomBase.h"
 #include "fhiclcpp/types/detail/ParameterBase.h"
 #include "fhiclcpp/types/detail/SequenceBase.h"
-#include "fhiclcpp/types/detail/SeqVectorBase.h"
 #include "fhiclcpp/types/detail/TableBase.h"
-#include "fhiclcpp/types/detail/PrintAllowedConfiguration.h"
 
 #include <iomanip>
 #include <regex>
 
 namespace {
 
-  inline bool is_sequence_element(std::string const& k)
+  inline bool
+  is_sequence_element(std::string const& k)
   {
     auto pos = k.find_last_of("]");
-    return pos != std::string::npos && pos == k.size()-1;
+    return pos != std::string::npos && pos == k.size() - 1;
   }
 
   using namespace fhicl::detail;
@@ -24,9 +24,7 @@ namespace {
   struct maybeName {
 
     maybeName(ParameterBase const& p, std::string const& ind)
-      : is_seq_elem{is_sequence_element(p.key())}
-      , name{p.name()}
-      , indent{ind}
+      : is_seq_elem{is_sequence_element(p.key())}, name{p.name()}, indent{ind}
     {}
 
     bool is_seq_elem;
@@ -34,21 +32,22 @@ namespace {
     std::string indent;
   };
 
-  std::ostream& operator<<(std::ostream& os, maybeName&& mn)
+  std::ostream&
+  operator<<(std::ostream& os, maybeName&& mn)
   {
     if (!mn.is_seq_elem) {
       os << mn.indent << mn.name << ": ";
-    }
-    else {
+    } else {
       os << mn.indent;
     }
     return os;
   }
 
-  std::string suffix(std::unordered_set<std::string>& keysWithCommas_,
-                     std::unordered_set<std::string>& keysWithEllipses_,
-                     std::string const& key,
-                     std::string const& indent)
+  std::string
+  suffix(std::unordered_set<std::string>& keysWithCommas_,
+         std::unordered_set<std::string>& keysWithEllipses_,
+         std::string const& key,
+         std::string const& indent)
   {
     std::string result;
     if (cet::search_all(keysWithCommas_, key)) {
@@ -62,7 +61,8 @@ namespace {
     return result;
   }
 
-  std::string non_whitespace(std::string const& s, std::size_t const sz)
+  std::string
+  non_whitespace(std::string const& s, std::size_t const sz)
   {
 
     // To support denoting optional tables, we sometimes print an
@@ -75,17 +75,17 @@ namespace {
     // parameters, so there's no reason to include any prefixes that
     // might be on the lowest-level indent (corresponding to sz == 1).
 
-    return sz > 1 ? cet::trim_right_copy(s," ") : "";
+    return sz > 1 ? cet::trim_right_copy(s, " ") : "";
   }
 
-  auto string_repeat(std::size_t const n, std::string const& s)
+  auto
+  string_repeat(std::size_t const n, std::string const& s)
   {
     std::string result;
-    for (std::size_t i{}; i!=n ; ++i)
+    for (std::size_t i{}; i != n; ++i)
       result += s;
     return result;
   }
-
 }
 
 using namespace fhicl::detail;
@@ -113,7 +113,7 @@ PrintAllowedConfiguration::before_action(ParameterBase const& p)
 
     if (p.is_conditional()) {
       buffer_ << '\n';
-      indent_.modify_top("┌"+string_repeat(30,"─"));
+      indent_.modify_top("┌" + string_repeat(30, "─"));
       buffer_ << non_whitespace(indent_(), indent_.size()) << '\n';
       indent_.modify_top("│  ");
     }
@@ -121,10 +121,9 @@ PrintAllowedConfiguration::before_action(ParameterBase const& p)
     if (!p.comment().empty()) {
       if (!p.is_conditional())
         buffer_ << non_whitespace(indent_(), indent_.size()) << '\n';
-      for(auto const& line : cet::split_by_regex(p.comment(), "\n"))
+      for (auto const& line : cet::split_by_regex(p.comment(), "\n"))
         buffer_ << indent_() << "## " << line << '\n';
     }
-
   }
 
   if (!is_sequence_element(p.key())) {
@@ -138,13 +137,12 @@ PrintAllowedConfiguration::before_action(ParameterBase const& p)
     // that.  Therefore, we modify the top indentation fragment only
     // if the parameter is not a sequence element.
 
-      if (p.is_optional()) {
-        if (p.is_conditional())
-          indent_.modify_top("│# ");
-        else
-          indent_.modify_top(" # ");
+    if (p.is_optional()) {
+      if (p.is_conditional())
+        indent_.modify_top("│# ");
+      else
+        indent_.modify_top(" # ");
     }
-
   }
 
   mps_.emplace(p, showParentsForFirstParam_, indent_);
@@ -158,22 +156,18 @@ PrintAllowedConfiguration::before_action(ParameterBase const& p)
 void
 PrintAllowedConfiguration::after_action(ParameterBase const& p)
 {
-  buffer_ << suffix(keysWithCommas_,
-                    keysWithEllipses_,
-                    p.key(),
-                    indent_());
+  buffer_ << suffix(keysWithCommas_, keysWithEllipses_, p.key(), indent_());
 
   if (p.has_default() && p.parameter_type() == par_type::ATOM)
     buffer_ << "  # default";
 
   if (!suppressFormat(p)) {
     if (p.is_conditional()) {
-      indent_.modify_top("└"+string_repeat(30,"─"));
+      indent_.modify_top("└" + string_repeat(30, "─"));
       buffer_ << '\n' << indent_();
-      indent_.modify_top(std::string(3,' '));
-    }
-    else if (p.is_optional()) {
-      indent_.modify_top(std::string(3,' '));
+      indent_.modify_top(std::string(3, ' '));
+    } else if (p.is_optional()) {
+      indent_.modify_top(std::string(3, ' '));
     }
   }
 
@@ -207,7 +201,7 @@ PrintAllowedConfiguration::enter_sequence(SequenceBase const& s)
 
   indent_.push();
 
-  if ( s.empty() )
+  if (s.empty())
     return;
 
   // We want the printout to look like this for sequences with
@@ -226,21 +220,13 @@ PrintAllowedConfiguration::enter_sequence(SequenceBase const& s)
   //   ]
 
   if (s.has_default() || (s.parameter_type() != par_type::SEQ_VECTOR)) {
-    for (std::size_t i{}; i != s.size()-1; ++i)
-      keysWithCommas_.emplace(s.key()+"["+std::to_string(i)+"]");
+    for (std::size_t i{}; i != s.size() - 1; ++i)
+      keysWithCommas_.emplace(s.key() + "[" + std::to_string(i) + "]");
     return;
   }
 
-  if (s.size() != 1ul) {
-    throw cet::exception("LogicError") <<
-      "Default Sequence<T> has a size not equal to 1.\n"
-      "Maybe you tried to print the allowed configuration\n"
-      "after the provided ParameterSet had been validated.\n"
-      "If not, please notify the artists.";
-  }
-
-  keysWithCommas_.emplace(s.key()+"[0]");
-  keysWithEllipses_.emplace(s.key()+"[0]");
+  keysWithCommas_.emplace(s.key() + "[0]");
+  keysWithEllipses_.emplace(s.key() + "[0]");
 }
 
 void
@@ -255,8 +241,7 @@ PrintAllowedConfiguration::exit_sequence(SequenceBase const&)
 void
 PrintAllowedConfiguration::atom(AtomBase const& a)
 {
-  buffer_ << maybeName{a, indent_()}
-          << a.stringified_value();
+  buffer_ << maybeName{a, indent_()} << a.stringified_value();
 }
 
 //======================================================================
@@ -264,6 +249,5 @@ PrintAllowedConfiguration::atom(AtomBase const& a)
 void
 PrintAllowedConfiguration::delegated_parameter(DelegateBase const& dp)
 {
-  buffer_ << maybeName{dp, indent_()}
-  << "<< delegated >>";
+  buffer_ << maybeName{dp, indent_()} << "<< delegated >>";
 }

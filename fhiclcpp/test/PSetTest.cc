@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-
-int main()
+int
+main()
 {
   fhicl::ParameterSet pset;
 
@@ -15,7 +15,7 @@ int main()
     pset.get<unsigned int>("a", 0u);
     assert(false);
   }
-  catch( fhicl::exception const & e ) {
+  catch (fhicl::exception const& e) {
     assert(true);
   }
 
@@ -32,15 +32,15 @@ int main()
   vi.push_back(-1);
   vi.push_back(-2);
   vi.push_back(-3);
-  pset.put<std::vector<int> >("e", vi);
-  assert(pset.get<std::vector<int> >("e")[1] == -2);
+  pset.put<std::vector<int>>("e", vi);
+  assert(pset.get<std::vector<int>>("e")[1] == -2);
 
   try {
     std::vector<unsigned int> vui_def;
-    pset.get<std::vector<unsigned int> >("e", vui_def);
+    pset.get<std::vector<unsigned int>>("e", vui_def);
     assert(false);
   }
-  catch( fhicl::exception const & e ) {
+  catch (fhicl::exception const& e) {
     assert(true);
   }
 
@@ -48,37 +48,36 @@ int main()
   vd.push_back(0.1);
   vd.push_back(0.2);
   vd.push_back(0.3);
-  pset.put<std::vector<double> >("f", vd);
-  assert(pset.get<std::vector<double> >("f")[1] == 0.2);
+  pset.put<std::vector<double>>("f", vd);
+  assert(pset.get<std::vector<double>>("f")[1] == 0.2);
 
   std::vector<std::string> vs;
   vs.push_back("str1");
   vs.push_back("str2");
   vs.push_back("str3");
-  pset.put<std::vector<std::string> >("g", vs);
+  pset.put<std::vector<std::string>>("g", vs);
 
   fhicl::ParameterSet pset2;
   pset2.put<int>("a2", 1);
   pset2.put<std::string>("b2", "bstring");
   pset.put<fhicl::ParameterSet>("h", pset2);
-  assert( pset.get<fhicl::ParameterSet>("h")
-              .get<std::string>("b2") == "bstring"
-        );
+  assert(pset.get<fhicl::ParameterSet>("h").get<std::string>("b2") ==
+         "bstring");
   assert(pset2.to_string() == "a2:1 b2:\"bstring\"");
 
   pset.put<unsigned int>("u1", 12);
-  assert (pset.get<unsigned int>("u1") == 12);
+  assert(pset.get<unsigned int>("u1") == 12);
 
   pset.put<unsigned int>("u2", 0);
-  assert (pset.get<unsigned int>("u2") == 0);
+  assert(pset.get<unsigned int>("u2") == 0);
 
   std::vector<unsigned int> vui;
   vui.push_back(1);
   vui.push_back(2);
   vui.push_back(3);
-  pset.put<std::vector<unsigned int> >("vu", vui);
-  assert(pset.get<std::vector<int> >("vu")[1] == 2);
-  assert(pset.get<std::vector<unsigned int> >("vu")[1] == 2);
+  pset.put<std::vector<unsigned int>>("vu", vui);
+  assert(pset.get<std::vector<int>>("vu")[1] == 2);
+  assert(pset.get<std::vector<unsigned int>>("vu")[1] == 2);
 
   pset.put<std::string>("int_str", "012");
   assert(pset.get<int>("int_str") == 12);
@@ -96,7 +95,7 @@ int main()
   assert(pset.get<bool>("b2") == false);
 
   std::vector<std::string> names = pset.get_pset_names();
-  assert(! names.empty());
+  assert(!names.empty());
   assert(names[0].compare("h") == 0);
 
   pset.put<std::string>("b3", "true");

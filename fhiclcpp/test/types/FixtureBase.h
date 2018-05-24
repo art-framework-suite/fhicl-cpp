@@ -7,9 +7,9 @@
 //
 // ======================================================================
 
-#include "fhiclcpp/types/Table.h"
 #include "fhiclcpp/intermediate_table.h"
 #include "fhiclcpp/make_ParameterSet.h"
+#include "fhiclcpp/types/Table.h"
 
 #include <iostream>
 
@@ -19,16 +19,16 @@ namespace fhiclcpp_types {
   struct FixtureBase {
 
     FixtureBase(std::string const& filename)
-      : pset{ get_pset(filename) }
-      , config{ pset.get<fhicl::ParameterSet>("pset"), {} }
+      : pset{get_pset(filename)}
+      , config{pset.get<fhicl::ParameterSet>("pset"), {}}
     {}
 
     fhicl::ParameterSet pset;
     fhicl::Table<Config> config;
 
   private:
-
-    fhicl::ParameterSet get_pset(std::string const& filename)
+    fhicl::ParameterSet
+    get_pset(std::string const& filename)
     {
       using namespace fhicl;
       putenv(const_cast<char*>("FHICL_FILE_PATH=./test:."));
@@ -41,9 +41,7 @@ namespace fhiclcpp_types {
       make_ParameterSet(tbl, pset);
       return pset;
     }
-
   };
-
 }
 
 #endif /* fhiclcpp_test_types_FixtureBase_h */

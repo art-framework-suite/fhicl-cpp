@@ -8,19 +8,19 @@ using namespace fhicl;
 
 namespace {
   struct S {
-    DelegatedParameter dp { Name("my_nested_delegate") };
-    OptionalDelegatedParameter odp { Name("my_optional_nested_delegate") };
+    DelegatedParameter dp{Name("my_nested_delegate")};
+    OptionalDelegatedParameter odp{Name("my_optional_nested_delegate")};
   };
 
   struct Config {
-    DelegatedParameter dp { Name("my_delegate") };
-    Table<S> s { Name("s") };
+    DelegatedParameter dp{Name("my_delegate")};
+    Table<S> s{Name("s")};
   };
-
 }
 
-int main()
+int
+main()
 {
-  Table<Config> pset { Name("pset") };
+  Table<Config> pset{Name("pset")};
   pset.print_allowed_configuration(std::cout);
 }

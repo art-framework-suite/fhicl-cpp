@@ -31,38 +31,43 @@
 //
 //----------------------------------------------------------------------
 
-#include "Python.h" // Needs to be first due to macro definition issues
+#include "cetlib/compiler_macros.h"
+#pragma GCC diagnostic push
+#if GCC_IS_AT_LEAST(7,1,0)
+#pragma GCC diagnostic ignored "-Wregister"
+#endif
+#include "Python.h" // Needs to be (almost) first due to macro definition issues
+#pragma GCC diagnostic pop
 #include "cetlib/search_path.h"
 #include "cetlib_except/exception.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/ParameterSetWalker.h"
 #include "fhiclcpp/make_ParameterSet.h"
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 
 class PythonDictConverter : public fhicl::ParameterSetWalker {
 public:
-
   using key_t = std::string;
   using any_t = boost::any;
 
   // Public methods.
 
   PythonDictConverter();
-  PyObject* result() const;     // Result is python dictionary.
+  PyObject* result() const; // Result is python dictionary.
 
 private:
-
   // Base class overrides.
-  void enter_table   (key_t const& key, any_t const& any) override;
+  void enter_table(key_t const& key, any_t const& any) override;
   void enter_sequence(key_t const& key, any_t const& any) override;
-  void atom          (key_t const& key, any_t const& any) override;
-  void exit_table    (key_t const& key, any_t const& any) override;
-  void exit_sequence (key_t const& key, any_t const& any) override;
+  void atom(key_t const& key, any_t const& any) override;
+  void exit_table(key_t const& key, any_t const& any) override;
+  void exit_sequence(key_t const& key, any_t const& any) override;
 
-  void add_object(key_t const& key, PyObject* pyobj);   // Add object to current parent.
+  void add_object(key_t const& key,
+                  PyObject* pyobj); // Add object to current parent.
 
   // Data members.
 
@@ -80,7 +85,8 @@ PythonDictConverter::PythonDictConverter()
   stack_.emplace_back(PyDict_New());
 }
 
-PyObject* PythonDictConverter::result() const
+PyObject*
+PythonDictConverter::result() const
 //
 // Purpose: Return result.  When this method is called, the result stack
 //          should contain exactly one object, and this object should be a
@@ -92,17 +98,19 @@ PyObject* PythonDictConverter::result() const
   // Do consistency checks.
 
   if (stack_.size() != 1)
-    throw cet::exception("fclmodule") << "Result stack has wrong size: "
-                                      << stack_.size() << std::endl;
+    throw cet::exception("fclmodule")
+      << "Result stack has wrong size: " << stack_.size() << std::endl;
   if (!PyDict_Check(stack_[0]))
-    throw cet::exception("fclmodule") << "Result stack has wrong type." << std::endl;
+    throw cet::exception("fclmodule")
+      << "Result stack has wrong type." << std::endl;
 
   // Everything OK.
 
   return stack_[0];
 }
 
-void PythonDictConverter::enter_table(key_t const& key, any_t const&)
+void
+PythonDictConverter::enter_table(key_t const& key, any_t const&)
 //
 // Purpose: Convert table.
 //
@@ -120,7 +128,8 @@ void PythonDictConverter::enter_table(key_t const& key, any_t const&)
   stack_.emplace_back(dict);
 }
 
-void PythonDictConverter::enter_sequence(key_t const& key, any_t const& any)
+void
+PythonDictConverter::enter_sequence(key_t const& key, any_t const& any)
 //
 // Purpose: Convert sequence.
 //
@@ -142,7 +151,8 @@ void PythonDictConverter::enter_sequence(key_t const& key, any_t const& any)
   stack_.emplace_back(seq);
 }
 
-void PythonDictConverter::atom(key_t const& key, any_t const& any)
+void
+PythonDictConverter::atom(key_t const& key, any_t const& any)
 //
 // Purpose: Convert atom.
 //
@@ -157,23 +167,25 @@ void PythonDictConverter::atom(key_t const& key, any_t const& any)
 
   // Get lower case version of argument string.
   std::string lcatom{atom};
-  std::transform(lcatom.begin(), lcatom.end(), lcatom.begin(),
-                 [](unsigned char c){return std::tolower(c);});
+  std::transform(lcatom.begin(),
+                 lcatom.end(),
+                 lcatom.begin(),
+                 [](unsigned char c) { return std::tolower(c); });
 
   // Check for boolean.
   if (lcatom == std::string("true") || lcatom == std::string("\"true\"")) {
     pyval = Py_True;
     Py_INCREF(pyval);
-  }
-  else if (lcatom == std::string("false") || lcatom == std::string("\"false\"")) {
+  } else if (lcatom == std::string("false") ||
+             lcatom == std::string("\"false\"")) {
     pyval = Py_False;
     Py_INCREF(pyval);
   }
 
   // Check for quoted string.
   auto const n = atom.size();
-  if (pyval == nullptr && n >= 2 && atom[0] == '"' && atom[n-1] == '"') {
-    std::string s = atom.substr(1, n-2);
+  if (pyval == nullptr && n >= 2 && atom[0] == '"' && atom[n - 1] == '"') {
+    std::string s = atom.substr(1, n - 2);
     pyval = PyString_FromString(s.c_str());
   }
 
@@ -204,23 +216,26 @@ void PythonDictConverter::atom(key_t const& key, any_t const& any)
   add_object(key, pyval);
 }
 
-void PythonDictConverter::exit_table(key_t const&, any_t const&)
+void
+PythonDictConverter::exit_table(key_t const&, any_t const&)
 //
 // Purpose: Close parent table.
 //
 {
   // Do consistency checks.
   if (stack_.size() < 2)
-    throw cet::exception("fclmodule") << "Result stack has wrong size: "
-                                      << stack_.size() << std::endl;
+    throw cet::exception("fclmodule")
+      << "Result stack has wrong size: " << stack_.size() << std::endl;
   if (!PyDict_Check(stack_.back()))
-    throw cet::exception("fclmodule") << "Result stack has wrong type." << std::endl;
+    throw cet::exception("fclmodule")
+      << "Result stack has wrong type." << std::endl;
 
   // Pop the current parent (this table) off the result stack.
   stack_.pop_back();
 }
 
-void PythonDictConverter::exit_sequence(key_t const&, any_t const&)
+void
+PythonDictConverter::exit_sequence(key_t const&, any_t const&)
 //
 // Purpose: Close current sequence.
 //
@@ -230,16 +245,18 @@ void PythonDictConverter::exit_sequence(key_t const&, any_t const&)
 {
   // Do consistency checks.
   if (stack_.size() < 2)
-    throw cet::exception("fclmodule") << "Result stack has wrong size: "
-                                      << stack_.size() << std::endl;
+    throw cet::exception("fclmodule")
+      << "Result stack has wrong size: " << stack_.size() << std::endl;
   if (!PyList_Check(stack_.back()))
-    throw cet::exception("fclmodule") << "Result stack has wrong type." << std::endl;
+    throw cet::exception("fclmodule")
+      << "Result stack has wrong type." << std::endl;
 
   // Pop the current parent (this sequence) off the result stack.
   stack_.pop_back();
 }
 
-void PythonDictConverter::add_object(key_t const& key, PyObject* pyobj)
+void
+PythonDictConverter::add_object(key_t const& key, PyObject* pyobj)
 //
 // Purpose: Add object to the current parent container.  The parent object
 //          can be either a python dictionary or a python list.  The key
@@ -260,8 +277,7 @@ void PythonDictConverter::add_object(key_t const& key, PyObject* pyobj)
     // Insert object into dicionary.
     PyDict_SetItemString(parent, key.c_str(), pyobj);
     Py_DECREF(pyobj);
-  }
-  else if (PyList_Check(parent)) {
+  } else if (PyList_Check(parent)) {
 
     // Lists handled here.
     if (PyList_Size(parent) == 0)
@@ -269,13 +285,14 @@ void PythonDictConverter::add_object(key_t const& key, PyObject* pyobj)
 
     // Find the first uninitialized list entry (do binary search).
     unsigned int low = 0;
-    unsigned int high = PyList_Size(parent)-1;
+    unsigned int high = PyList_Size(parent) - 1;
     if (PyList_GetItem(parent, 0) == 0)
       high = 0;
     if (PyList_GetItem(parent, high) != 0)
-      throw cet::exception("fclmodule") << "Parent list has no free entries." << std::endl;
-    while (high-low > 1) {
-      unsigned int mid = (low + high)/2;
+      throw cet::exception("fclmodule")
+        << "Parent list has no free entries." << std::endl;
+    while (high - low > 1) {
+      unsigned int mid = (low + high) / 2;
       if (PyList_GetItem(parent, mid) == 0)
         high = mid;
       else
@@ -284,15 +301,20 @@ void PythonDictConverter::add_object(key_t const& key, PyObject* pyobj)
 
     // Insert object into list at the appropriate position.
     PyList_SetItem(parent, high, pyobj);
-  }
-  else {
-    throw cet::exception("fclmodule") << "Parent object is not dictionary or list." << std::endl;
+  } else {
+    throw cet::exception("fclmodule")
+      << "Parent object is not dictionary or list." << std::endl;
   }
 }
 
-static std::string format(PyObject* obj, unsigned int pos, unsigned int indent, unsigned int maxlen)
+static std::string
+format(PyObject* obj,
+       unsigned int pos,
+       unsigned int indent,
+       unsigned int maxlen)
 //
-// Purpose: Convert a python object to a prettified string.  The resulting string
+// Purpose: Convert a python object to a prettified string.  The resulting
+// string
 //          is supposed to be valid python code.
 //
 // Arguments: obj    - Object to be formatted.
@@ -319,16 +341,16 @@ static std::string format(PyObject* obj, unsigned int pos, unsigned int indent, 
   if (PyString_Check(obj)) {
     // String objects, add single quotes, but don't do any other formatting.
     ss << "'" << PyString_AsString(obj) << "'";
-  }
-  else if (PyDict_Check(obj)) {
+  } else if (PyDict_Check(obj)) {
     // Always print dictionary objects in multiline format, one key per line.
     // Get list of keys.  Keys are assumed to be strings.
     PyObject* keys = PyDict_Keys(obj);
 
-    // Make a first pass over the list of keys to determine the maximum length key.
+    // Make a first pass over the list of keys to determine the maximum length
+    // key.
     int n = PyList_Size(keys);
     int keymaxlen = 0;
-    for (int i=0; i<n; ++i) {
+    for (int i = 0; i < n; ++i) {
       PyObject* key = PyList_GetItem(keys, i);
       int keylen = PyString_Size(key);
       if (keylen > keymaxlen)
@@ -337,26 +359,26 @@ static std::string format(PyObject* obj, unsigned int pos, unsigned int indent, 
 
     // Second pass, loop over keys and values and convert them to strings.
     char sep = '{';
-    for (int i=0; i<n; ++i) {
+    for (int i = 0; i < n; ++i) {
       PyObject* key = PyList_GetItem(keys, i);
       PyObject* value = PyDict_GetItem(obj, key);
       char const* ks = PyString_AsString(key);
-      std::string ksquote = std::string("'") + std::string(ks) + std::string("'");
+      std::string ksquote =
+        std::string("'") + std::string(ks) + std::string("'");
       ss << sep << '\n'
-         << std::setw(indent+2) << ""
-         << std::setw(keymaxlen+2) << std::left << ksquote << " : "
-         << format(value, indent + keymaxlen + 7, indent+2, maxlen);
+         << std::setw(indent + 2) << "" << std::setw(keymaxlen + 2) << std::left
+         << ksquote << " : "
+         << format(value, indent + keymaxlen + 7, indent + 2, maxlen);
       sep = ',';
     }
     if (n == 0)
       ss << "{}";
     else
-      ss << '\n' << std::setw(indent+1) << std::right << '}';
+      ss << '\n' << std::setw(indent + 1) << std::right << '}';
 
     Py_DECREF(keys);
 
-  }
-  else if (PyList_Check(obj) || PyTuple_Check(obj)) {
+  } else if (PyList_Check(obj) || PyTuple_Check(obj)) {
 
     // Sequence printing handled here.
     // Break lines only when position exceeds maxlen.
@@ -367,8 +389,7 @@ static std::string format(PyObject* obj, unsigned int pos, unsigned int indent, 
       open_seq = '[';
       close_seq = ']';
       n = PyList_Size(obj);
-    }
-    else {
+    } else {
       open_seq = '(';
       close_seq = ')';
       n = PyTuple_Size(obj);
@@ -376,8 +397,8 @@ static std::string format(PyObject* obj, unsigned int pos, unsigned int indent, 
 
     // Loop over elements of this sequence.
     std::string sep(1, open_seq);
-    unsigned int break_indent = pos+1;
-    for (int i=0; i<n; ++i) {
+    unsigned int break_indent = pos + 1;
+    for (int i = 0; i < n; ++i) {
       ss << sep;
       pos += sep.size();
       PyObject* ele = PySequence_GetItem(obj, i);
@@ -391,9 +412,11 @@ static std::string format(PyObject* obj, unsigned int pos, unsigned int indent, 
 
       // Decide if we want to break the line before printing this element.
       // Never break at the first element of a sequence.
-      // Force a break (except at first element) if this is a structured element.
-      // If we do break here, reformat this element with the updated position.
-      bool const force_break{PyList_Check(ele) || PyTuple_Check(ele) || PyDict_Check(ele)};
+      // Force a break (except at first element) if this is a structured
+      // element. If we do break here, reformat this element with the updated
+      // position.
+      bool const force_break{PyList_Check(ele) || PyTuple_Check(ele) ||
+                             PyDict_Check(ele)};
       if (i > 0 && (force_break || pos + n1 > maxlen)) {
         ss << '\n' << std::setw(break_indent) << "";
         pos = break_indent;
@@ -419,8 +442,7 @@ static std::string format(PyObject* obj, unsigned int pos, unsigned int indent, 
     if (n == 0)
       ss << open_seq;
     ss << close_seq;
-  }
-  else {
+  } else {
 
     // Last resort, use python's string representation.
     PyObject* pystr = PyObject_Str(obj);
@@ -430,9 +452,11 @@ static std::string format(PyObject* obj, unsigned int pos, unsigned int indent, 
   return ss.str();
 }
 
-static PyObject* make_pset(PyObject*, PyObject* args)
+static PyObject*
+make_pset(PyObject*, PyObject* args)
 //
-// Purpose: Public module function to read fcl file and return a python dictionary.
+// Purpose: Public module function to read fcl file and return a python
+// dictionary.
 //
 // Arguments: self - Not used, because this is not a member function.
 //            args - Argument tuple.  A single string representing the
@@ -464,7 +488,8 @@ static PyObject* make_pset(PyObject*, PyObject* args)
   return result;
 }
 
-static PyObject* pretty(PyObject*, PyObject *args)
+static PyObject*
+pretty(PyObject*, PyObject* args)
 //
 // Purpose: Public module function to convert a python fcl dictionary to a
 //          prettified string.
@@ -484,8 +509,7 @@ static PyObject* pretty(PyObject*, PyObject *args)
     // No arguments, return none.
     result = Py_None;
     Py_INCREF(result);
-  }
-  else {
+  } else {
     // Otherwise, extract the first element.
     PyObject* obj = PySequence_GetItem(args, 0);
     std::string const s{format(obj, 0, 0, 80)};
@@ -499,13 +523,13 @@ static PyObject* pretty(PyObject*, PyObject *args)
 static struct PyMethodDef fclmodule_methods[] = {
   {"make_pset", make_pset, METH_VARARGS, "Make dictionary from parameter set."},
   {"pretty", pretty, METH_VARARGS, "Print the in-memory dictionary."},
-  {nullptr, nullptr, 0, nullptr}
-};
+  {nullptr, nullptr, 0, nullptr}};
 
 // Initialization function.
 extern "C" {
-  void initfhicl()
-  {
-    Py_InitModule("fhicl", fclmodule_methods);
-  }
+void
+initfhicl()
+{
+  Py_InitModule("fhicl", fclmodule_methods);
+}
 }

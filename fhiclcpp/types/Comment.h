@@ -24,17 +24,18 @@ namespace fhicl {
 
   namespace comment_detail {
     struct ArgWrapper {
-      ArgWrapper(char const* arg): value{arg} {}
-      ArgWrapper(std::string const& arg): value{arg} {}
+      ArgWrapper(char const* arg) : value{arg} {}
+      ArgWrapper(std::string const& arg) : value{arg} {}
       std::string value;
     };
   }
 
-  struct Comment{
-    explicit Comment(comment_detail::ArgWrapper const& wrapper) : value{wrapper.value} {}
+  struct Comment {
+    explicit Comment(comment_detail::ArgWrapper const& wrapper)
+      : value{wrapper.value}
+    {}
     std::string value;
   };
-
 }
 
 #endif /* fhiclcpp_types_Comment_h */

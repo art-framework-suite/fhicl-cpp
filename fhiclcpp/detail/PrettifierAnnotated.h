@@ -94,8 +94,8 @@
 
 #include "fhiclcpp/ParameterSetWalker.h"
 #include "fhiclcpp/coding.h"
-#include "fhiclcpp/fwd.h"
 #include "fhiclcpp/detail/Indentation.h"
+#include "fhiclcpp/fwd.h"
 
 #include <sstream>
 #include <stack>
@@ -106,21 +106,25 @@ namespace fhicl {
 
     class PrettifierAnnotated : public ParameterSetWalker {
     public:
-
       PrettifierAnnotated(unsigned initial_indent_level = 0);
 
-      std::string result() const { return buffer_.str(); }
+      std::string
+      result() const
+      {
+        return buffer_.str();
+      }
 
     private:
+      void before_action(key_t const&,
+                         any_t const&,
+                         ParameterSet const*) override;
+      void after_action() override;
 
-      void before_action (key_t const&, any_t const&, ParameterSet const*) override;
-      void after_action  () override;
-
-      void enter_table   (key_t const&, any_t const&) override;
+      void enter_table(key_t const&, any_t const&) override;
       void enter_sequence(key_t const&, any_t const&) override;
 
-      void exit_table    (key_t const&, any_t const&) override;
-      void exit_sequence (key_t const&, any_t const&) override;
+      void exit_table(key_t const&, any_t const&) override;
+      void exit_sequence(key_t const&, any_t const&) override;
 
       void atom(key_t const&, any_t const&) override;
 
@@ -133,9 +137,7 @@ namespace fhicl {
       std::string cached_info_;
       std::stack<std::size_t> sequence_sizes_;
       std::size_t curr_size_;
-
     };
-
   }
 }
 

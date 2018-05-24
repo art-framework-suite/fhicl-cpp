@@ -21,39 +21,51 @@ namespace fhicl {
 
     class Indentation {
     public:
-
       Indentation(unsigned const iil = 0u)
-        : indents_{{ std::string(iil*indent_increment,' ') }}
+        : indents_{{std::string(iil * indent_increment, ' ')}}
       {}
 
-      Indentation(std::string const& prefix)
-        : indents_{{prefix}}
-      {}
+      Indentation(std::string const& prefix) : indents_{{prefix}} {}
 
-      std::string const & operator()() const { return indents_.top(); }
+      std::string const&
+      operator()() const
+      {
+        return indents_.top();
+      }
 
-      void modify_top(std::string const& s)
+      void
+      modify_top(std::string const& s)
       {
         assert(!indents_.empty());
         if (indents_.size() == 1ul) {
           indents_.top() = s;
-        }
-        else {
+        } else {
           indents_.pop();
-          indents_.emplace(indents_.top()+s);
+          indents_.emplace(indents_.top() + s);
         }
       }
 
-      auto size() { return indents_.size(); }
+      auto
+      size()
+      {
+        return indents_.size();
+      }
 
-      void pop () { indents_.pop() ; }
-      void push() { indents_.emplace( indents_.top()+std::string(indent_increment, ' ' )); }
+      void
+      pop()
+      {
+        indents_.pop();
+      }
+      void
+      push()
+      {
+        indents_.emplace(indents_.top() + std::string(indent_increment, ' '));
+      }
 
     private:
       static constexpr std::size_t indent_increment = 3u;
       std::stack<std::string> indents_;
     };
-
   }
 }
 

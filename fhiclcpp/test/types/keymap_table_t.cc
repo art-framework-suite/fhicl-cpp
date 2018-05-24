@@ -7,16 +7,16 @@
 //
 // ======================================================================
 
-#define BOOST_TEST_MODULE ( keymap test with tables )
+#define BOOST_TEST_MODULE (keymap test with tables)
 
 #include "cetlib/quiet_unit_test.hpp"
+#include "cetlib/test_macros.h"
+#include "fhiclcpp/test/types/KeyMap.h"
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/Sequence.h"
 #include "fhiclcpp/types/Table.h"
 #include "fhiclcpp/types/TableFragment.h"
 #include "fhiclcpp/types/Tuple.h"
-#include "fhiclcpp/test/types/KeyMap.h"
-#include "cetlib/test_macros.h"
 
 #include <iostream>
 #include <string>
@@ -29,17 +29,16 @@ using namespace std;
 namespace {
 
   struct S {
-    Atom<int> test { Name("atom") };
-    Sequence<int,2> seq { Name("sequence") };
-    Tuple<int,double,bool> tuple { Name("tuple") };
+    Atom<int> test{Name("atom")};
+    Sequence<int, 2> seq{Name("sequence")};
+    Tuple<int, double, bool> tuple{Name("tuple")};
   };
-
 }
 
-BOOST_AUTO_TEST_SUITE( types_keymap_test )
+BOOST_AUTO_TEST_SUITE(types_keymap_test)
 
 // [14] Table<S>
-BOOST_AUTO_TEST_CASE( table_t )
+BOOST_AUTO_TEST_CASE(table_t)
 {
   auto map = KeyMap::get<Table<S>>("table");
   auto ref = {"table",
@@ -55,9 +54,9 @@ BOOST_AUTO_TEST_CASE( table_t )
 }
 
 // [15] Sequence< Table<S> >
-BOOST_AUTO_TEST_CASE( table_in_seq_t )
+BOOST_AUTO_TEST_CASE(table_in_seq_t)
 {
-  auto map = KeyMap::get< Sequence< Table<S> >>("seqtable");
+  auto map = KeyMap::get<Sequence<Table<S>>>("seqtable");
 
   auto ref = {"seqtable",
               "seqtable[0]",
@@ -73,9 +72,9 @@ BOOST_AUTO_TEST_CASE( table_in_seq_t )
 }
 
 // [16] Sequence< Table<S>,2 >
-BOOST_AUTO_TEST_CASE( table_in_seq_2_t )
+BOOST_AUTO_TEST_CASE(table_in_seq_2_t)
 {
-  auto map = KeyMap::get<Sequence< Table<S>, 2 >>("seqtable");
+  auto map = KeyMap::get<Sequence<Table<S>, 2>>("seqtable");
   auto ref = {"seqtable",
               "seqtable[0]",
               "seqtable[0].atom",
@@ -99,9 +98,9 @@ BOOST_AUTO_TEST_CASE( table_in_seq_2_t )
 }
 
 // [17] Tuple< Table<S>, U... >
-BOOST_AUTO_TEST_CASE( table_in_tuple_t )
+BOOST_AUTO_TEST_CASE(table_in_tuple_t)
 {
-  auto map = KeyMap::get<Tuple< Table<S>, int, double >>("tuptable");
+  auto map = KeyMap::get<Tuple<Table<S>, int, double>>("tuptable");
   auto ref = {"tuptable",
               "tuptable[0]",
               "tuptable[0].atom",
@@ -118,9 +117,9 @@ BOOST_AUTO_TEST_CASE( table_in_tuple_t )
 }
 
 // [18] Tuple< Sequence< Table<S> >, U... >
-BOOST_AUTO_TEST_CASE( seqtable_in_tuple_t )
+BOOST_AUTO_TEST_CASE(seqtable_in_tuple_t)
 {
-  auto map = KeyMap::get<Tuple< Sequence< Table<S> >, int, double >>("seqtuptable");
+  auto map = KeyMap::get<Tuple<Sequence<Table<S>>, int, double>>("seqtuptable");
   auto ref = {"seqtuptable",
               "seqtuptable[0]",
               "seqtuptable[0][0]",
@@ -138,9 +137,10 @@ BOOST_AUTO_TEST_CASE( seqtable_in_tuple_t )
 }
 
 // [19] Tuple< Sequence< Table<S>, SZ >, U... >
-BOOST_AUTO_TEST_CASE( seqtable_2_in_tuple_t )
+BOOST_AUTO_TEST_CASE(seqtable_2_in_tuple_t)
 {
-  auto map = KeyMap::get<Tuple< Sequence< Table<S>, 2 >, int, double >>("seqtuptable");
+  auto map =
+    KeyMap::get<Tuple<Sequence<Table<S>, 2>, int, double>>("seqtuptable");
   auto ref = {"seqtuptable",
               "seqtuptable[0]",
               "seqtuptable[0][0]",
@@ -167,9 +167,9 @@ BOOST_AUTO_TEST_CASE( seqtable_2_in_tuple_t )
 }
 
 // [20] Sequence< Tuple< Table<S>, U... > >
-BOOST_AUTO_TEST_CASE( tuptable_in_seq_t )
+BOOST_AUTO_TEST_CASE(tuptable_in_seq_t)
 {
-  auto map = KeyMap::get<Sequence< Tuple< Table<S>, int, double > >>("tupseqtable");
+  auto map = KeyMap::get<Sequence<Tuple<Table<S>, int, double>>>("tupseqtable");
   auto ref = {"tupseqtable",
               "tupseqtable[0]",
               "tupseqtable[0][0]",
@@ -187,9 +187,10 @@ BOOST_AUTO_TEST_CASE( tuptable_in_seq_t )
 }
 
 // [21] Sequence< Tuple< Table<S>, U... >, SZ >
-BOOST_AUTO_TEST_CASE( tuptable_in_seq_2_t )
+BOOST_AUTO_TEST_CASE(tuptable_in_seq_2_t)
 {
-  auto map = KeyMap::get<Sequence< Tuple< Table<S>, int, double >, 2 >>("tupseqtable");
+  auto map =
+    KeyMap::get<Sequence<Tuple<Table<S>, int, double>, 2>>("tupseqtable");
   auto ref = {"tupseqtable",
               "tupseqtable[0]",
               "tupseqtable[0][0]",
@@ -214,15 +215,15 @@ BOOST_AUTO_TEST_CASE( tuptable_in_seq_2_t )
               "tupseqtable[1][0].tuple[1]",
               "tupseqtable[1][0].tuple[2]",
               "tupseqtable[1][1]",
-              "tupseqtable[1][2]" };
+              "tupseqtable[1][2]"};
   CET_CHECK_EQUAL_COLLECTIONS(map, ref);
 }
 
 // [21] Sequence< Tuple< Table<S>, U... >, SZ >
-BOOST_AUTO_TEST_CASE( tablefragment_t )
+BOOST_AUTO_TEST_CASE(tablefragment_t)
 {
   TableFragment<S> tf;
-  BOOST_CHECK_EQUAL( tf().test.key() , "atom");
+  BOOST_CHECK_EQUAL(tf().test.key(), "atom");
 
   {
     KeyMap km;

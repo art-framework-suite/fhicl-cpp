@@ -15,7 +15,7 @@ namespace fhicl {
   template <typename T>
   OptionalTable<T>::OptionalTable(Name&& name,
                                   Comment&& comment)
-    : TableBase{std::move(name),std::move(comment), value_type::OPTIONAL, detail::AlwaysUse()}
+    : TableBase{std::move(name),std::move(comment), par_style::OPTIONAL, detail::AlwaysUse()}
     , RegisterIfTableMember{this}
   {
     NameStackRegistry::end_of_ctor();
@@ -25,7 +25,7 @@ namespace fhicl {
   OptionalTable<T>::OptionalTable(Name&& name,
                                   Comment&& comment,
                                   std::function<bool()> maybeUse)
-    : TableBase{std::move(name),std::move(comment), value_type::OPTIONAL_CONDITIONAL, maybeUse}
+    : TableBase{std::move(name),std::move(comment), par_style::OPTIONAL_CONDITIONAL, maybeUse}
     , RegisterIfTableMember{this}
   {
     NameStackRegistry::end_of_ctor();
@@ -34,7 +34,7 @@ namespace fhicl {
   template <typename T>
   OptionalTable<T>::OptionalTable(ParameterSet const& pset,
                                   std::set<std::string> const & keysToIgnore)
-    : TableBase{Name("<top_level>"), Comment(""), value_type::OPTIONAL, detail::AlwaysUse()}
+    : TableBase{Name("<top_level>"), Comment(""), par_style::OPTIONAL, detail::AlwaysUse()}
     , RegisterIfTableMember{this}
   {
     validate_ParameterSet( pset, keysToIgnore );

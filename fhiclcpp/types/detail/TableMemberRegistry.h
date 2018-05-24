@@ -49,7 +49,6 @@ namespace fhicl {
 
     class TableMemberRegistry {
     public:
-
       // Disable copy/move operations
       TableMemberRegistry(TableMemberRegistry const&) = delete;
       TableMemberRegistry(TableMemberRegistry&&) = delete;
@@ -57,14 +56,14 @@ namespace fhicl {
       TableMemberRegistry& operator=(TableMemberRegistry&&) = delete;
 
     private:
-
       TableMemberRegistry() = default;
 
-      using base_ptr        = cet::exempt_ptr<ParameterBase>;
+      using base_ptr = cet::exempt_ptr<ParameterBase>;
       using table_members_t = std::vector<base_ptr>;
-      std::stack< table_members_t > tables_;
+      std::stack<table_members_t> tables_;
 
-      static TableMemberRegistry& instance()
+      static TableMemberRegistry&
+      instance()
       {
         static TableMemberRegistry registry;
         return registry;
@@ -72,10 +71,13 @@ namespace fhicl {
 
       // Retrieval facilities for fhicl::(Optional)Table
 
-      template <typename T, typename KeysToIgnore> friend class fhicl::Table;
-      template <typename T> friend class fhicl::OptionalTable;
+      template <typename T, typename KeysToIgnore>
+      friend class fhicl::Table;
+      template <typename T>
+      friend class fhicl::OptionalTable;
 
-      std::vector<base_ptr> release_members()
+      std::vector<base_ptr>
+      release_members()
       {
         std::vector<base_ptr> result;
         std::swap(tables_.top(), result);
@@ -86,22 +88,22 @@ namespace fhicl {
       // Registration facilities
 
       friend class RegisterIfTableMember;
-      void emplace_table_member(ParameterBase* pb)
+      void
+      emplace_table_member(ParameterBase* pb)
       {
         tables_.top().emplace_back(pb);
       }
 
-      void new_table()
+      void
+      new_table()
       {
         tables_.emplace();
       }
-
     };
 
     //========================================================
     class RegisterIfTableMember {
     public:
-
       RegisterIfTableMember(ParameterBase* pb)
       {
         if (is_table_member(pb->key())) {
@@ -111,14 +113,12 @@ namespace fhicl {
           TableMemberRegistry::instance().new_table();
         }
       }
-
     };
-
   }
 }
 
 #endif /* fhiclcpp_types_detail_TableMemberRegistry_h */
 
-  // Local variables:
-  // mode: c++
-  // End:
+// Local variables:
+// mode: c++
+// End:

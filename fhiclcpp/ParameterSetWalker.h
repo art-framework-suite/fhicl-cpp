@@ -74,39 +74,68 @@ namespace fhicl {
 
   class ParameterSetWalker {
   public:
-
     virtual ~ParameterSetWalker() noexcept = default;
 
     using key_t = std::string;
     using any_t = boost::any;
 
-    void do_enter_table   (key_t const& k, any_t const& a) { enter_table(k, a); }
-    void do_enter_sequence(key_t const& k, any_t const& a) { enter_sequence(k, a); }
-    void do_atom          (key_t const& k, any_t const& a) { atom(k, a); }
-
-    void do_before_action(key_t const& k, any_t const& a, ParameterSet const* ps)
+    void
+    do_enter_table(key_t const& k, any_t const& a)
     {
-      before_action(k,a,ps);
+      enter_table(k, a);
     }
-    void do_after_action() { after_action(); }
+    void
+    do_enter_sequence(key_t const& k, any_t const& a)
+    {
+      enter_sequence(k, a);
+    }
+    void
+    do_atom(key_t const& k, any_t const& a)
+    {
+      atom(k, a);
+    }
 
-    void do_exit_table   (key_t const& k, any_t const& a) { exit_table(k, a); }
-    void do_exit_sequence(key_t const& k, any_t const& a) { exit_sequence(k, a); }
+    void
+    do_before_action(key_t const& k, any_t const& a, ParameterSet const* ps)
+    {
+      before_action(k, a, ps);
+    }
+    void
+    do_after_action()
+    {
+      after_action();
+    }
+
+    void
+    do_exit_table(key_t const& k, any_t const& a)
+    {
+      exit_table(k, a);
+    }
+    void
+    do_exit_sequence(key_t const& k, any_t const& a)
+    {
+      exit_sequence(k, a);
+    }
 
   private:
-
-    virtual void enter_table   (key_t const&, any_t const&) = 0;
+    virtual void enter_table(key_t const&, any_t const&) = 0;
     virtual void enter_sequence(key_t const&, any_t const&) = 0;
-    virtual void atom          (key_t const&, any_t const&) = 0;
+    virtual void atom(key_t const&, any_t const&) = 0;
 
-
-    virtual void exit_table    (key_t const&, any_t const&) {}
-    virtual void exit_sequence (key_t const&, any_t const&) {}
+    virtual void
+    exit_table(key_t const&, any_t const&)
+    {}
+    virtual void
+    exit_sequence(key_t const&, any_t const&)
+    {}
 
     // Pointer to enclosing ParameterSet object provided
-    virtual void before_action(key_t const&, any_t const&, ParameterSet const*) {}
-    virtual void after_action() {}
-
+    virtual void
+    before_action(key_t const&, any_t const&, ParameterSet const*)
+    {}
+    virtual void
+    after_action()
+    {}
   };
 
 } // fhicl

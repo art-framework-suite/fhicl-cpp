@@ -1,4 +1,5 @@
 include(CetMake)
+include(CetMakeCompletions)
 
 cet_make_exec(fhicl-dump
   SOURCE fhicl-dump.cc
@@ -18,6 +19,9 @@ cet_make_exec(fhicl-write-db
   fhiclcpp
   ${SQLITE3}
 )
+
+cet_make_completions(fhicl-dump)
+cet_make_completions(fhicl-expand)
 
 install_headers()
 install_source()

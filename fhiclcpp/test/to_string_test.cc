@@ -6,9 +6,8 @@
 #include <cstdlib>
 #include <string>
 
-
 int
-  main()
+main()
 {
   putenv(const_cast<char*>("FHICL_FILE_PATH=./test:."));
   cet::filepath_lookup policy("FHICL_FILE_PATH");
@@ -40,14 +39,16 @@ int
   assert(pset2.get<std::string>("f").compare("32") == 0);
   assert(pset2.get<int>("f") == 32);
 
-  assert(pset2.get<std::vector<int> >("g")[2] == 3);
+  assert(pset2.get<std::vector<int>>("g")[2] == 3);
 
-  assert(pset2.get<std::vector<fhicl::ParameterSet> >("h")[1]
-             .get<std::string>("h2").compare("h2") == 0);
+  assert(pset2.get<std::vector<fhicl::ParameterSet>>("h")[1]
+           .get<std::string>("h2")
+           .compare("h2") == 0);
 
   assert(pset2.get<fhicl::ParameterSet>("i")
-             .get<fhicl::ParameterSet>("i1")
-             .get<std::string>("i1_1").compare("test") == 0);
+           .get<fhicl::ParameterSet>("i1")
+           .get<std::string>("i1_1")
+           .compare("test") == 0);
 
   return 0;
-}  // main()
+} // main()

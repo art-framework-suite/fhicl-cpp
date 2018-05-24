@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE ( optionalDelegatedParameter test )
+#define BOOST_TEST_MODULE (optionalDelegatedParameter test)
 
 #include "cetlib/quiet_unit_test.hpp"
 #include "cetlib/test_macros.h"
@@ -9,19 +9,18 @@ using namespace fhicl;
 
 namespace {
   struct S {
-    OptionalDelegatedParameter da { Name("optional_delegated_atom") };
+    OptionalDelegatedParameter da{Name("optional_delegated_atom")};
   };
 
   struct Config {
-    OptionalDelegatedParameter dt { Name("optional_delegated_table") };
-    OptionalDelegatedParameter ds { Name("optional_delegated_sequence") };
-    Table<S> nested { Name("s") };
+    OptionalDelegatedParameter dt{Name("optional_delegated_table")};
+    OptionalDelegatedParameter ds{Name("optional_delegated_sequence")};
+    Table<S> nested{Name("s")};
   };
 
   struct Fixture : fhiclcpp_types::FixtureBase<Config> {
     Fixture() : FixtureBase("delegatedParameter_t.fcl") {}
   };
-
 }
 
 BOOST_FIXTURE_TEST_SUITE(optionalDelegatedParameter_t, Fixture)

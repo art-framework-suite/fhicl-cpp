@@ -1,4 +1,4 @@
-#include "cetlib/exception.h"
+#include "cetlib_except/exception.h"
 #include "cetlib/filepath_maker.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/intermediate_table.h"
@@ -8,7 +8,7 @@
 #include <iostream>
 
 int
-  main( )
+main()
 {
   putenv(const_cast<char*>("FHICL_FILE_PATH=./test:."));
 
@@ -18,9 +18,9 @@ int
   try {
     fhicl::parse_document(in, policy, tbl);
   }
-  catch( cet::exception const & e ) {
+  catch (cet::exception const& e) {
     std::cerr << e.what() << '\n';
     return 0;
   }
   return 1;
-}  // main()
+} // main()

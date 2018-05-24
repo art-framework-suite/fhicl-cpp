@@ -1,9 +1,10 @@
-#include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/ParameterSet.h"
+#include "fhiclcpp/make_ParameterSet.h"
 #include <cassert>
 #include <string>
 
-int main()
+int
+main()
 {
   fhicl::ParameterSet ps;
   std::string text("m1: { val: 3 name: boo} ");
