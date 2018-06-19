@@ -40,9 +40,9 @@ cet_report_compiler_flags()
 if(NOT APPLE)
   find_package(OpenSSL REQUIRED )
 endif()
-find_package(PythonLibs)
-find_package(cetlib)
-find_package(Boost 1.50.0 COMPONENTS program_options)
+find_package(PythonLibs REQUIRED)
+find_package(cetlib REQUIRED)
+find_package(Boost 1.50.0 COMPONENTS program_options REQUIRED)
 
 # SQLite
 find_library(SQLITE3 NAMES sqlite3 REQUIRED)
