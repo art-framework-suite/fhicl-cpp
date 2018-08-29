@@ -40,7 +40,12 @@ cet_report_compiler_flags()
 if(NOT APPLE)
   find_package(OpenSSL REQUIRED )
 endif()
+
+# Both of these are needed to ensure sane and consistent Python
+# location, even though we don't actually need the interpreter.
+find_package(PythonInterp REQUIRED)
 find_package(PythonLibs REQUIRED)
+
 find_package(cetlib REQUIRED)
 find_package(Boost 1.50.0 COMPONENTS program_options REQUIRED)
 
