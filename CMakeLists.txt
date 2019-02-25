@@ -17,6 +17,7 @@
 cmake_minimum_required(VERSION 3.11)  # use cmake 3.11 or later
 
 project(fhiclcpp)
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # cetbuildtools contains our cmake modules
 find_package(cetbuildtools REQUIRED)
@@ -66,21 +67,36 @@ cet_report_compiler_flags()
 find_ups_product(cetbuildtools v4_14_01)
 find_ups_product(cetlib_except v1_00_00)
 find_ups_product(cetlib v2_01_00)
-find_ups_product(python)
+find_ups_product(python v3_7_2)
 find_ups_product(sqlite v3_07_15_00)
 find_ups_boost(v1_50_0)
 
-# Python
-cet_find_library(PYTHON NAMES python2.7 PATHS ENV PYTHON_LIB NO_DEFAULT_PATH)
+# ----------------------------------------------------------------------
+# Python stuff
 
+#cet_find_library(PYTHON NAMES python2.7 PATHS ENV PYTHON_LIB NO_DEFAULT_PATH)
+cet_find_library(PYTHON NAMES python3.7 PATHS ENV PYTHON_LIB NO_DEFAULT_PATH)
+
+# ----------------------------------------------------------------------
 # SQLite
 cet_find_library(SQLITE3 NAMES sqlite3_ups PATHS ENV SQLITE_LIB NO_DEFAULT_PATH)
 
-# source code
+
+
+
+# ----------------------------------------------------------------------
+# Describe source tree layout:
+
 add_subdirectory(fhiclcpp)
 add_subdirectory(python)
 add_subdirectory(tools)
 add_subdirectory(ups)
 
-# packaging utility
+# ----------------------------------------------------------------------
+# Documentation generation:
+#find_package(Sphinx REQUIRED)
+add_subdirectory(docs)
+
+# ----------------------------------------------------------------------
+# Packaging utility
 include(UseCPack)
