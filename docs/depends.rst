@@ -1,6 +1,7 @@
 |depends| depends
 =================
-cetlibv3_07_01
-#pythonv2_7_15a
-pythonv3_7_2
-cetbuildtoolsv7_11_00
+
+| `(internal link): cetlib </home/ryan/Documents/fermilab/work/doc_devel/all_docs/cetlib/index.html>`_
+| (external link): #python
+| (external link): python
+| (external link): cetbuildtools

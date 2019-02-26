@@ -1,4 +1,9 @@
-# quick python string grabbing stuff
+# doing quick testing here for conf.py.in 
+# was going to make this a separate file to import modules but 
+# the relative path stuff made it harder than easy.
+# probably has something to do w/ the fact that cmake is executing
+# some template file or something. didn't feel like figuring it out.
+# might come back to it.
 
 
 import os
@@ -14,7 +19,8 @@ author = 'artists'
 src = os.environ['MRB_SOURCE']
 src_dir = os.environ['MRB_SOURCE']+'/'+project
 
-
+# html directory
+html = os.environ['HTML_DIR']#+'/'project
 
 
 def get_deps(path2deps):
@@ -41,7 +47,35 @@ with open(src+'/'+project+'/docs/depends.rst', 'w+') as deps_page:
 #with open('depends.rst', 'w+') as deps_page:
   deps_page.write('|depends| depends')
   deps_page.write('\n=================\n')
+  #first = deps[0]
+  #deps_page.write(first[0])
   for pkg in deps:
-    deps_page.write(pkg[0]+pkg[1]+'\n')
-  #deps_page.seek(0)
-  #deps_page.read()
+    if(os.path.isdir(html+'/'+pkg[0])):
+      print("this is a directory: ", html+'/'+pkg[0])
+      deps_page.write('\n(internal link): '+pkg[0])
+    else:
+      print("this is not a directory: ", html+'/'+pkg[0])
+      deps_page.write('\n(external link): '+pkg[0])
+
+
+print('\n')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# eof

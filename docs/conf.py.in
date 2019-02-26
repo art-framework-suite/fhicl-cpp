@@ -26,7 +26,8 @@ author = 'artists'
 
 # more general stuff
 src=os.environ['MRB_SOURCE']
-src_dir=os.environ['MRB_SOURCE']+'/'+project
+top=os.environ['MRB_TOP']
+html = os.environ['HTML_DIR']#+'/'project
 
 def dotted_version(normal_version):
     return normal_version.lstrip('v').replace('_', '.')
@@ -40,7 +41,8 @@ release = dotted_version('@version@')
 # versions drop-down menu.
 #built_docs_path = '/Users/kyleknoepfel/work/art_suite_docs/' + project
 #built_docs_path = '/home/ryan/Documents/fermilab/work/doc_devel/srcs/' + project
-built_docs_path = src+'/'+project
+#built_docs_path = src+'/'+project
+built_docs_path = top+'/all_docs/'+project
 
 files = os.listdir(built_docs_path)
 subdirs = [subdir for subdir in files
@@ -218,6 +220,14 @@ with open(src+'/'+project+'/docs/depends.rst', 'w+') as deps_page:
   deps_page.write('|depends| depends')
   deps_page.write('\n=================\n')
   for pkg in depends_on:
-    deps_page.write(pkg[0]+pkg[1]+'\n')
+    #deps_page.write(pkg[0]+pkg[1]+'\n')
+    pkg_path = html+'/'+pkg[0]
+    #if(os.path.isdir(html+'/'+pkg[0])):
+    if(os.path.isdir(pkg_path)):
+      print("this is a directory: ", html+'/'+pkg[0])
+      deps_page.write('\n| `(internal link): '+pkg[0]+' <'+pkg_path+'/index.html>`_')
+    else:
+      print("this is not a directory: ", html+'/'+pkg[0])
+      deps_page.write('\n| (external link): '+pkg[0])
 
 print("+++++++++++++++++++++++\n\n\n\n\n")

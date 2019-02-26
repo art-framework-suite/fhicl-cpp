@@ -15,7 +15,11 @@ set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/_build")
 set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/_doctrees")
 
 # HTML output directory
-set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/html")
+#set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/html")
+set(SPHINX_HTML_DIR "$ENV{MRB_TOP}/all_docs/fhiclcpp")
+#message("\n\n\n\n\n\n")
+#message(${SPHINX_HTML_DIR})
+#message("\n\n\n\n\n\n")
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/_static/ DESTINATION ${BINARY_BUILD_DIR}/_static)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/_templates/ DESTINATION ${BINARY_BUILD_DIR}/_templates)
