@@ -15,11 +15,65 @@ set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/_build")
 set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/_doctrees")
 
 # HTML output directory
+# --- doing a bit of extra work here. Why?
+#        + we want to see what directory are people putting their docs
+#          do we want them to make and environement variable for that?
+#        + once we know that this dir exists, we want to check does the 
+#          product dir exist there (e.g. all_docs/fhiclcpp exists)
+#          if not then we should probably make it ourselves
+#        + and then we do the same for the version being developed
+#          the goal is for the all_docs dir to look similar to scisoft
+#          in directory structure.
+
 #set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/html")
-set(SPHINX_HTML_DIR "$ENV{MRB_TOP}/all_docs/fhiclcpp")
-#message("\n\n\n\n\n\n")
-#message(${SPHINX_HTML_DIR})
-#message("\n\n\n\n\n\n")
+#set(SPHINX_HTML_DIR "$ENV{MRB_TOP}/all_docs/fhiclcpp")
+#set(SPHINX_HTML_DIR "$ENV{MRB_TOP}/all_docs/${PROJECT_NAME}/$ENV{}")
+message("\n\n\n\n\n\n")
+
+set(TOP_DOCS_DIR "$ENV{MRB_TOP}/all_docs")
+
+# looking for top level dir
+if(EXISTS "${TOP_DOCS_DIR}")
+  message("I can use exists this way. all_docs is there.")
+  set(PROJ_DOCS_DIR "${TOP_DOCS_DIR}/${PROJECT_NAME}")
+  
+
+  # looking for project dir
+  if(EXISTS "${PROJ_DOCS_DIR}")
+    message("fhiclcpp dir is here")
+    string(TOUPPER ${PROJECT_NAME} ENV_PROJ_NAME)
+    set(VERSION_DOCS_DIR "${PROJ_DOCS_DIR}/$ENV{${ENV_PROJ_NAME}_VERSION}")
+    message("looking for.. ${DUMB_TEMP_VAR}")
+    #if(EXISTS "$ENV{MRB_TOP}/all_docs/${PROJECT_NAME}/$ENV{${ENV_PROJ_NAME}_VERSION}")
+
+    if(EXISTS "${VERSION_DOCS_DIR}")
+      #set(DUMB_TEMP_VAR "$ENV{MRB_TOP}/all_docs/${PROJECT_NAME}/$ENV{${ENV_PROJ_NAME}_VERSION}")
+      message("version dir is here")
+    else()
+      message("You don't have a version dir")
+      add_custom_target(build_version_dir ALL COMMAND 
+                        ${CMAKE_COMMAND} -E make_directory 
+                        ${VERSION_DOCS_DIR})
+    endif()
+  else()
+    message("You don't have a fhiclcpp dir")
+    add_custom_target(build_version_dir ALL COMMAND 
+                      ${CMAKE_COMMAND} -E make_directory 
+                      ${PROJ_DOCS_DIR})
+    
+  endif()
+else()
+  message("You don't a spot to put your docs!")
+endif()
+  
+
+
+message("\n\n\n\n\n\n")
+
+set(SPHINX_HTML_DIR "${VERSION_DOCS_DIR}")
+
+
+
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/_static/ DESTINATION ${BINARY_BUILD_DIR}/_static)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/_templates/ DESTINATION ${BINARY_BUILD_DIR}/_templates)
