@@ -44,7 +44,9 @@ release = dotted_version('@version@')
 #built_docs_path = src+'/'+project
 built_docs_path = top+'/all_docs/'+project
 
+print("\n\n\ninvestigating the version tab stuff..")
 files = os.listdir(built_docs_path)
+print(files)
 subdirs = [subdir for subdir in files
            if os.path.isdir(os.path.join(built_docs_path, subdir))]
 versions = { subdir: dotted_version(subdir) for subdir in subdirs }
