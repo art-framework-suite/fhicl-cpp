@@ -50,6 +50,7 @@ print(files)
 subdirs = [subdir for subdir in files
            if os.path.isdir(os.path.join(built_docs_path, subdir))]
 versions = { subdir: dotted_version(subdir) for subdir in subdirs }
+print(built_docs_path+subdirs[0])
 
 versions['@version@'] = release
 
