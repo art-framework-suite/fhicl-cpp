@@ -51,16 +51,32 @@ if(EXISTS "${TOP_DOCS_DIR}")
       message("version dir is here")
     else()
       message("You don't have a version dir")
-      add_custom_target(build_version_dir ALL COMMAND 
+      add_custom_target(build_fhiclcpp_version_dir ALL COMMAND 
                         ${CMAKE_COMMAND} -E make_directory 
                         ${VERSION_DOCS_DIR})
     endif()
   else()
     message("You don't have a fhiclcpp dir")
-    add_custom_target(build_version_dir ALL COMMAND 
+    add_custom_target(build_fhiclcpp_proj_dir ALL COMMAND 
                       ${CMAKE_COMMAND} -E make_directory 
                       ${PROJ_DOCS_DIR})
-    
+        
+    # Going back through now assuming it exists ! 
+    message("fhiclcpp dir is here")
+    string(TOUPPER ${PROJECT_NAME} ENV_PROJ_NAME)
+    set(VERSION_DOCS_DIR "${PROJ_DOCS_DIR}/$ENV{${ENV_PROJ_NAME}_VERSION}")
+    message("looking for.. ${DUMB_TEMP_VAR}")
+    #if(EXISTS "$ENV{MRB_TOP}/all_docs/${PROJECT_NAME}/$ENV{${ENV_PROJ_NAME}_VERSION}")
+
+    if(EXISTS "${VERSION_DOCS_DIR}")
+      #set(DUMB_TEMP_VAR "$ENV{MRB_TOP}/all_docs/${PROJECT_NAME}/$ENV{${ENV_PROJ_NAME}_VERSION}")
+      message("version dir is here")
+    else()
+      message("You don't have a version dir")
+      add_custom_target(build_fhiclcpp_version_dir ALL COMMAND 
+                        ${CMAKE_COMMAND} -E make_directory 
+                        ${VERSION_DOCS_DIR})
+    endif() 
   endif()
 else()
   message("You don't a spot to put your docs!")

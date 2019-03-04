@@ -13,8 +13,9 @@
 #  make test
 #  make install
 #  make package (builds distribution tarfile)
+# ======================================================================
 
-cmake_minimum_required(VERSION 3.11)  # use cmake 3.11 or later
+cmake_minimum_required(VERSION 3.11) # use cmake 3.11 or later
 
 project(fhiclcpp)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -62,7 +63,6 @@ endif()
 
 cet_report_compiler_flags()
 
-
 # these are minimum required versions, not the actual product versions
 find_ups_product(cetbuildtools v4_14_01)
 find_ups_product(cetlib_except v1_00_00)
@@ -87,10 +87,10 @@ cet_find_library(SQLITE3 NAMES sqlite3_ups PATHS ENV SQLITE_LIB NO_DEFAULT_PATH)
 # ----------------------------------------------------------------------
 # Describe source tree layout:
 
-add_subdirectory(fhiclcpp)
-add_subdirectory(python)
-add_subdirectory(tools)
-add_subdirectory(ups)
+add_subdirectory(fhiclcpp) # source
+add_subdirectory(python) # python
+add_subdirectory(tools) # tools
+add_subdirectory(ups) # ups - table and config files
 
 # ----------------------------------------------------------------------
 # Documentation generation:
