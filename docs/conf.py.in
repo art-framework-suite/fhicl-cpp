@@ -25,9 +25,13 @@ copyright = '2018'
 author = 'artists'
 
 # more general stuff
-src=os.environ['MRB_SOURCE']
-top=os.environ['MRB_TOP']
+src = os.environ['MRB_SOURCE']
+top = os.environ['MRB_TOP']
 html = os.environ['HTML_DIR']#+'/'project
+
+if(not html):
+    print("You haven't set an install dir ($HTML_DIR). Please set one and try again.")
+    sys.exit() 
 
 def dotted_version(normal_version):
     return normal_version.lstrip('v').replace('_', '.')
@@ -39,18 +43,16 @@ release = dotted_version('@version@')
 
 # Assemble list of already-built documentation that will appear in the
 # versions drop-down menu.
-#built_docs_path = '/Users/kyleknoepfel/work/art_suite_docs/' + project
-#built_docs_path = '/home/ryan/Documents/fermilab/work/doc_devel/srcs/' + project
-#built_docs_path = src+'/'+project
 built_docs_path = top+'/all_docs/'+project
+install_docs_path = html+'/'+project 
 
-print("\n\n\ninvestigating the version tab stuff..")
-files = os.listdir(built_docs_path)
-print(files)
+print("Building ", project, " html files..\n")
+files = os.listdir(install_docs_path)
+#print(files)
 subdirs = [subdir for subdir in files
-           if os.path.isdir(os.path.join(built_docs_path, subdir))]
+           if os.path.isdir(os.path.join(install_docs_path, subdir))]
 versions = { subdir: dotted_version(subdir) for subdir in subdirs }
-print(built_docs_path+subdirs[0])
+#print(install_docs_path+subdirs[0])
 
 versions['@version@'] = release
 
@@ -90,7 +92,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path .
-exclude_patterns = []
+exclude_patterns = ['series_notes/*', 'suite_notes/*', '*temp.rst']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -220,6 +222,7 @@ with open(src+'/'+project+'/ups/product_deps') as deps_file:
 
 
 with open(src+'/'+project+'/docs/depends.rst', 'w+') as deps_page:
+  deps_page.write(':orphan:\n\n')
   deps_page.write('|release| depends on')
   deps_page.write('\n====================\n')
   for pkg in depends_on:
@@ -259,26 +262,15 @@ with open(src+'/'+project+'/docs/depends.rst', 'w+') as deps_page:
 #   - have a user written rst file that inserts relevant information in placeholders. something like that.
 
 
-# --- testing vars
+# --- release notes stuff 
 
 proj_docs_dir = src + '/' + project + '/docs/'
+#series_release_notes_command = 'perl /home/ryan/Documents/fermilab/work/doc_devel/srcs/art/docs/release-notes --series-notes ' + project + ' ' + release + ' > /home/ryan/Documents/fermilab/work/doc_devel/srcs/art/docs/series_temp.rst'
+#suite_release_notes_command = 'perl /home/ryan/Documents/fermilab/work/doc_devel/srcs/art/docs/release-notes --suite-notes ' + project + ' ' + release + ' > /home/ryan/Documents/fermilab/work/doc_devel/srcs/art/docs/suite_temp.rst'
 series_release_notes_command = "perl " + proj_docs_dir + "release-notes --series-notes fhicl-cpp " + release
 #suite_release_notes_command = "perl " + proj_docs_dir + "release-notes --suite-notes " + project + ' ' + release
 suite_release_notes_command = "perl " + proj_docs_dir + "release-notes fhicl-cpp " + release
-#print("\n\n")
-#print("\tI'm trying to get some sense of what variables show up as... ")
-#print(series_release_notes_command)
-#print(suite_release_notes_command)
-#print("\n\n")
 
-# --- series-notes 
-## series_release_notes_command = 'perl /home/ryan/Documents/fermilab/work/doc_devel/srcs/art/docs/release-notes --series-notes ' + project + ' ' + release + ' > /home/ryan/Documents/fermilab/work/doc_devel/srcs/art/docs/series_temp.rst'
-## 
-## 
-## suite_release_notes_command = 'perl /home/ryan/Documents/fermilab/work/doc_devel/srcs/art/docs/release-notes --suite-notes ' + project + ' ' + release + ' > /home/ryan/Documents/fermilab/work/doc_devel/srcs/art/docs/suite_temp.rst'
-## 
-## 
-## 
 os.system(series_release_notes_command + ' > ' + src + '/' + project + '/docs/series_temp.rst')
 os.system(suite_release_notes_command + ' > ' + src + '/' + project + '/docs/suite_temp.rst')
 os.system('cat ' + src + '/' + project + '/docs/series_temp.rst ' + src + '/' + project + '/docs/suite_temp.rst > ' + src + '/' + project + '/docs/temp.rst')
@@ -287,7 +279,6 @@ os.system('cat ' + src + '/' + project + '/docs/series_temp.rst ' + src + '/' + 
 
 #with open("/home/ryan/Documents/fermilab/work/doc_devel/srcs/art/docs/temp.rst", "r+") as notes_page:
 with open(src + '/' + project + '/docs/releaseNotes.rst', "w") as final_notes:
-    #print("\twe in here")
     with open(src + '/' + project + '/docs/temp.rst', "r+") as auto_notes:
         for line in auto_notes:
             #print(line)

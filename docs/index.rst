@@ -37,7 +37,7 @@ A separate page describes those remaining types and functions that are typically
 
 
 The ParameterSet Interface
--------------------------
+--------------------------
 
 Names, keys, and values
 ~~~~~~~~~~~~~~~~~~~~~~~
