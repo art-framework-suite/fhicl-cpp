@@ -79,6 +79,8 @@ namespace fhicl {
 
       return is_sequence_element(key) ? false : true;
     }
+
+    std::size_t index_for_sequence_element(std::string const& name);
   }
 }
 

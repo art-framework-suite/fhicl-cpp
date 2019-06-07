@@ -24,6 +24,7 @@ cet_test(PSetTest)
 cet_test(ParameterSet_t USE_BOOST_UNIT
   DATAFILES Sample.cfg
 )
+cet_test(printing_helpers_t)
 
 cet_test(get_sequence_elements_t USE_BOOST_UNIT
   DATAFILES Sample.cfg

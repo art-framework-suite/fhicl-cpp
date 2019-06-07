@@ -21,7 +21,7 @@ project(fhiclcpp)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # cetbuildtools contains our cmake modules
-find_package(cetbuildtools REQUIRED)
+find_package(cetbuildtools 7.13.01 REQUIRED)
 
 include(CetCMakeEnv)
 cet_cmake_env()
@@ -64,18 +64,17 @@ endif()
 cet_report_compiler_flags()
 
 # these are minimum required versions, not the actual product versions
-find_ups_product(cetbuildtools v4_14_01)
 find_ups_product(cetlib_except v1_00_00)
 find_ups_product(cetlib v2_01_00)
 find_ups_product(python v3_7_2)
 find_ups_product(sqlite v3_07_15_00)
-find_ups_boost(v1_50_0)
 
 # ----------------------------------------------------------------------
 # Python stuff
 
 #cet_find_library(PYTHON NAMES python2.7 PATHS ENV PYTHON_LIB NO_DEFAULT_PATH)
 cet_find_library(PYTHON NAMES python3.7 PATHS ENV PYTHON_LIB NO_DEFAULT_PATH)
+find_ups_boost(BOOST_TARGETS v1_50_0)
 
 # ----------------------------------------------------------------------
 # SQLite

@@ -1,5 +1,8 @@
 #include "fhiclcpp/detail/printing_helpers.h"
+#include "fhiclcpp/exception.h"
 
+#include <cassert>
+#include <iterator>
 #include <limits>
 #include <regex>
 
@@ -100,4 +103,25 @@ atom::value(std::any const& a)
   using ps_atom_t = std::string;
   std::string const str = std::any_cast<ps_atom_t>(a);
   return str == std::string(9, '\0') ? "@nil" : str;
+}
+
+//==================================================================
+// miscellany
+
+std::size_t
+detail::index_for_sequence_element(std::string const& name)
+{
+  if (!is_sequence_element(name)) {
+    throw exception{error::other,
+                    "An error occurred while converting a name to a sequence "
+                    "element index.\n"}
+      << "The name '" << name << "' does not correspond to a sequence element.";
+  }
+  auto const b = name.find_last_of("[");
+  assert(b != std::string::npos);
+  auto const e = name.find_last_of("]");
+  assert(e == name.length() - 1);
+  auto const start = b + 1;
+  assert(start < e);
+  return std::stoull(name.substr(start, e - start));
 }
