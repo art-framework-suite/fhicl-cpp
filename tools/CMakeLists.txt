@@ -4,13 +4,13 @@ include(CetMakeCompletions)
 cet_make_exec(fhicl-dump
   SOURCE fhicl-dump.cc
   LIBRARIES
-  cetlib fhiclcpp ${Boost_PROGRAM_OPTIONS_LIBRARY}
+  cetlib fhiclcpp Boost::program_options
   )
 
 cet_make_exec(fhicl-expand
   SOURCE fhicl-expand.cc
   LIBRARIES
-  cetlib cetlib_except ${Boost_PROGRAM_OPTIONS_LIBRARY}
+  cetlib cetlib_except Boost::program_options
   )
 
 cet_make_exec(fhicl-write-db

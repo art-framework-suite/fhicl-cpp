@@ -102,11 +102,6 @@ namespace fhicl {
       {
         mdata_.set_par_style(vt);
       }
-      void
-      set_key(std::string const& key)
-      {
-        mdata_.set_key(key);
-      }
 
     private:
       virtual void do_set_value(fhicl::ParameterSet const&,
