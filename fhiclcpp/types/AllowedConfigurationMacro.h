@@ -10,12 +10,12 @@
 // =====================================================================
 
 #include "cetlib/compiler_macros.h"
-#include "cetlib/metaprogramming.h"
 #include "fhiclcpp/types/ConfigurationTable.h"
 #include "fhiclcpp/types/Name.h"
 
 #include <memory>
 #include <string>
+#include <type_traits>
 
 namespace fhicl::detail {
 
@@ -29,9 +29,7 @@ namespace fhicl::detail {
   };
 
   template <class T>
-  struct AllowedConfiguration<
-    T,
-    cet::enable_if_type_exists_t<typename T::Parameters>> {
+  struct AllowedConfiguration<T, std::void_t<typename T::Parameters>> {
     static std::unique_ptr<fhicl::ConfigurationTable>
     get(std::string const& name)
     {
