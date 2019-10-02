@@ -29,7 +29,9 @@ namespace fhicl::detail {
   };
 
   template <class T>
-  struct AllowedConfiguration<T, std::void_t<typename T::Parameters>> {
+  struct AllowedConfiguration<T,
+                              std::void_t<decltype(typename T::Parameters{
+                                std::declval<fhicl::Name>()})>> {
     static std::unique_ptr<fhicl::ConfigurationTable>
     get(std::string const& name)
     {

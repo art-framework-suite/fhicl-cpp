@@ -118,7 +118,6 @@ namespace fhicl {
     bool
     operator()(value_type& t) const
     {
-
       if (!has_value_)
         return false;
 
