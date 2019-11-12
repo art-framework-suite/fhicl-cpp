@@ -1,5 +1,5 @@
-parent fhiclcpp v4_10_00
-defaultqual e17
+parent fhiclcpp v4_11_00
+defaultqual e19
 #
 fcldir -
 
@@ -10,12 +10,12 @@ table_fragment_end
 #
 # define product/version pairs
 product         version
-cetlib          v3_08_00
+cetlib          v3_09_00
 pybind11        v2_2_4
-python          v2_7_15a        -default-
-python          v3_7_2          py3
+python          v3_7_2          -default-
+python          v2_7_15a        py2
 
-cetbuildtools   v7_13_02        -       only_for_build
+cetbuildtools   v7_14_00        -       only_for_build
 end_product_list
 
 table_fragment_begin
@@ -25,22 +25,14 @@ table_fragment_end
 
 # Matrix of qualifiers versus dependent products
 qualifier       cetlib          pybind11 python notes
-e17:debug       e17:debug       -nq-     -nq-
-e17:prof        e17:prof        -nq-     -nq-
 e19:debug       e19:debug       -nq-     -nq-
 e19:prof        e19:prof        -nq-     -nq-
-c2:debug        c2:debug        -nq-     -nq-
-c2:prof         c2:prof         -nq-     -nq-
 c7:debug        c7:debug        -nq-     -nq-
 c7:prof         c7:prof         -nq-     -nq-
-e17:debug:py3   e17:debug       -nq-     -nq-
-e17:prof:py3    e17:prof        -nq-     -nq-
-e19:debug:py3   e19:debug       -nq-     -nq-
-e19:prof:py3    e19:prof        -nq-     -nq-
-c2:debug:py3    c2:debug        -nq-     -nq-
-c2:prof:py3     c2:prof         -nq-     -nq-
-c7:debug:py3    c7:debug        -nq-     -nq-
-c7:prof:py3     c7:prof         -nq-     -nq-
+e19:debug:py2   e19:debug       -nq-     -nq-
+e19:prof:py2    e19:prof        -nq-     -nq-
+c7:debug:py2    c7:debug        -nq-     -nq-
+c7:prof:py2     c7:prof         -nq-     -nq-
 end_qualifier_list
 
 # Local Variables:
