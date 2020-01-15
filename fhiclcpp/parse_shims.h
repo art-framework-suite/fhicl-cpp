@@ -107,3 +107,7 @@ namespace boost {
   }
 }
 #endif /* fhiclcpp_parse_shims_h */
+
+// Local Variables:
+// mode: c++
+// End:

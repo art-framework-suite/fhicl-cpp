@@ -6,6 +6,7 @@
 #include "cetlib/container_algorithms.h"
 #include "fhiclcpp/ParameterSetRegistry.h"
 #include "fhiclcpp/make_ParameterSet.h"
+#include "fhiclcpp/test/boost_test_print_pset.h"
 #include "hep_concurrency/RecursiveMutex.h"
 
 #include "sqlite3.h"
@@ -42,18 +43,18 @@ BOOST_AUTO_TEST_CASE(Typedefs)
 
 BOOST_AUTO_TEST_CASE(MakeAndAdd)
 {
-  BOOST_REQUIRE(ParameterSetRegistry::empty());
-  BOOST_REQUIRE_EQUAL(ParameterSetRegistry::size(), 0ul);
+  BOOST_TEST_REQUIRE(ParameterSetRegistry::empty());
+  BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == 0ul);
   ParameterSet pset;
   make_ParameterSet(
     "x: 5 y: { a: \"oops\" b: 9 } z: { c: \"Looooong striiiiiing.\" }", pset);
-  BOOST_REQUIRE(!ParameterSetRegistry::empty());
-  BOOST_REQUIRE_EQUAL(ParameterSetRegistry::size(), 2ul);
+  BOOST_TEST_REQUIRE(!ParameterSetRegistry::empty());
+  BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == 2ul);
   ParameterSetRegistry::put(pset);
-  BOOST_REQUIRE_EQUAL(ParameterSetRegistry::size(), 3ul);
+  BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == 3ul);
   auto ps2 = ParameterSetRegistry::get(pset.id());
-  BOOST_REQUIRE_EQUAL(pset.id(), ps2.id());
-  BOOST_REQUIRE(pset == ps2);
+  BOOST_TEST_REQUIRE(pset.id() == ps2.id());
+  BOOST_TEST_REQUIRE(pset == ps2);
 }
 
 BOOST_AUTO_TEST_CASE(AddFromIterAndGet)
@@ -68,7 +69,7 @@ BOOST_AUTO_TEST_CASE(AddFromIterAndGet)
     make_ParameterSet(s, pset);
     v1.emplace_back(pset);
   }
-  BOOST_REQUIRE_EQUAL(ParameterSetRegistry::size(), expected_size);
+  BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == expected_size);
   vector<ParameterSetRegistry::value_type> v2;
   string const f{"filler"};
   for (auto p : v1) {
@@ -77,22 +78,22 @@ BOOST_AUTO_TEST_CASE(AddFromIterAndGet)
   }
   expected_size += 3;
   ParameterSetRegistry::put(v1.cbegin(), v1.cend());
-  BOOST_REQUIRE_EQUAL(ParameterSetRegistry::size(), expected_size);
+  BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == expected_size);
   expected_size += 3;
   ParameterSetRegistry::put(v2.cbegin(), v2.cend());
-  BOOST_REQUIRE_EQUAL(ParameterSetRegistry::size(), expected_size);
+  BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == expected_size);
   ParameterSet pset;
   ParameterSetRegistry::get(v2.front().first, pset);
-  BOOST_REQUIRE(pset == v2.front().second);
+  BOOST_TEST_REQUIRE(pset == v2.front().second);
   auto p2 = ParameterSetRegistry::get(v2.back().first);
-  BOOST_REQUIRE(p2 == v2.back().second);
+  BOOST_TEST_REQUIRE(p2 == v2.back().second);
 }
 
 BOOST_AUTO_TEST_CASE(TestImport)
 {
   atomic<size_t> expected_size{ParameterSetRegistry::size()};
   sqlite3* db = nullptr;
-  BOOST_REQUIRE(!sqlite3_open(":memory:", &db));
+  BOOST_TEST_REQUIRE(!sqlite3_open(":memory:", &db));
   throwOnSQLiteFailure(db);
   char* errMsg = nullptr;
   sqlite3_exec(db,
@@ -174,11 +175,11 @@ BOOST_AUTO_TEST_CASE(TestImport)
       });
     cet::SimultaneousFunctionSpawner sfs{tasks};
   }
-  BOOST_REQUIRE_EQUAL(ParameterSetRegistry::size(), expected_size);
+  BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == expected_size);
   ParameterSetRegistry::importFrom(db);
   // Make sure the registry didn't expand as a result of the insert.
-  BOOST_REQUIRE_EQUAL(ParameterSetRegistry::size(), expected_size);
-  BOOST_REQUIRE_EQUAL(sqlite3_close(db), SQLITE_OK);
+  BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == expected_size);
+  BOOST_TEST_REQUIRE(sqlite3_close(db) == SQLITE_OK);
   // Read from registry in parallel
   {
     RecursiveMutex m{"ParameterSetRegistry_t::m"};
@@ -189,14 +190,14 @@ BOOST_AUTO_TEST_CASE(TestImport)
           // FIXME: Not thread-safe according to tsan!
           RecursiveMutexSentry sentry{m, "test"};
           // Should be in registry already.
-          BOOST_REQUIRE(ParameterSetRegistry::has(id));
+          BOOST_TEST_REQUIRE(ParameterSetRegistry::has(id));
         }
       } else {
         {
           // FIXME: Not thread-safe according to tsan!
           RecursiveMutexSentry sentry{m, "test"};
           // Make sure the import didn't inject them into the registry.
-          BOOST_REQUIRE(!ParameterSetRegistry::has(id));
+          BOOST_TEST_REQUIRE(!ParameterSetRegistry::has(id));
         }
         // We expect the get() call below to increase the size of the
         // registry by pulling the entry in from the backing DB.
@@ -206,7 +207,7 @@ BOOST_AUTO_TEST_CASE(TestImport)
         // FIXME: Not thread-safe according to tsan!
         RecursiveMutexSentry sentry{m, "test"};
         auto const& p2 = ParameterSetRegistry::get(id);
-        BOOST_REQUIRE(p2 == p.first);
+        BOOST_TEST_REQUIRE(p2 == p.first);
       }
     };
     vector<function<void()>> tasks;
@@ -215,14 +216,14 @@ BOOST_AUTO_TEST_CASE(TestImport)
         return [read_from_registry, p] { read_from_registry(p); };
       });
     cet::SimultaneousFunctionSpawner sfs{tasks};
-    BOOST_REQUIRE_EQUAL(ParameterSetRegistry::size(), expected_size);
+    BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == expected_size);
   }
 }
 
 BOOST_AUTO_TEST_CASE(TestExport)
 {
   sqlite3* db = nullptr;
-  BOOST_REQUIRE(!sqlite3_open(":memory:", &db));
+  BOOST_TEST_REQUIRE(!sqlite3_open(":memory:", &db));
   // Check empty!
   sqlite3_stmt* stmt = nullptr;
   // Make sure we get our own fresh and empty DB.
@@ -232,15 +233,15 @@ BOOST_AUTO_TEST_CASE(TestExport)
     -1,
     &stmt,
     nullptr);
-  BOOST_REQUIRE_EQUAL(sqlite3_step(stmt), SQLITE_DONE); // No rows.
+  BOOST_TEST_REQUIRE(sqlite3_step(stmt) == SQLITE_DONE); // No rows.
   sqlite3_reset(stmt);
   ParameterSetRegistry::exportTo(db);
-  BOOST_REQUIRE_EQUAL(sqlite3_step(stmt), SQLITE_ROW); // Found table.
+  BOOST_TEST_REQUIRE(sqlite3_step(stmt) == SQLITE_ROW); // Found table.
   sqlite3_finalize(stmt);
   sqlite3_prepare_v2(
     db, "SELECT COUNT(*) from ParameterSets;", -1, &stmt, nullptr);
-  BOOST_REQUIRE_EQUAL(sqlite3_step(stmt), SQLITE_ROW);
-  BOOST_REQUIRE_EQUAL(sqlite3_column_int64(stmt, 0), 13l);
+  BOOST_TEST_REQUIRE(sqlite3_step(stmt) == SQLITE_ROW);
+  BOOST_TEST_REQUIRE(sqlite3_column_int64(stmt, 0) == 13l);
   sqlite3_finalize(stmt);
   sqlite3_close(db);
 }

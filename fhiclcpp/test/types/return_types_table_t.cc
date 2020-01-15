@@ -62,7 +62,7 @@ namespace {
   require_type_as(T& t [[maybe_unused]])
   {
     auto rt = t();
-    BOOST_CHECK((std::is_same<R, decltype(rt)>::value));
+    BOOST_TEST((std::is_same<R, decltype(rt)>::value));
   }
 
   struct S {
