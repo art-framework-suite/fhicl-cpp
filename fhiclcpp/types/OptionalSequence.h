@@ -55,7 +55,7 @@ namespace fhicl {
     }
 
     bool
-    hasValue() const
+    hasValue() const noexcept
     {
       return has_value_;
     }
@@ -128,6 +128,12 @@ namespace fhicl {
 
       std::swap(result, t);
       return true;
+    }
+
+    bool
+    hasValue() const noexcept
+    {
+      return has_value_;
     }
 
   private:

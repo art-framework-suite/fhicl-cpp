@@ -91,6 +91,7 @@ BOOST_AUTO_TEST_CASE(optTable_t)
 BOOST_AUTO_TEST_CASE(optSeqVector_t1)
 {
   std::vector<int> intList;
+  BOOST_CHECK(!config().list1.hasValue());
   BOOST_CHECK(!config().list1(intList));
 }
 
@@ -99,6 +100,7 @@ BOOST_AUTO_TEST_CASE(optSeqVector_t2)
 {
   std::array<int, 4> intList;
   auto ref = {1, 2, 4, 8};
+  BOOST_CHECK(config().list2.hasValue());
   BOOST_CHECK(config().list2(intList));
   CET_CHECK_EQUAL_COLLECTIONS(intList, ref);
 }
