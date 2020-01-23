@@ -15,7 +15,7 @@ pybind11        v2_2_4
 python          v3_7_2          -default-
 python          v2_7_15a        py2
 
-cetbuildtools   v7_14_00        -       only_for_build
+cetbuildtools   v7_15_00        -       only_for_build
 end_product_list
 
 table_fragment_begin
