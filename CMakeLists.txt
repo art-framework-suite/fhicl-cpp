@@ -14,9 +14,9 @@
 #  make install
 #  make package (builds distribution tarfile)
 
-cmake_minimum_required(VERSION 3.11)  # use cmake 3.11 or later
+cmake_minimum_required(VERSION 3.14..3.14 FATAL_ERROR)
 
-project(fhiclcpp)
+project(fhiclcpp LANGUAGES CXX)
 
 # cetbuildtools contains our cmake modules
 find_package(cetbuildtools 7.13.01 REQUIRED)
