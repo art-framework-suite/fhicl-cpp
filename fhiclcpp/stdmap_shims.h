@@ -352,3 +352,7 @@ namespace shims {
 }
 
 #endif /* fhiclcpp_stdmap_shims_h */
+
+// Local Variables:
+// mode: c++
+// End:

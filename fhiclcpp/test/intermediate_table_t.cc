@@ -29,19 +29,19 @@ BOOST_AUTO_TEST_CASE(main)
   table.put("table.t1.val", "oops");
   BOOST_CHECK_NO_THROW(table.erase("table.t1.waldo"));
   BOOST_CHECK_NO_THROW(table.erase("table.t1.val"));
-  BOOST_CHECK(!table.exists("table.t1.val"));
+  BOOST_TEST(!table.exists("table.t1.val"));
   BOOST_CHECK_THROW(table.erase("table.val1.valX"), fhicl::exception);
-  BOOST_CHECK_EQUAL(table.get<std::string>("string1"), "string");
-  BOOST_CHECK_EQUAL(table.get<std::string>("string2"), "string");
-  BOOST_CHECK_EQUAL(table.get<std::complex<double>>("complex"),
-                    std::complex<double>(-3, -0.5));
-  BOOST_CHECK_EQUAL(table.get<sequence_t const&>("sequence").size(), 7u);
-  //   BOOST_CHECK_EQUAL(table.get<sequence_t &>("sequence").size(), 7u);
-  BOOST_CHECK_EQUAL(table.get<int>("sequence[3]"), 20);
+  BOOST_TEST(table.get<std::string>("string1") == "string");
+  BOOST_TEST(table.get<std::string>("string2") == "string");
+  BOOST_TEST(table.get<std::complex<double>>("complex") ==
+             std::complex<double>(-3, -0.5));
+  BOOST_TEST(table.get<sequence_t const&>("sequence").size() == 7u);
+  //   BOOST_TEST(table.get<sequence_t &>("sequence").size() ==  7u);
+  BOOST_TEST(table.get<int>("sequence[3]") == 20);
   BOOST_CHECK_THROW(table.get<int>("sequence[5]"), fhicl::exception); // Nil
-  BOOST_CHECK_EQUAL(table.get<table_t const&>("table").size(), 2u);
-  BOOST_CHECK_EQUAL(table.get<table_t const&>("table.t1").size(), 0u);
-  //  BOOST_CHECK_EQUAL(table.get<table_t &>("table").size(), 2u);
+  BOOST_TEST(table.get<table_t const&>("table").size() == 2u);
+  BOOST_TEST(table.get<table_t const&>("table.t1").size() == 0u);
+  //  BOOST_TEST(table.get<table_t &>("table").size() ==  2u);
   ParameterSet pset;
   make_ParameterSet(table, pset);
   std::cout << pset.to_indented_string() << std::endl;
@@ -56,8 +56,8 @@ q: { @table::w.x.y })";
   ParameterSet pset;
   make_ParameterSet(cfg, pset);
   std::cout << pset.to_indented_string() << std::endl;
-  BOOST_CHECK(pset.has_key("q.z"));
-  BOOST_CHECK(!pset.has_key("w"));
+  BOOST_TEST(pset.has_key("q.z"));
+  BOOST_TEST(!pset.has_key("w"));
 }
 
 BOOST_AUTO_TEST_CASE(prolog_erase_dotted)
@@ -69,8 +69,8 @@ q: { @table::w.x.y })";
   ParameterSet pset;
   make_ParameterSet(cfg, pset);
   std::cout << pset.to_indented_string() << std::endl;
-  BOOST_CHECK(pset.has_key("q.z"));
-  BOOST_CHECK(!pset.has_key("w"));
+  BOOST_TEST(pset.has_key("q.z"));
+  BOOST_TEST(!pset.has_key("w"));
 }
 
 BOOST_AUTO_TEST_CASE(prolog_nested_partial_dup_nested)
@@ -82,8 +82,8 @@ w: { b: { c: 6 } })";
   ParameterSet pset;
   make_ParameterSet(cfg, pset);
   std::cout << pset.to_indented_string() << std::endl;
-  BOOST_CHECK(pset.has_key("w.b"));
-  BOOST_CHECK(!pset.has_key("w.x"));
+  BOOST_TEST(pset.has_key("w.b"));
+  BOOST_TEST(!pset.has_key("w.x"));
 }
 
 BOOST_AUTO_TEST_CASE(prolog_nested_partial_dup_dotted)
@@ -95,8 +95,8 @@ w.b.c: 6)";
   ParameterSet pset;
   make_ParameterSet(cfg, pset);
   std::cout << pset.to_indented_string() << std::endl;
-  BOOST_CHECK(pset.has_key("w.b"));
-  BOOST_CHECK(!pset.has_key("w.x"));
+  BOOST_TEST(pset.has_key("w.b"));
+  BOOST_TEST(!pset.has_key("w.x"));
 }
 
 BOOST_AUTO_TEST_CASE(prolog_dotted_partial_dup_nested)
@@ -108,8 +108,8 @@ w: { b: { c: 6 } })";
   ParameterSet pset;
   make_ParameterSet(cfg, pset);
   std::cout << pset.to_indented_string() << std::endl;
-  BOOST_CHECK(pset.has_key("w.b"));
-  BOOST_CHECK(!pset.has_key("w.x"));
+  BOOST_TEST(pset.has_key("w.b"));
+  BOOST_TEST(!pset.has_key("w.x"));
 }
 
 BOOST_AUTO_TEST_CASE(prolog_dotted_partial_dup_dotted)
@@ -121,8 +121,8 @@ w.b.c: 6)";
   ParameterSet pset;
   make_ParameterSet(cfg, pset);
   std::cout << pset.to_indented_string() << std::endl;
-  BOOST_CHECK(pset.has_key("w.b"));
-  BOOST_CHECK(!pset.has_key("w.x"));
+  BOOST_TEST(pset.has_key("w.b"));
+  BOOST_TEST(!pset.has_key("w.x"));
 }
 
 BOOST_AUTO_TEST_CASE(prolog_nested_dup_nested)
@@ -134,8 +134,8 @@ w: { x: { c: 6 } })";
   ParameterSet pset;
   make_ParameterSet(cfg, pset);
   std::cout << pset.to_indented_string() << std::endl;
-  BOOST_CHECK(pset.has_key("w.x.c"));
-  BOOST_CHECK(!pset.has_key("w.x.y"));
+  BOOST_TEST(pset.has_key("w.x.c"));
+  BOOST_TEST(!pset.has_key("w.x.y"));
 }
 
 BOOST_AUTO_TEST_CASE(prolog_nested_dup_dotted)
@@ -147,8 +147,8 @@ w.x.c: 6)";
   ParameterSet pset;
   make_ParameterSet(cfg, pset);
   std::cout << pset.to_indented_string() << std::endl;
-  BOOST_CHECK(pset.has_key("w.x.c"));
-  BOOST_CHECK(!pset.has_key("w.x.y"));
+  BOOST_TEST(pset.has_key("w.x.c"));
+  BOOST_TEST(!pset.has_key("w.x.y"));
 }
 
 BOOST_AUTO_TEST_CASE(prolog_dotted_dup_nested)
@@ -160,8 +160,8 @@ w: { x: { c: 6 } })";
   ParameterSet pset;
   make_ParameterSet(cfg, pset);
   std::cout << pset.to_indented_string() << std::endl;
-  BOOST_CHECK(pset.has_key("w.x.c"));
-  BOOST_CHECK(!pset.has_key("w.x.y"));
+  BOOST_TEST(pset.has_key("w.x.c"));
+  BOOST_TEST(!pset.has_key("w.x.y"));
 }
 
 BOOST_AUTO_TEST_CASE(prolog_dotted_dup_dotted)
@@ -173,8 +173,8 @@ w.x.c: 6)";
   ParameterSet pset;
   make_ParameterSet(cfg, pset);
   std::cout << pset.to_indented_string() << std::endl;
-  BOOST_CHECK(pset.has_key("w.x.c"));
-  BOOST_CHECK(!pset.has_key("w.x.y"));
+  BOOST_TEST(pset.has_key("w.x.c"));
+  BOOST_TEST(!pset.has_key("w.x.y"));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

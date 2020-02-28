@@ -10,7 +10,7 @@ namespace fhicl::detail {
                                          std::size_t provided);
 }
 
-#endif
+#endif /* fhiclcpp_types_detail_check_nargs_for_bounded_sequences_h */
 
 // Local variables:
 // mode: c++
