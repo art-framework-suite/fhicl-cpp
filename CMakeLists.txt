@@ -76,6 +76,6 @@ add_subdirectory(fhiclcpp)
 add_subdirectory(python)
 add_subdirectory(tools)
 add_subdirectory(ups)
-
+add_subdirectory(cmakeConfig)
 # packaging utility
 include(UseCPack)
