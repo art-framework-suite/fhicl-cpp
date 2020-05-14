@@ -155,20 +155,24 @@ namespace {
   canon_num(std::string const& num)
   {
     std::string result;
-    if (!cet::canonical_number(num, result)) {
-      result = "####";
-    }
-    return result;
+    return cet::canonical_number(num, result) ?
+             result :
+             throw fhicl::exception(fhicl::error::parse_error)
+               << "The string '" << num
+               << "' is not representable as a canonical number.";
   }
 
   std::string
   canon_str(std::string const& str)
   {
     std::string result;
-    if (!cet::canonical_string(str, result)) {
-      result = "oops";
-    }
-    return result;
+    return cet::canonical_string(str, result) ?
+             result :
+             throw fhicl::exception(fhicl::error::parse_error)
+               << "The string " + str +
+                    " is not representable as a canonical string.\n"
+               << "It is likely you have an unescaped (or incorrectly escaped) "
+                  "character.";
   }
 
   void
