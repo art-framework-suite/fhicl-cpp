@@ -64,7 +64,6 @@ cet_report_compiler_flags()
 # these are minimum required versions, not the actual product versions
 find_ups_product(cetlib_except v1_00_00)
 find_ups_product(cetlib v2_01_00)
-find_ups_product(python)
 find_ups_product(sqlite v3_07_15_00)
 find_ups_boost(BOOST_TARGETS v1_50_0)
 
@@ -73,7 +72,6 @@ cet_find_library(SQLITE3 NAMES sqlite3_ups PATHS ENV SQLITE_LIB NO_DEFAULT_PATH)
 
 # source code
 add_subdirectory(fhiclcpp)
-add_subdirectory(python)
 add_subdirectory(tools)
 add_subdirectory(ups)
 

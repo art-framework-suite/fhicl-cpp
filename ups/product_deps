@@ -3,16 +3,10 @@ defaultqual e19
 #
 fcldir -
 
-table_fragment_begin
-   pathPrepend(PYTHONPATH, ${FHICLCPP_LIB})
-table_fragment_end
-
 #
 # define product/version pairs
 product         version		<format=2>
 cetlib          v3_10_00
-pybind11        v2_5_0a
-python          v3_8_3
 cetbuildtools   v7_17_00        -       only_for_build
 end_product_list
 
@@ -22,13 +16,13 @@ table_fragment_begin
 table_fragment_end
 
 # Matrix of qualifiers versus dependent products
-qualifier       cetlib          pybind11 python notes
-e20:debug       e20:debug       -nq-     -nq-
-e20:prof        e20:prof        -nq-     -nq-
-e19:debug       e19:debug       -nq-     -nq-
-e19:prof        e19:prof        -nq-     -nq-
-c7:debug        c7:debug        -nq-     -nq-
-c7:prof         c7:prof         -nq-     -nq-
+qualifier       cetlib      notes
+e20:debug       e20:debug
+e20:prof        e20:prof
+e19:debug       e19:debug
+e19:prof        e19:prof
+c7:debug        c7:debug
+c7:prof         c7:prof
 end_qualifier_list
 
 # Local Variables:
