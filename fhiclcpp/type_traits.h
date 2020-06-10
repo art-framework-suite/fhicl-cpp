@@ -49,6 +49,11 @@ namespace fhicl {
   template <typename T, typename... ARGS>
   class OptionalTupleAs;
 
+  template <typename T, typename Config>
+  class TableAs;
+  template <typename T, typename Config>
+  class OptionalTableAs;
+
   class DelegatedParameter;
   class OptionalDelegatedParameter;
 }
@@ -232,6 +237,13 @@ namespace tt {
   template <typename T, typename... ARGS>
   struct is_fhicl_type<fhicl::OptionalTupleAs<T(ARGS...)>> : std::true_type {};
 
+  // ... TableAs
+  template <typename T, typename Config>
+  struct is_fhicl_type<fhicl::TableAs<T, Config>> : std::true_type {};
+
+  template <typename T, typename Config>
+  struct is_fhicl_type<fhicl::OptionalTableAs<T, Config>> : std::true_type {};
+
   template <typename T>
   inline constexpr bool is_fhicl_type_v{is_fhicl_type<T>::value};
 
@@ -258,6 +270,11 @@ namespace tt {
     using type = fhicl::Tuple<ARGS...>;
   };
 
+  template <typename T, typename Config>
+  struct fhicl_type_impl<fhicl::TableAs<T, Config>> {
+    using type = fhicl::TableAs<T, Config>;
+  };
+
   template <typename T, typename... ARGS>
   struct fhicl_type_impl<fhicl::TupleAs<T(ARGS...)>> {
     using type = fhicl::TupleAs<T(ARGS...)>;
@@ -281,6 +298,11 @@ namespace tt {
   template <typename... ARGS>
   struct fhicl_type_impl<fhicl::OptionalTuple<ARGS...>> {
     using type = fhicl::OptionalTuple<ARGS...>;
+  };
+
+  template <typename T, typename Config>
+  struct fhicl_type_impl<fhicl::OptionalTableAs<T, Config>> {
+    using type = fhicl::OptionalTableAs<T, Config>;
   };
 
   template <typename T, typename... ARGS>
@@ -318,6 +340,11 @@ namespace tt {
   template <typename... ARGS>
   struct return_type_impl<fhicl::Tuple<ARGS...>> {
     using value_type = typename fhicl::Tuple<ARGS...>::value_type;
+  };
+
+  template <typename T, typename Config>
+  struct return_type_impl<fhicl::TableAs<T, Config>> {
+    using value_type = typename fhicl::TableAs<T, Config>::value_type;
   };
 
   template <typename T, typename... ARGS>
