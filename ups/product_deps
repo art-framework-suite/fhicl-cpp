@@ -13,6 +13,7 @@ end_product_list
 table_fragment_begin
     sourceRequired(${FHICLCPP_FQ_DIR}/bin/fhicl-dump_completions, NO_UPS_ENV)
     sourceRequired(${FHICLCPP_FQ_DIR}/bin/fhicl-expand_completions, NO_UPS_ENV)
+    sourceRequired(${FHICLCPP_FQ_DIR}/bin/fhicl-inspect_completions, NO_UPS_ENV)
 table_fragment_end
 
 # Matrix of qualifiers versus dependent products

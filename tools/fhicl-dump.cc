@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "boost/program_options.hpp"
+#include "cetlib/ostream_handle.h"
 #include "cetlib/parsed_program_options.h"
 #include "cetlib_except/demangle.h"
 #include "fhiclcpp/ParameterSet.h"
@@ -36,7 +37,7 @@ namespace {
     bool quiet{false};
     string output_filename;
     string input_filename;
-    int lookup_policy{};
+    std::unique_ptr<cet::filepath_maker> policy;
     string lookup_path;
   };
 
@@ -44,9 +45,6 @@ namespace {
 
   fhicl::ParameterSet form_pset(string const& filename,
                                 cet::filepath_maker& lookup_policy);
-
-  std::unique_ptr<cet::filepath_maker> get_policy(int lookup_policy,
-                                                  string const& lookup_path);
 }
 
 //======================================================================
@@ -71,31 +69,17 @@ main(int argc, char** argv)
     }
   }
 
-  auto const policy = get_policy(opts.lookup_policy, opts.lookup_path);
-
-  ParameterSet pset;
-  try {
-    pset = form_pset(opts.input_filename, *policy);
-  }
-  catch (cet::exception const& e) {
-    std::cerr << e.what() << '\n';
-    return 4;
-  }
-  catch (...) {
-    std::cerr << "Unknown exception\n";
-    return 5;
-  }
+  auto const pset = form_pset(opts.input_filename, *opts.policy);
 
   if (opts.quiet)
     return 0;
 
-  std::ofstream ofs{opts.output_filename};
-  std::ostream& os = opts.output_filename.empty() ? std::cout : ofs;
+  auto os = cet::select_stream(opts.output_filename, std::cout);
 
   os << "# Produced from '" << argv[0] << "' using:\n"
      << "#   Input  : " << opts.input_filename << '\n'
      << "#   Policy : "
-     << cet::demangle_symbol(typeid(decltype(*policy)).name()) << '\n'
+     << cet::demangle_symbol(typeid(decltype(*opts.policy)).name()) << '\n'
      << "#   Path   : \"" << opts.lookup_path << "\"\n\n"
      << pset.to_indented_string(0, opts.mode);
 }
@@ -130,15 +114,12 @@ namespace {
          "assignment (mutually exclusive with 'annotate' option)")
       ("quiet,q", "suppress output to STDOUT")
       ("lookup-policy,l",
-         bpo::value<int>(&opts.lookup_policy)->default_value(1),
-         "lookup policy code:"
-         "\n  0 => cet::filepath_maker"
-         "\n  1 => cet::filepath_lookup"
-         "\n  2 => cet::filepath_lookup_nonabsolute"
-         "\n  3 => cet::filepath_lookup_after1")
+         bpo::value<string>()->default_value("permissive"),
+         "lookup policy code (see '--policy-types')")
       ("path,p",
          bpo::value<std::string>(&opts.lookup_path)->default_value(fhicl_env_var),
-         "path or environment variable to be used by lookup-policy");
+         "path or environment variable to be used by lookup-policy")
+      ("supported-policies", "list the supported file lookup policies");
     // clang-format on
 
     bpo::positional_options_description p;
@@ -148,6 +129,12 @@ namespace {
 
     if (vm.count("help")) {
       std::cout << desc << '\n';
+      throw cet::exception(help);
+    }
+
+    cet::lookup_policy_selector const supported_policies{};
+    if (vm.count("supported-policies")) {
+      std::cout << supported_policies.help_message();
       throw cet::exception(help);
     }
 
@@ -164,6 +151,11 @@ namespace {
                                       "'--prefix-annotate' options.\n";
     }
 
+    if (vm.count("lookup-policy") > 0) {
+      opts.policy = supported_policies.select(
+        vm["lookup-policy"].as<std::string>(), opts.lookup_path);
+    }
+
     if (annotate)
       opts.mode = print_mode::annotated;
     if (prefix_annotate)
@@ -175,26 +167,6 @@ namespace {
       throw cet::exception(config) << err_stream.str();
     }
     return opts;
-  }
-
-  std::unique_ptr<cet::filepath_maker>
-  get_policy(int const lookup_policy, std::string const& lookup_path)
-  {
-    switch (lookup_policy) {
-      case 0:
-        return std::make_unique<cet::filepath_maker>();
-      case 1:
-        return std::make_unique<cet::filepath_lookup>(lookup_path);
-      case 2:
-        return std::make_unique<cet::filepath_lookup_nonabsolute>(lookup_path);
-      case 3:
-        return std::make_unique<cet::filepath_lookup_after1>(lookup_path);
-      default:
-        std::ostringstream err_stream;
-        err_stream << "Error: command line lookup-policy " << lookup_policy
-                   << " is unknown; choose 0, 1, 2, or 3\n";
-        throw std::runtime_error(err_stream.str());
-    }
   }
 
   fhicl::ParameterSet

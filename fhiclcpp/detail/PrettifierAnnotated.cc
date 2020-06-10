@@ -27,7 +27,7 @@ PrettifierAnnotated::before_action(key_t const& key,
 }
 
 void
-PrettifierAnnotated::after_action()
+PrettifierAnnotated::after_action(key_t const&)
 {
   cached_info_ = curr_info_;
 }

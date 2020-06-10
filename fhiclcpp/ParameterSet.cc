@@ -399,11 +399,11 @@ ParameterSet::walk(ParameterSetWalker& psw) const
         psw.do_atom(key, a);
       }
 
-      psw.do_after_action();
+      psw.do_after_action(key);
     };
 
-  for (const auto& entry : mapping_) {
-    act_on_element(entry.first, entry.second);
+  for (auto const& [key, value] : mapping_) {
+    act_on_element(key, value);
   }
 }
 
