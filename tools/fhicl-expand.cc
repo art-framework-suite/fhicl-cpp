@@ -19,6 +19,7 @@
 #include "cetlib/container_algorithms.h"
 #include "cetlib/filepath_maker.h"
 #include "cetlib/includer.h"
+#include "cetlib/parsed_program_options.h"
 #include "cetlib_except/exception.h"
 
 #include <fstream>
@@ -47,7 +48,7 @@ namespace {
     string lookup_path;
   };
 
-  Options process_arguments(int argc, char* argv[]);
+  Options process_arguments(int argc, char const* argv[]);
 
   std::unique_ptr<cet::filepath_maker> get_policy(
     int const lookup_policy,
@@ -62,7 +63,7 @@ namespace {
 // ===================================================================
 
 int
-main(int argc, char* argv[])
+main(int argc, char const* argv[])
 {
 
   Options opts;
@@ -77,8 +78,8 @@ main(int argc, char* argv[])
   }
 
   // Set output/error streams
-  std::ofstream outfile(opts.output_filename.c_str());
-  std::ofstream errfile(opts.error_filename.c_str());
+  std::ofstream outfile{opts.output_filename};
+  std::ofstream errfile{opts.error_filename};
 
   std::ostream& out = opts.output_filename.empty() ? std::cout : outfile;
   std::ostream& err = opts.error_filename.empty() ? std::cerr : errfile;
@@ -97,7 +98,7 @@ main(int argc, char* argv[])
 namespace {
 
   Options
-  process_arguments(int argc, char* argv[])
+  process_arguments(int argc, char const* argv[])
   {
     using namespace std;
     namespace bpo = boost::program_options;
@@ -106,38 +107,28 @@ namespace {
 
     bpo::options_description desc("fhicl-expand <options> [files]\nOptions");
     Options opts;
-
-    desc.add_options()("help,h", "produce help message")(
-      "inputs,i", bpo::value<strings>(&opts.input_filenames), "input files")(
-      "output,o", bpo::value<string>(&opts.output_filename), "output file")(
-      "error,e", bpo::value<string>(&opts.error_filename), "error file")(
-      "lookup-policy,l",
-      bpo::value<int>(&opts.lookup_policy)->default_value(1),
-      "lookup policy code:"
-      "\n  0 => cet::filepath_maker"
-      "\n  1 => cet::filepath_lookup"
-      "\n  2 => cet::filepath_lookup_nonabsolute"
-      "\n  3 => cet::filepath_lookup_after1")(
-      "path,p",
-      bpo::value<string>(&opts.lookup_path)->default_value(fhicl_env_var),
-      "path or environment variable to be used by lookup-policy");
+    // clang-format off
+    desc.add_options()
+      ("help,h", "produce help message")
+      ("inputs,i", bpo::value<strings>(&opts.input_filenames), "input files")
+      ("output,o", bpo::value<string>(&opts.output_filename), "output file")
+      ("error,e", bpo::value<string>(&opts.error_filename), "error file")
+      ("lookup-policy,l",
+         bpo::value<int>(&opts.lookup_policy)->default_value(1),
+         "lookup policy code:"
+         "\n  0 => cet::filepath_maker"
+         "\n  1 => cet::filepath_lookup"
+         "\n  2 => cet::filepath_lookup_nonabsolute"
+         "\n  3 => cet::filepath_lookup_after1")
+      ("path,p",
+         bpo::value<string>(&opts.lookup_path)->default_value(fhicl_env_var),
+        "path or environment variable to be used by lookup-policy");
+    // clang-format on
 
     bpo::positional_options_description pd;
     pd.add("inputs", -1);
 
-    bpo::variables_map varmap;
-    try {
-      bpo::store(
-        bpo::command_line_parser(argc, argv).options(desc).positional(pd).run(),
-        varmap);
-      bpo::notify(varmap);
-    }
-    catch (bpo::error& err) {
-      std::ostringstream err_stream;
-      err_stream << "Error processing command line in " << argv[0] << ": "
-                 << err.what() << '\n';
-      throw cet::exception(processing) << err_stream.str();
-    };
+    auto const varmap = cet::parsed_program_options(argc, argv, desc, pd);
 
     // Interpret options:
 

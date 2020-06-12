@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "boost/program_options.hpp"
+#include "cetlib/parsed_program_options.h"
 #include "cetlib_except/demangle.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/detail/print_mode.h"
@@ -39,7 +40,7 @@ namespace {
     string lookup_path;
   };
 
-  Options process_arguments(int argc, char* argv[]);
+  Options process_arguments(int argc, char const* argv[]);
 
   fhicl::ParameterSet form_pset(string const& filename,
                                 cet::filepath_maker& lookup_policy);
@@ -51,7 +52,7 @@ namespace {
 //======================================================================
 
 int
-main(int argc, char* argv[])
+main(int argc, char const* argv[])
 {
 
   Options opts;
@@ -62,7 +63,7 @@ main(int argc, char* argv[])
     if (e.category() == help)
       return 1;
     if (e.category() == processing) {
-      std::cerr << e.what() << '\n';
+      std::cerr << e.what();
       return 2;
     }
     if (e.category() == config) {
@@ -105,56 +106,46 @@ main(int argc, char* argv[])
 namespace {
 
   Options
-  process_arguments(int argc, char* argv[])
+  process_arguments(int argc, char const* argv[])
   {
     namespace bpo = boost::program_options;
 
     Options opts;
 
-    bool annotated{false};
-    bool prefix_annotated{false};
+    bool annotate{false};
+    bool prefix_annotate{false};
 
     bpo::options_description desc("fhicl-dump [-c] <file>\nOptions");
-    desc.add_options()("help,h", "produce this help message")(
-      "config,c", bpo::value<std::string>(&opts.input_filename), "input file")(
-      "output,o",
-      bpo::value<std::string>(&opts.output_filename),
-      "output file (default is STDOUT)")(
-      "annotated,a",
-      bpo::bool_switch(&annotated)->default_value(false, "false"),
-      "include source location annotations")(
-      "prefix-annotated",
-      bpo::bool_switch(&prefix_annotated)->default_value(false, "false"),
-      "include source location annotations on line preceding parameter "
-      "assignment (mutually exclusive with 'annotated' option)")(
-      "quiet,q", "suppress output to STDOUT")(
-      "lookup-policy,l",
-      bpo::value<int>(&opts.lookup_policy)->default_value(1),
-      "lookup policy code:"
-      "\n  0 => cet::filepath_maker"
-      "\n  1 => cet::filepath_lookup"
-      "\n  2 => cet::filepath_lookup_nonabsolute"
-      "\n  3 => cet::filepath_lookup_after1")(
-      "path,p",
-      bpo::value<std::string>(&opts.lookup_path)->default_value(fhicl_env_var),
-      "path or environment variable to be used by lookup-policy");
+    // clang-format off
+    desc.add_options()
+      ("help,h", "produce this help message")
+      ("config,c", bpo::value<std::string>(&opts.input_filename), "input file")
+      ("output,o", bpo::value<std::string>(&opts.output_filename),
+         "output file (default is STDOUT)")
+      ("annotate,a",
+         bpo::bool_switch(&annotate),
+         "include source location annotations")
+      ("prefix-annotate",
+         bpo::bool_switch(&prefix_annotate),
+         "include source location annotations on line preceding parameter "
+         "assignment (mutually exclusive with 'annotate' option)")
+      ("quiet,q", "suppress output to STDOUT")
+      ("lookup-policy,l",
+         bpo::value<int>(&opts.lookup_policy)->default_value(1),
+         "lookup policy code:"
+         "\n  0 => cet::filepath_maker"
+         "\n  1 => cet::filepath_lookup"
+         "\n  2 => cet::filepath_lookup_nonabsolute"
+         "\n  3 => cet::filepath_lookup_after1")
+      ("path,p",
+         bpo::value<std::string>(&opts.lookup_path)->default_value(fhicl_env_var),
+         "path or environment variable to be used by lookup-policy");
+    // clang-format on
 
     bpo::positional_options_description p;
     p.add("config", -1);
 
-    bpo::variables_map vm;
-    try {
-      bpo::store(
-        bpo::command_line_parser(argc, argv).options(desc).positional(p).run(),
-        vm);
-      bpo::notify(vm);
-    }
-    catch (bpo::error& err) {
-      std::ostringstream err_stream;
-      err_stream << "Error processing command line in " << argv[0] << ": "
-                 << err.what() << '\n';
-      throw cet::exception(processing) << err_stream.str();
-    };
+    auto const vm = cet::parsed_program_options(argc, argv, desc, p);
 
     if (vm.count("help")) {
       std::cout << desc << '\n';
@@ -162,21 +153,21 @@ namespace {
     }
 
     if (vm.count("quiet")) {
-      if (annotated || prefix_annotated) {
+      if (annotate || prefix_annotate) {
         throw cet::exception(config) << "Cannot specify both '--quiet' and "
-                                        "'--(prefix-)annotated' options.\n";
+                                        "'--(prefix-)annotate' options.\n";
       }
       opts.quiet = true;
     }
 
-    if (annotated && prefix_annotated) {
-      throw cet::exception(config) << "Cannot specify both '--annotated' and "
-                                      "'--prefix-annotated' options.\n";
+    if (annotate && prefix_annotate) {
+      throw cet::exception(config) << "Cannot specify both '--annotate' and "
+                                      "'--prefix-annotate' options.\n";
     }
 
-    if (annotated)
+    if (annotate)
       opts.mode = print_mode::annotated;
-    if (prefix_annotated)
+    if (prefix_annotate)
       opts.mode = print_mode::prefix_annotated;
 
     if (!vm.count("config")) {
