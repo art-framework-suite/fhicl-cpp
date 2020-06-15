@@ -40,7 +40,7 @@ namespace {
     string lookup_path;
   };
 
-  Options process_arguments(int argc, char const* argv[]);
+  Options process_arguments(int argc, char** argv);
 
   fhicl::ParameterSet form_pset(string const& filename,
                                 cet::filepath_maker& lookup_policy);
@@ -52,9 +52,8 @@ namespace {
 //======================================================================
 
 int
-main(int argc, char const* argv[])
+main(int argc, char** argv)
 {
-
   Options opts;
   try {
     opts = process_arguments(argc, argv);
@@ -106,7 +105,7 @@ main(int argc, char const* argv[])
 namespace {
 
   Options
-  process_arguments(int argc, char const* argv[])
+  process_arguments(int argc, char** argv)
   {
     namespace bpo = boost::program_options;
 
