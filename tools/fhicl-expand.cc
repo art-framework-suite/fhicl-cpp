@@ -19,6 +19,7 @@
 #include "cetlib/container_algorithms.h"
 #include "cetlib/filepath_maker.h"
 #include "cetlib/includer.h"
+#include "cetlib/ostream_handle.h"
 #include "cetlib/parsed_program_options.h"
 #include "cetlib_except/exception.h"
 
@@ -58,6 +59,13 @@ namespace {
                    cet::filepath_maker& lookup_policy,
                    std::ostream& to,
                    std::ostream& err);
+
+  cet::ostream_handle
+  select_stream(std::ostream& os, std::string const& filename)
+  {
+    return empty(filename) ? cet::ostream_handle{os} :
+                             cet::ostream_handle{filename};
+  }
 }
 
 // ===================================================================
@@ -77,11 +85,8 @@ main(int argc, char** argv)
   }
 
   // Set output/error streams
-  std::ofstream outfile{opts.output_filename};
-  std::ofstream errfile{opts.error_filename};
-
-  std::ostream& out = opts.output_filename.empty() ? std::cout : outfile;
-  std::ostream& err = opts.error_filename.empty() ? std::cerr : errfile;
+  auto out = select_stream(std::cout, opts.output_filename);
+  auto err = select_stream(std::cerr, opts.error_filename);
 
   auto const policy = get_policy(opts.lookup_policy, opts.lookup_path);
 
