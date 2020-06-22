@@ -17,6 +17,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <variant>
 
 using namespace fhicl;
 using namespace fhicl::detail;
@@ -32,6 +33,10 @@ namespace {
   string const processing{"Processing"};
   string const config{"Configuration"};
 
+  struct Help {
+    std::string msg;
+  };
+
   struct Options {
     print_mode mode{print_mode::raw};
     bool quiet{false};
@@ -41,7 +46,8 @@ namespace {
     string lookup_path;
   };
 
-  Options process_arguments(int argc, char** argv);
+  std::variant<Options, Help>
+  process_arguments(int argc, char** argv);
 
   fhicl::ParameterSet form_pset(string const& filename,
                                 cet::filepath_maker& lookup_policy);
@@ -52,23 +58,13 @@ namespace {
 int
 main(int argc, char** argv)
 {
-  Options opts;
-  try {
-    opts = process_arguments(argc, argv);
-  }
-  catch (cet::exception const& e) {
-    if (e.category() == help)
-      return 1;
-    if (e.category() == processing) {
-      std::cerr << e.what();
-      return 2;
-    }
-    if (e.category() == config) {
-      std::cerr << e.what() << '\n';
-      return 3;
-    }
+  auto const opts_or_help = process_arguments(argc, argv);
+  if (std::holds_alternative<Help>(opts_or_help)) {
+    std::cout << std::get<Help>(opts_or_help).msg;
+    return 0;
   }
 
+  auto const& opts = std::get<Options>(opts_or_help);
   auto const pset = form_pset(opts.input_filename, *opts.policy);
 
   if (opts.quiet)
@@ -88,7 +84,7 @@ main(int argc, char** argv)
 
 namespace {
 
-  Options
+  std::variant<Options, Help>
   process_arguments(int argc, char** argv)
   {
     namespace bpo = boost::program_options;
@@ -128,14 +124,14 @@ namespace {
     auto const vm = cet::parsed_program_options(argc, argv, desc, p);
 
     if (vm.count("help")) {
-      std::cout << desc << '\n';
-      throw cet::exception(help);
+      std::ostringstream os;
+      os << desc << '\n';
+      return Help{os.str()};
     }
 
     cet::lookup_policy_selector const supported_policies{};
     if (vm.count("supported-policies")) {
-      std::cout << supported_policies.help_message();
-      throw cet::exception(help);
+      return Help{supported_policies.help_message()};
     }
 
     if (vm.count("quiet")) {
