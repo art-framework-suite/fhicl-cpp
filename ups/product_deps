@@ -1,38 +1,29 @@
-parent fhiclcpp v4_11_01
+parent fhiclcpp v4_12_00
 defaultqual e19
 #
 fcldir -
 
-table_fragment_begin
-   pathPrepend(PYTHONPATH, ${FHICLCPP_LIB})
-table_fragment_end
-
 #
 # define product/version pairs
-product         version
-cetlib          v3_10_00
-pybind11        v2_2_4
-python          v3_7_2          -default-
-python          v2_7_15a        py2
-
-cetbuildtools   v7_15_01        -       only_for_build
+product         version		<format=2>
+cetlib          v3_11_00
+cetbuildtools   v7_17_01        -       only_for_build
 end_product_list
 
 table_fragment_begin
     sourceRequired(${FHICLCPP_FQ_DIR}/bin/fhicl-dump_completions, NO_UPS_ENV)
     sourceRequired(${FHICLCPP_FQ_DIR}/bin/fhicl-expand_completions, NO_UPS_ENV)
+    sourceRequired(${FHICLCPP_FQ_DIR}/bin/fhicl-get_completions, NO_UPS_ENV)
 table_fragment_end
 
 # Matrix of qualifiers versus dependent products
-qualifier       cetlib          pybind11 python notes
-e19:debug       e19:debug       -nq-     -nq-
-e19:prof        e19:prof        -nq-     -nq-
-c7:debug        c7:debug        -nq-     -nq-
-c7:prof         c7:prof         -nq-     -nq-
-e19:debug:py2   e19:debug       -nq-     -nq-
-e19:prof:py2    e19:prof        -nq-     -nq-
-c7:debug:py2    c7:debug        -nq-     -nq-
-c7:prof:py2     c7:prof         -nq-     -nq-
+qualifier       cetlib      notes
+e20:debug       e20:debug
+e20:prof        e20:prof
+e19:debug       e19:debug
+e19:prof        e19:prof
+c7:debug        c7:debug
+c7:prof         c7:prof
 end_qualifier_list
 
 # Local Variables:

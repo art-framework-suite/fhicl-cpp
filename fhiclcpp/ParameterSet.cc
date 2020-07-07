@@ -175,8 +175,11 @@ ParameterSet::descend_(std::vector<std::string> const& names,
 {
   ParameterSet const* p{this};
   ParameterSet tmp;
-  for (auto const& table : names) {
-    if (!p->get_one_(table, tmp)) {
+  for (auto const& name : names) {
+    if (!p->is_key_to_table(name)) {
+      return false;
+    }
+    if (!p->get_one_(name, tmp)) {
       return false;
     }
     p = &tmp;
@@ -396,11 +399,11 @@ ParameterSet::walk(ParameterSetWalker& psw) const
         psw.do_atom(key, a);
       }
 
-      psw.do_after_action();
+      psw.do_after_action(key);
     };
 
-  for (const auto& entry : mapping_) {
-    act_on_element(entry.first, entry.second);
+  for (auto const& [key, value] : mapping_) {
+    act_on_element(key, value);
   }
 }
 

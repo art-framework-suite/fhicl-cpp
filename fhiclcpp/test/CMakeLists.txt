@@ -46,7 +46,7 @@ cet_test(issue_0923_t.sh PREBUILT
 )
 cet_test(key_assembler_t USE_BOOST_UNIT)
 cet_test(parse_document_test USE_BOOST_UNIT)
-cet_test(parse_value_string_test)
+cet_test(parse_value_string_test USE_BOOST_UNIT)
 cet_test(to_indented_string_test USE_BOOST_UNIT)
 cet_test(to_indented_string_annotated_test
   DATAFILES

@@ -245,8 +245,8 @@ fhicl::detail::decode(std::any const& a, std::complex<T>& result)
 {
   std::complex<ldbl> via;
   decode(a, via);
-  result = std::complex<T>(boost::numeric_cast<T>(via.real()),
-                           boost::numeric_cast<T>(via.imag()));
+  result = std::complex<T>{boost::numeric_cast<T>(via.real()),
+                           boost::numeric_cast<T>(via.imag())};
 }
 
 //====================================================================

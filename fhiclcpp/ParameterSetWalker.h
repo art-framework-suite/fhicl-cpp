@@ -100,9 +100,9 @@ namespace fhicl {
       before_action(k, a, ps);
     }
     void
-    do_after_action()
+    do_after_action(key_t const& k)
     {
-      after_action();
+      after_action(k);
     }
 
     void
@@ -133,7 +133,7 @@ namespace fhicl {
     before_action(key_t const&, any_t const&, ParameterSet const*)
     {}
     virtual void
-    after_action()
+    after_action(key_t const&)
     {}
   };
 

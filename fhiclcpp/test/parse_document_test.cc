@@ -303,6 +303,14 @@ BOOST_AUTO_TEST_CASE(expand_sequence)
   cmp(pset.get<std::vector<std::string>>("ethel"), ethelref);
 }
 
+BOOST_AUTO_TEST_CASE(string_escaping)
+{
+  intermediate_table tbl;
+  BOOST_CHECK_THROW(parse_document(R"(x: "$\d+^")", tbl), cet::exception);
+  BOOST_CHECK_NO_THROW(parse_document(R"(x: "$\\d+^")", tbl));
+  BOOST_CHECK_NO_THROW(parse_document(R"(x: '$\d+^')", tbl));
+}
+
 BOOST_AUTO_TEST_CASE(bad_lookup)
 {
   std::string document = "x: @local::dead\n";
