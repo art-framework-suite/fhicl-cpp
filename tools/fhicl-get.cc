@@ -8,7 +8,7 @@
 #include "fhiclcpp/intermediate_table.h"
 #include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/parse.h"
-#include "fhiclcpp/tools/Printer.h"
+#include "tools/Printer.h"
 
 #include <iostream>
 #include <stdexcept>
