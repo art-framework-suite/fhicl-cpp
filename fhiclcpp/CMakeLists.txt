@@ -1,6 +1,6 @@
 include(CetMake)
 
-cet_make(
+cet_make( ### MIGRATE-ACTION-RECOMMENDED: use cet_make_library(), build_dictionary(), basic_plugin() with explicit source lists
   LIBRARIES
   cetlib
   cetlib_except

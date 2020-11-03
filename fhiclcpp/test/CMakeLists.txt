@@ -8,7 +8,7 @@ include(CetTest)
 cet_enable_asserts()
 
 # Identify libraries to be linked:
-link_libraries(fhiclcpp)
+link_libraries(fhiclcpp) ### MIGRATE-ACTION-RECOMMENDED: use target_link_libraries() with target semantics
 
 cet_test_env("FHICL_FILE_PATH=.")
 

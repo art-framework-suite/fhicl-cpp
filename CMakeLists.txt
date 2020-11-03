@@ -14,11 +14,15 @@
 #  make install
 #  make package (builds distribution tarfile)
 
-cmake_minimum_required(VERSION 3.12...3.14 FATAL_ERROR)
-project(fhiclcpp LANGUAGES CXX C)
+cmake_minimum_required(VERSION 3.18.2 FATAL_ERROR)
+cmake_policy(VERSION 3.14)
+# Policy CMP0096 must be set to NEW to preserve leading zeros in the
+# VERSION set by project().
+cmake_policy(SET CMP0096 NEW)
+find_package(cetmodules 2.00.01)
+project(fhiclcpp VERSION 4.12.02 LANGUAGES CXX C)
 
-# cetbuildtools contains our cmake modules
-find_package(cetbuildtools 7.13.01 REQUIRED)
+# cetbuildtools contains our cmake modules ### MIGRATE-ACTION-REQUIRED: remove
 
 include(CetCMakeEnv)
 cet_cmake_env()
@@ -62,18 +66,17 @@ cet_report_compiler_flags()
 
 
 # these are minimum required versions, not the actual product versions
-find_ups_product(cetlib_except v1_00_00)
-find_ups_product(cetlib v2_01_00)
-find_ups_product(sqlite v3_07_15_00)
+find_ups_product(cetlib_except) ### MIGRATE-ACTION-RECOMMENDED: use cet_find_package() with target semantics for linking
+find_ups_product(cetlib) ### MIGRATE-ACTION-RECOMMENDED: use cet_find_package() with target semantics for linking
+find_ups_product(sqlite v3_07_15_00) ### MIGRATE-ACTION-RECOMMENDED: use cet_find_package() with target semantics for linking
 find_ups_boost(BOOST_TARGETS v1_50_0)
 
 # SQLite
-cet_find_library(SQLITE3 NAMES sqlite3_ups PATHS ENV SQLITE_LIB NO_DEFAULT_PATH)
+cet_find_library(SQLITE3 NAMES sqlite3_ups PATHS ENV SQLITE_LIB NO_DEFAULT_PATH) ### MIGRATE-ACTION-RECOMMENDED: use of ENV ... may be UPS-dependent ### MIGRATE-ACTION-RECOMMENDED: use cet_find_package() with target semantics for linking
 
 # source code
 add_subdirectory(fhiclcpp)
 add_subdirectory(tools)
-add_subdirectory(ups)
 
 # packaging utility
-include(UseCPack)
+cet_cmake_config(COMPATIBILITY SameMajorVersion)
