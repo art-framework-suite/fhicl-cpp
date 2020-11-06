@@ -2,12 +2,12 @@
 #define BOOST_TEST_MODULE (ParameterSetRegistry_t)
 #include "cetlib/quiet_unit_test.hpp"
 
-#include "cetlib/SimultaneousFunctionSpawner.h"
 #include "cetlib/container_algorithms.h"
 #include "fhiclcpp/ParameterSetRegistry.h"
 #include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/test/boost_test_print_pset.h"
 #include "hep_concurrency/RecursiveMutex.h"
+#include "hep_concurrency/simultaneous_function_spawner.h"
 
 #include "sqlite3.h"
 
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(TestImport)
                                 entry = make_pair(pset, p.second);
                               });
                             });
-    cet::SimultaneousFunctionSpawner sfs{tasks};
+    simultaneous_function_spawner sfs{tasks};
   }
   // Insert ParameterSets into db in parallel
   {
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(TestImport)
       v1, back_inserter(tasks), [insert_into_db](auto const& pr) {
         return [insert_into_db, pr] { insert_into_db(pr); };
       });
-    cet::SimultaneousFunctionSpawner sfs{tasks};
+    simultaneous_function_spawner sfs{tasks};
   }
   BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == expected_size);
   ParameterSetRegistry::importFrom(db);
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(TestImport)
       v1, back_inserter(tasks), [read_from_registry](auto const& p) {
         return [read_from_registry, p] { read_from_registry(p); };
       });
-    cet::SimultaneousFunctionSpawner sfs{tasks};
+    simultaneous_function_spawner sfs{tasks};
     BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == expected_size);
   }
 }
