@@ -42,79 +42,61 @@
 #
 # ======================================================================
 
-cet_test(keymap_t                USE_BOOST_UNIT)
-cet_test(keymap_defaults_t       USE_BOOST_UNIT)
-cet_test(keymap_table_t          USE_BOOST_UNIT)
-cet_test(keys_to_ignore_t        USE_BOOST_UNIT)
-cet_test(return_types_t          USE_BOOST_UNIT)
-cet_test(return_types_table_t    USE_BOOST_UNIT)
-cet_test(return_value_defaults_t USE_BOOST_UNIT)
-cet_test(searchAllowedConfiguration_t USE_BOOST_UNIT)
+set(TESTS_REQUIRING_BOOST_UNIT_AND_FHICLCPP
+    keymap_t
+    keymap_defaults_t
+    keymap_table_t
+    keys_to_ignore_t
+    return_types_t
+    return_types_table_t
+    return_value_defaults_t
+    searchAllowedConfiguration_t
+    table_insertionOperator_t
+    bounded_sequences_with_defaults_t
+    nestedValidation_01_t
+    nestedValidation_02_t
+    nestedValidation_03_t)
+foreach(test IN LISTS TESTS_REQUIRING_BOOST_UNIT_AND_FHICLCPP)
+  cet_test(${test} USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
+endforeach()
 
-cet_test(tableAs_t USE_BOOST_UNIT
-  DATAFILES
-  tableAs_t.fcl)
+set(TESTS_WITH_REF_FILES
+    print_tupleAs_t
+    print_allowed_configuration_t
+    print_allowed_configuration_optionalParameters_t
+    print_allowed_configuration_tableFragment_t
+    print_allowed_configuration_delegatedParameter_t
+    print_allowed_configuration_conditional_t
+    print_allowed_configuration_defaults_t)
+foreach(test IN LISTS TESTS_WITH_REF_FILES)
+  cet_test(${test}
+           REF "${CMAKE_CURRENT_SOURCE_DIR}/${test}-ref.txt"
+           LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
+endforeach()
 
-cet_test(tupleAs_t USE_BOOST_UNIT
-  DATAFILES
-  tupleAs_t.fcl)
+set(TESTS_WITH_DATAFILES
+    tableAs_t
+    tupleAs_t
+    delegatedParameter_t
+    optionalDelegatedParameter_t
+    return_values_from_fcl_t
+    return_optionalValues_from_fcl_t
+    return_table_values_from_fcl_t)
+foreach(test IN LISTS TESTS_WITH_DATAFILES)
+  cet_test(${test} USE_BOOST_UNIT
+           DATAFILES ${test}.fcl
+           LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
+endforeach()
 
 cet_test(conditional_t USE_BOOST_UNIT
   DATAFILES
-  cond_01_t.fcl
-  cond_02_t.fcl
-  cond_03_t.fcl
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/conditional_t-ref.txt")
-
-cet_test(print_tupleAs_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_tupleAs_t-ref.txt")
-
-cet_test(print_allowed_configuration_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_t-ref.txt")
-
-cet_test(print_allowed_configuration_optionalParameters_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_optionalParameters_t-ref.txt")
-
-cet_test(print_allowed_configuration_tableFragment_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_tableFragment_t-ref.txt")
-
-cet_test(print_allowed_configuration_delegatedParameter_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_delegatedParameter_t-ref.txt")
-
-cet_test(print_allowed_configuration_conditional_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_conditional_t-ref.txt")
-
-cet_test(print_allowed_configuration_defaults_t
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_defaults_t-ref.txt")
+    cond_01_t.fcl
+    cond_02_t.fcl
+    cond_03_t.fcl
+  REF "${CMAKE_CURRENT_SOURCE_DIR}/conditional_t-ref.txt"
+  LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 
 cet_test(validate_ParameterSet_t
-  DATAFILES
-  validate_ParameterSet_t.fcl
-  REF "${CMAKE_CURRENT_SOURCE_DIR}/validate_ParameterSet_t-ref.txt")
-
-cet_test(delegatedParameter_t USE_BOOST_UNIT
-  DATAFILES
-  delegatedParameter_t.fcl)
-
-cet_test(optionalDelegatedParameter_t USE_BOOST_UNIT
-  DATAFILES
-  optionalDelegatedParameter_t.fcl)
-
-cet_test(return_values_from_fcl_t USE_BOOST_UNIT
-  DATAFILES
-  return_values_from_fcl_t.fcl)
-
-cet_test(return_optionalValues_from_fcl_t USE_BOOST_UNIT
-  DATAFILES
-  return_optionalValues_from_fcl_t.fcl)
-
-cet_test(return_table_values_from_fcl_t USE_BOOST_UNIT
-  DATAFILES
-  return_table_values_from_fcl_t.fcl)
-
-cet_test(table_insertionOperator_t USE_BOOST_UNIT)
-cet_test(bounded_sequences_with_defaults_t USE_BOOST_UNIT)
-
-cet_test(nestedValidation_01_t USE_BOOST_UNIT)
-cet_test(nestedValidation_02_t USE_BOOST_UNIT)
-cet_test(nestedValidation_03_t USE_BOOST_UNIT)
+  DATAFILES validate_ParameterSet_t.fcl
+  REF "${CMAKE_CURRENT_SOURCE_DIR}/validate_ParameterSet_t-ref.txt"
+  LIBRARIES PRIVATE fhiclcpp::fhiclcpp)

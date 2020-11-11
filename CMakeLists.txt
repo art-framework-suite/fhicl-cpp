@@ -31,7 +31,7 @@ cet_set_compiler_flags(DIAGS VIGILANT
   WERROR
   NO_UNDEFINED
   EXTRA_FLAGS -pedantic
-  EXTRA_CXX_FLAGS -Wnon-virtual-dtor -Wdelete-non-virtual-dtor -DBOOST_TEST_NO_OLD_TOOLS
+  $<$<COMPILE_LANGUAGE:CXX>:-Wnon-virtual-dtor;-Wdelete-non-virtual-dtor;-DBOOST_TEST_NO_OLD_TOOLS>
   )
 
 if($ENV{CET_SANITIZE_ADDRESS})
@@ -65,11 +65,10 @@ endif()
 cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
 
-# these are minimum required versions, not the actual product versions
-find_ups_product(cetlib_except) ### MIGRATE-ACTION-RECOMMENDED: use cet_find_package() with target semantics for linking
-find_ups_product(cetlib) ### MIGRATE-ACTION-RECOMMENDED: use cet_find_package() with target semantics for linking
-find_ups_product(sqlite v3_07_15_00) ### MIGRATE-ACTION-RECOMMENDED: use cet_find_package() with target semantics for linking
-find_ups_boost(BOOST_TARGETS v1_50_0)
+cet_find_package(cetlib_except)
+cet_find_package(cetlib)
+cet_find_package(sqlite)
+cet_find_package(Boost COMPONENTS REQUIRED program_options)
 
 # SQLite
 cet_find_library(SQLITE3 NAMES sqlite3_ups PATHS ENV SQLITE_LIB NO_DEFAULT_PATH) ### MIGRATE-ACTION-RECOMMENDED: use of ENV ... may be UPS-dependent ### MIGRATE-ACTION-RECOMMENDED: use cet_find_package() with target semantics for linking
