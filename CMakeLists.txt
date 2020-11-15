@@ -64,13 +64,10 @@ endif()
 cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
 
-cet_find_package(cetlib_except)
-cet_find_package(cetlib)
-cet_find_package(sqlite)
 cet_find_package(Boost COMPONENTS REQUIRED program_options)
-
-# SQLite
-cet_find_library(SQLITE3 NAMES sqlite3_ups PATHS ENV SQLITE_LIB NO_DEFAULT_PATH) ### MIGRATE-ACTION-RECOMMENDED: use of ENV ... may be UPS-dependent ### MIGRATE-ACTION-RECOMMENDED: use cet_find_package() with target semantics for linking
+cet_find_package(SQLite3)
+cet_find_package(cetlib)
+cet_find_package(cetlib_except)
 
 # source code
 add_subdirectory(fhiclcpp)

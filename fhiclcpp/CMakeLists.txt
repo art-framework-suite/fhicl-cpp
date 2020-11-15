@@ -37,6 +37,7 @@ cet_make_library(
     types/OptionalDelegatedParameter.cc
   LIBRARIES PUBLIC
     cetlib::cetlib
+    SQLite::SQLite3
   WITH_STATIC_LIBRARY
   )
 
