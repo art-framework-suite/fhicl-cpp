@@ -65,9 +65,9 @@ cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
 
 cet_find_package(Boost COMPONENTS REQUIRED program_options)
-cet_find_package(SQLite3)
-cet_find_package(cetlib)
-cet_find_package(cetlib_except)
+cet_find_package(SQLite3 REQUIRED)
+cet_find_package(cetlib REQUIRED)
+cet_find_package(cetlib_except REQUIRED)
 
 # source code
 add_subdirectory(fhiclcpp)
