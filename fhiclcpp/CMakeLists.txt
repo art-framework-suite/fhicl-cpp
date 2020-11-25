@@ -39,7 +39,7 @@ cet_make_library(
     cetlib::cetlib
     SQLite::SQLite3
   WITH_STATIC_LIBRARY
-  )
+)
 
 install_headers(SUBDIRS detail types types/detail)
 install_source(SUBDIRS detail types types/detail)
