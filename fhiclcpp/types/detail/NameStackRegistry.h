@@ -76,7 +76,11 @@ namespace fhicl {
     static NameStackRegistry&
     instance()
     {
-      static NameStackRegistry registry;
+      // The registry is used only during construction of the
+      // tables, and not afterward. As construction takes place on
+      // only one thread, it is safe to label the registry as a
+      // thread-local.
+      static thread_local NameStackRegistry registry;
       return registry;
     }
 
