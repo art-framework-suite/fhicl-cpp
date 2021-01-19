@@ -100,8 +100,3 @@ cet_test(validate_ParameterSet_t
   DATAFILES validate_ParameterSet_t.fcl
   REF "${CMAKE_CURRENT_SOURCE_DIR}/validate_ParameterSet_t-ref.txt"
   LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
-
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
-cet_test(tables_in_parallel_t
-  LIBRARIES PRIVATE fhiclcpp::fhiclcpp Threads::Threads)
