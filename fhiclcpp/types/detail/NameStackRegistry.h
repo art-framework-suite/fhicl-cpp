@@ -76,6 +76,13 @@ namespace fhicl {
     static NameStackRegistry&
     instance_()
     {
+      // The use of the registry is restricted to the construction of
+      // fhiclcpp types.  As construction happens on only one thread,
+      // it is sufficient for each thread to have its own copy.
+      // Although a thread-local static would be appropriate here, not
+      // all implementations adequately support thread-local variables
+      // for the use case here.  We thus use a custom-built per-thread
+      // cache.
       static detail::per_thread_holder<NameStackRegistry> registry;
       return registry.slot_for_current_thread();
     }
