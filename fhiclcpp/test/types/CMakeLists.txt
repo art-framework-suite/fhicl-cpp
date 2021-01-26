@@ -66,6 +66,11 @@ cet_test(conditional_t USE_BOOST_UNIT
   cond_03_t.fcl
   REF "${CMAKE_CURRENT_SOURCE_DIR}/conditional_t-ref.txt")
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+cet_test(tables_in_parallel_t
+  LIBRARIES PRIVATE Threads::Threads)
+
 cet_test(print_tupleAs_t
   REF "${CMAKE_CURRENT_SOURCE_DIR}/print_tupleAs_t-ref.txt")
 
@@ -88,8 +93,7 @@ cet_test(print_allowed_configuration_defaults_t
   REF "${CMAKE_CURRENT_SOURCE_DIR}/print_allowed_configuration_defaults_t-ref.txt")
 
 cet_test(validate_ParameterSet_t
-  DATAFILES
-  validate_ParameterSet_t.fcl
+  DATAFILES validate_ParameterSet_t.fcl
   REF "${CMAKE_CURRENT_SOURCE_DIR}/validate_ParameterSet_t-ref.txt")
 
 cet_test(delegatedParameter_t USE_BOOST_UNIT

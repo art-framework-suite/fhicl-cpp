@@ -21,7 +21,7 @@ namespace fhicl::detail {
                       Comment const& comment = Comment(""),
                       par_style const parStyle = par_style::NTYPES,
                       par_type const parType = par_type::NTYPES)
-      : key_{NameStackRegistry::instance().full_key(name.value)}
+      : key_{NameStackRegistry::full_key(name.value)}
       , name_{name.value}
       , comment_{comment.value}
       , parStyle_{parStyle}

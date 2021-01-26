@@ -151,9 +151,8 @@ namespace fhicl {
         // When emplacing a new element, do not include in the key
         // argument the current name-stack stem--it will
         // automatically be prepended.
-        auto const& nsr = NameStackRegistry::instance();
-        if (!nsr.empty()) {
-          std::string const& current_stem = nsr.current();
+        if (!NameStackRegistry::empty()) {
+          std::string const& current_stem = NameStackRegistry::current();
           std::size_t const pos =
             key_fragment.find(current_stem) != std::string::npos ?
               current_stem.size() + 1ul : // + 1ul to account for the '.'
