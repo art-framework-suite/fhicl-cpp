@@ -5,6 +5,7 @@ cet_make(
   cetlib
   cetlib_except
   hep_concurrency
+  ${TBB}
   ${SQLITE3}
   WITH_STATIC_LIBRARY
   SUBDIRS

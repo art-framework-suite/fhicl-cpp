@@ -1,4 +1,4 @@
-parent fhiclcpp v4_12_02
+parent fhiclcpp v4_13_00
 defaultqual e19
 #
 fcldir -
@@ -6,8 +6,8 @@ fcldir -
 #
 # define product/version pairs
 product         version		<format=2>
-cetlib          v3_11_01
-cetbuildtools   v7_17_01        -       only_for_build
+cetlib          v3_12_00
+cetbuildtools   v7_17_02        -       only_for_build
 end_product_list
 
 table_fragment_begin

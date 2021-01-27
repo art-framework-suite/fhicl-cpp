@@ -65,6 +65,7 @@ cet_report_compiler_flags()
 find_ups_product(cetlib_except v1_00_00)
 find_ups_product(cetlib v2_01_00)
 find_ups_product(sqlite v3_07_15_00)
+find_ups_product(tbb)
 find_ups_boost(BOOST_TARGETS v1_50_0)
 
 # SQLite
