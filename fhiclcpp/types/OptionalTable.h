@@ -82,8 +82,7 @@ namespace fhicl {
     std::shared_ptr<T> value_{std::make_shared<T>()};
     bool has_value_{false};
     ParameterSet pset_{};
-    members_t members_{
-      detail::TableMemberRegistry::instance().release_members()};
+    members_t members_{detail::TableMemberRegistry::release_members()};
 
     members_t const&
     get_members() const override

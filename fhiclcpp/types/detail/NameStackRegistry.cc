@@ -17,11 +17,12 @@ namespace fhicl {
         << "Cannot insert empty name into 'NameStackRegistry'.\n";
     }
 
-    if (names_.empty() || std::regex_match(name, re_sequence_element)) {
-      names_.emplace_back(name);
+    auto& names = instance_().names_;
+    if (names.empty() || std::regex_match(name, re_sequence_element)) {
+      names.emplace_back(name);
     } else {
-      names_.emplace_back("." + name);
+      names.emplace_back("." + name);
     }
-    return std::accumulate(names_.begin(), names_.end(), std::string{});
+    return std::accumulate(names.begin(), names.end(), std::string{});
   }
 }

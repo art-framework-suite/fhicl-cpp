@@ -87,8 +87,7 @@ namespace fhicl {
 
     std::shared_ptr<T> value_{std::make_shared<T>()};
     ParameterSet pset_{};
-    members_t members_{
-      detail::TableMemberRegistry::instance().release_members()};
+    members_t members_{detail::TableMemberRegistry::release_members()};
 
     struct Impl {};
     Table(ParameterSet const&, std::set<std::string> const&, Impl);
@@ -206,7 +205,7 @@ namespace fhicl {
       vs.check_keys();
     }
     catch (fhicl::detail::validationException const&) {
-      NameStackRegistry::instance().clear();
+      NameStackRegistry::clear();
       throw;
     }
   }

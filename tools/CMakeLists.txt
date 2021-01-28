@@ -1,19 +1,23 @@
 include(CetMake)
 include(CetMakeCompletions)
 
-cet_make_exec(fhicl-dump
+cet_make_exec(
+  NAME fhicl-dump
   SOURCE fhicl-dump.cc
-  LIBRARIES cetlib fhiclcpp Boost::program_options)
+  LIBRARIES PRIVATE fhiclcpp::fhiclcpp Boost::program_options)
 
-cet_make_exec(fhicl-expand
+cet_make_exec(
+  NAME fhicl-expand
   SOURCE fhicl-expand.cc
-  LIBRARIES cetlib cetlib_except Boost::program_options)
+  LIBRARIES PRIVATE cetlib::cetlib Boost::program_options)
 
-cet_make_exec(fhicl-get
+cet_make_exec(
+  NAME fhicl-get
   SOURCE fhicl-get.cc
-  LIBRARIES fhiclcpp cetlib cetlib_except Boost::program_options)
+  LIBRARIES PRIVATE fhiclcpp::fhiclcpp Boost::program_options)
 
-cet_make_exec(fhicl-write-db
+cet_make_exec(
+  NAME fhicl-write-db
   SOURCE fhicl-write-db.cc
   LIBRARIES fhiclcpp ${SQLITE3})
 

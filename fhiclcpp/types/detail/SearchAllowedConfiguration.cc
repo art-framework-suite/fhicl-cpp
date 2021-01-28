@@ -1,4 +1,5 @@
 #include "fhiclcpp/types/detail/SearchAllowedConfiguration.h"
+#include "fhiclcpp/exception.h"
 
 using namespace fhicl::detail;
 using fhicl::detail::SearchAllowedConfiguration;
