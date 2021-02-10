@@ -11,7 +11,7 @@ cet_test_env("FHICL_FILE_PATH=.")
 
 add_subdirectory(types)
 
-cet_test(dotted_names LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
+cet_test(dotted_names USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 cet_test(hex_test LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 
 cet_test(PSetSample INSTALL_EXAMPLE INSTALL_SOURCE
