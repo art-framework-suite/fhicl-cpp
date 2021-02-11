@@ -6,13 +6,13 @@
 #include "fhiclcpp/ParameterSetRegistry.h"
 #include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/test/boost_test_print_pset.h"
-#include "hep_concurrency/RecursiveMutex.h"
 #include "hep_concurrency/simultaneous_function_spawner.h"
 
 #include "sqlite3.h"
 
 #include <atomic>
 #include <functional>
+#include <mutex>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(TestImport)
   }
   // Insert ParameterSets into db in parallel
   {
-    RecursiveMutex m{"ParameterSetRegistry_t::m"};
+    std::recursive_mutex m{};
     auto insert_into_db = [&db, &m](auto const& pr) {
       // Since this lambda is intended to be executed in parallel, one
       // should not specify a BEGIN (IMMEDIATE|EXCLUSIVE) TRANSACTION
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(TestImport)
       throwOnSQLiteFailure(rc2);
       {
         // FIXME: sqlite3_step is not thread-safe according to tsan!
-        RecursiveMutexSentry sentry{m, "test"};
+        std::lock_guard sentry{m};
         assert(sqlite3_step(oStmt) == SQLITE_DONE);
       }
       auto const rc3 = sqlite3_finalize(oStmt);
@@ -182,20 +182,20 @@ BOOST_AUTO_TEST_CASE(TestImport)
   BOOST_TEST_REQUIRE(sqlite3_close(db) == SQLITE_OK);
   // Read from registry in parallel
   {
-    RecursiveMutex m{"ParameterSetRegistry_t::m"};
+    std::recursive_mutex m{};
     auto read_from_registry = [&expected_size, &m](auto const& p) {
       auto const& id = p.first.id();
       if (p.second) {
         {
           // FIXME: Not thread-safe according to tsan!
-          RecursiveMutexSentry sentry{m, "test"};
+          std::lock_guard sentry{m};
           // Should be in registry already.
           BOOST_TEST_REQUIRE(ParameterSetRegistry::has(id));
         }
       } else {
         {
           // FIXME: Not thread-safe according to tsan!
-          RecursiveMutexSentry sentry{m, "test"};
+          std::lock_guard sentry{m};
           // Make sure the import didn't inject them into the registry.
           BOOST_TEST_REQUIRE(!ParameterSetRegistry::has(id));
         }
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(TestImport)
       }
       {
         // FIXME: Not thread-safe according to tsan!
-        RecursiveMutexSentry sentry{m, "test"};
+        std::lock_guard sentry{m};
         auto const& p2 = ParameterSetRegistry::get(id);
         BOOST_TEST_REQUIRE(p2 == p.first);
       }
