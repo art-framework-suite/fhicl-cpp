@@ -21,7 +21,6 @@
 #include "fhiclcpp/parse.h"
 
 #include <array>
-#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -46,8 +45,6 @@ namespace {
 int
 main()
 {
-
-  putenv(const_cast<char*>("FHICL_FILE_PATH=./test:."));
   cet::filepath_lookup policy("FHICL_FILE_PATH");
   std::string const in("to_tupleTypes_test.fcl");
 

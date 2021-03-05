@@ -6,9 +6,9 @@
 
 #define BOOST_TEST_MODULE (tableAs test)
 
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
-#include "fhiclcpp/test/types/FixtureBase.h"
+#include "FixtureBase.h"
 #include "fhiclcpp/types/OptionalTableAs.h"
 #include "fhiclcpp/types/Sequence.h"
 #include "fhiclcpp/types/Table.h"

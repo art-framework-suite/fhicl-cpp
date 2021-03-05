@@ -5,7 +5,6 @@
 #include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/parse.h"
 
-#include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 #include <string>

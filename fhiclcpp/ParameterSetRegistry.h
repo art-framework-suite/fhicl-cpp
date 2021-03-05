@@ -11,7 +11,14 @@
 #include "fhiclcpp/ParameterSetID.h"
 #include "fhiclcpp/fwd.h"
 
-#include "sqlite3.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+  typedef struct sqlite3 sqlite3;
+  typedef struct sqlite3_stmt sqlite3_stmt;
+#ifdef __cplusplus
+}
+#endif
 
 #include <mutex>
 #include <unordered_map>

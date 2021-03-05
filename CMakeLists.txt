@@ -1,21 +1,6 @@
-#
-#  fhiclcpp/CMakeLists.txt
-#  -------------------------------------------------------------------
-#
-#  CMake build file for library fhiclcpp and fhiclcppD
-#
-#  cd .../path/to/build/directory
-#  source .../path/to/source/code/setup_for_development
-#  cmake [-DCMAKE_INSTALL_PREFIX=/install/path]
-#        -DCMAKE_BUILD_TYPE=$CETPKG_TYPE
-#        $CETPKG_SOURCE
-#  make
-#  make test
-#  make install
-#  make package (builds distribution tarfile)
 cmake_minimum_required(VERSION 3.18.2 FATAL_ERROR)
 
-find_package(cetmodules 2.04.00 REQUIRED)
+find_package(cetmodules 2.13.00 REQUIRED)
 project(fhiclcpp VERSION 4.13.00 LANGUAGES CXX C)
 
 # cetbuildtools contains our cmake modules ### MIGRATE-ACTION-REQUIRED: remove
@@ -49,15 +34,14 @@ endif()
 
 cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
-
-cet_find_package(Boost COMPONENTS REQUIRED program_options)
-cet_find_package(SQLite3 REQUIRED)
-cet_find_package(cetlib REQUIRED)
-cet_find_package(cetlib_except REQUIRED)
+cet_find_package(Boost PRIVATE COMPONENTS program_options REQUIRED)
+cet_find_package(SQLite3 PRIVATE REQUIRED)
+cet_find_package(cetlib PRIVATE REQUIRED)
+cet_find_package(cetlib_except PRIVATE REQUIRED)
 
 # source code
 add_subdirectory(fhiclcpp)
 add_subdirectory(tools)
 
 # packaging utility
-cet_cmake_config(COMPATIBILITY SameMajorVersion)
+cet_cmake_config(CONFIG_POST_TARGET_VARS config/fhiclcpp-augment-FHICLCPP.cmake)

@@ -6,7 +6,7 @@
 
 #define BOOST_TEST_MODULE (optionalAtom test)
 
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "fhiclcpp/types/OptionalAtom.h"
 #include "fhiclcpp/types/detail/ParameterSchemaRegistry.h"

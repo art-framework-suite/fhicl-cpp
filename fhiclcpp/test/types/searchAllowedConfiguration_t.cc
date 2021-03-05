@@ -1,6 +1,6 @@
 #define BOOST_TEST_MODULE (search allowed configuration test)
 
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/Sequence.h"

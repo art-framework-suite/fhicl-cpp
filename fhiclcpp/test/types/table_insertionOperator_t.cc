@@ -6,7 +6,7 @@
 
 #define BOOST_TEST_MODULE (table_insertionOperator_t)
 
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/OptionalTable.h"

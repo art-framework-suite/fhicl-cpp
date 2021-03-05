@@ -4,6 +4,8 @@
 
 #include "fhiclcpp/DatabaseSupport.h"
 
+#include "sqlite3.h"
+
 BOOST_AUTO_TEST_SUITE(write_sqlitedb_test)
 
 BOOST_AUTO_TEST_CASE(write_sqlite)

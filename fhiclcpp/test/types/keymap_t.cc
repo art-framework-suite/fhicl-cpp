@@ -7,9 +7,9 @@
 
 #define BOOST_TEST_MODULE (keymap test)
 
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
-#include "fhiclcpp/test/types/KeyMap.h"
+#include "KeyMap.h"
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/Sequence.h"
 #include "fhiclcpp/types/Tuple.h"

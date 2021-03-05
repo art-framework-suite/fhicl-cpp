@@ -7,7 +7,14 @@
 #include "cetlib/filepath_maker.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/make_ParameterSet.h"
-#include "sqlite3.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  typedef struct sqlite3 sqlite3;
+#ifdef __cplusplus
+}
+#endif
 
 namespace fhicl {
   // Given a ParameterSet, return two vectors of strings:

@@ -11,7 +11,6 @@
 int
 main()
 {
-  putenv(const_cast<char*>("FHICL_FILE_PATH=./test:."));
   cet::filepath_lookup policy("FHICL_FILE_PATH");
 
   // parse a configuration file; obtain intermediate form

@@ -1,7 +1,7 @@
 #include "cetlib/filepath_maker.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/make_ParameterSet.h"
-#include <cstdlib>
+
 #include <iostream>
 #include <string>
 
@@ -15,7 +15,6 @@ main(int argc, char* argv[])
     exit(1);
   }
 
-  putenv(const_cast<char*>("FHICL_FILE_PATH=./test:."));
   cet::filepath_lookup policy("FHICL_FILE_PATH");
 
   std::string cfg_in(argv[1]);

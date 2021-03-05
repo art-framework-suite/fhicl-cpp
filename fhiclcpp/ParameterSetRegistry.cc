@@ -8,6 +8,8 @@
 #include "fhiclcpp/exception.h"
 #include "fhiclcpp/make_ParameterSet.h"
 
+#include "sqlite3.h"
+
 using fhicl::detail::throwOnSQLiteFailure;
 
 std::recursive_mutex fhicl::ParameterSetRegistry::mutex_{};

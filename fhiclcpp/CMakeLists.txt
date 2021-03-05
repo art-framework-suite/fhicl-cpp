@@ -1,8 +1,13 @@
 include(CetMake)
 
-cet_make_library(
-  LIBRARY_NAME
-    fhiclcpp
+cet_find_package(Boost COMPONENTS headers REQUIRED)
+cet_find_package(SQLite3 PRIVATE REQUIRED)
+cet_find_package(TBB REQUIRED)
+cet_find_package(cetlib REQUIRED)
+cet_find_package(cetlib_except REQUIRED)
+cet_find_package(hep_concurrency REQUIRED)
+
+cet_make_library(HEADERS_TARGET WITH_STATIC_LIBRARY
   SOURCE
     coding.cc
     DatabaseSupport.cc
@@ -24,24 +29,25 @@ cet_make_library(
     parse.cc
     parse_shims.cc
     Protection.cc
-    types/DelegatedParameter.cc
-    types/detail/check_nargs_for_bounded_sequences.cc
-    types/detail/MaybeDisplayParent.cc
-    types/detail/NameStackRegistry.cc
-    types/detail/ostream_helpers.cc
-    types/detail/PrintAllowedConfiguration.cc
-    types/detail/SearchAllowedConfiguration.cc
-    types/detail/strip_containing_names.cc
-    types/detail/ValidateThenSet.cc
-    types/Name.cc
-    types/OptionalDelegatedParameter.cc
-  LIBRARIES PUBLIC
-    cetlib::cetlib
-    SQLite::SQLite3
-  WITH_STATIC_LIBRARY
+  LIBRARIES
+    PUBLIC
+      art_plugin_support::support_macros
+      cetlib::cetlib
+      hep_concurrency::hep_concurrency
+      cetlib_except::cetlib_except
+      Boost::headers
+    PRIVATE
+      cetlib::sqlite
+      cetlib::container_algorithms
+      SQLite::SQLite3
 )
 
-install_headers(SUBDIRS detail types types/detail)
-install_source(SUBDIRS detail types types/detail)
-# Testing
+# Declare our secondary export set here so that it follows the default,
+# upon which its targets depend.
+cet_register_export_set(SET_NAME PluginSupport NAMESPACE art_plugin_support)
+
+install_headers(SUBDIRS detail)
+install_source(SUBDIRS detail)
+
+add_subdirectory(types)
 add_subdirectory(test)

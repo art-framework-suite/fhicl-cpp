@@ -1,9 +1,9 @@
 #define BOOST_TEST_MODULE (keymap test)
 
-#include "cetlib/quiet_unit_test.hpp"
+#include "CondConfig.h"
+#include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/make_ParameterSet.h"
-#include "fhiclcpp/test/types/CondConfig.h"
 #include "fhiclcpp/types/Table.h"
 
 #include <iostream>
