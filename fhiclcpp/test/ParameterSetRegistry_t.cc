@@ -1,6 +1,6 @@
 // vim: set sw=2 expandtab :
 #define BOOST_TEST_MODULE (ParameterSetRegistry_t)
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "cetlib/container_algorithms.h"
 #include "fhiclcpp/ParameterSetRegistry.h"

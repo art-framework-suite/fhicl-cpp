@@ -1,6 +1,6 @@
 #define BOOST_TEST_MODULE (writesqlitedb test)
 
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "fhiclcpp/DatabaseSupport.h"
 

@@ -6,7 +6,7 @@
 
 #define BOOST_TEST_MODULE (to_indented_string test)
 
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
 #include <functional>
 #include <numeric>

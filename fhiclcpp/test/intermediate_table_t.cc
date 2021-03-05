@@ -1,5 +1,5 @@
 #define BOOST_TEST_MODULE (intermediate_table_t)
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/intermediate_table.h"

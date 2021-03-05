@@ -5,7 +5,7 @@
 // ======================================================================
 
 #define BOOST_TEST_MODULE (document test)
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "fhiclcpp/extended_value.h"
 #include "fhiclcpp/parse.h"
