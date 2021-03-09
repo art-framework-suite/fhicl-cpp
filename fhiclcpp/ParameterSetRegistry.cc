@@ -7,12 +7,12 @@
 #include "fhiclcpp/ParameterSetID.h"
 #include "fhiclcpp/exception.h"
 #include "fhiclcpp/make_ParameterSet.h"
-#include "hep_concurrency/RecursiveMutex.h"
+
+#include "sqlite3.h"
 
 using fhicl::detail::throwOnSQLiteFailure;
 
-hep::concurrency::RecursiveMutex fhicl::ParameterSetRegistry::mutex_{
-  "fhicl::psr::mutex_"};
+std::recursive_mutex fhicl::ParameterSetRegistry::mutex_{};
 
 namespace {
   sqlite3*
@@ -78,7 +78,7 @@ void
 fhicl::ParameterSetRegistry::importFrom(sqlite3* db)
 {
   assert(db);
-  hep::concurrency::RecursiveMutexSentry sentry{mutex_, __func__};
+  std::lock_guard sentry{mutex_};
 
   // This does *not* cause anything new to be imported into the
   // registry itself, just its backing DB.
@@ -122,7 +122,7 @@ void
 fhicl::ParameterSetRegistry::exportTo(sqlite3* db)
 {
   assert(db);
-  hep::concurrency::RecursiveMutexSentry sentry{mutex_, __func__};
+  std::lock_guard sentry{mutex_};
 
   cet::sqlite::Transaction txn{db};
   cet::sqlite::exec(db,
@@ -184,7 +184,7 @@ fhicl::ParameterSetRegistry::exportTo(sqlite3* db)
 void
 fhicl::ParameterSetRegistry::stageIn()
 {
-  hep::concurrency::RecursiveMutexSentry sentry{mutex_, __func__};
+  std::lock_guard sentry{mutex_};
 
   sqlite3* primaryDB = instance_().primaryDB_;
   auto& registry = instance_().registry_;

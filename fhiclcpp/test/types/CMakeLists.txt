@@ -42,66 +42,62 @@
 #
 # ======================================================================
 
-set(TESTS_REQUIRING_BOOST_UNIT_AND_FHICLCPP
-    keymap_t
+foreach (test IN ITEMS
+    bounded_sequences_with_defaults_t
     keymap_defaults_t
+    keymap_t
     keymap_table_t
     keys_to_ignore_t
+    nestedValidation_01_t
+    nestedValidation_02_t
+    nestedValidation_03_t
     return_types_t
     return_types_table_t
     return_value_defaults_t
     searchAllowedConfiguration_t
     table_insertionOperator_t
-    bounded_sequences_with_defaults_t
-    nestedValidation_01_t
-    nestedValidation_02_t
-    nestedValidation_03_t)
-foreach(test IN LISTS TESTS_REQUIRING_BOOST_UNIT_AND_FHICLCPP)
-  cet_test(${test} USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
+)
+  cet_test(${test} USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::types fhiclcpp::fhiclcpp)
 endforeach()
 
-set(TESTS_WITH_REF_FILES
-    print_tupleAs_t
-    print_allowed_configuration_t
-    print_allowed_configuration_optionalParameters_t
-    print_allowed_configuration_tableFragment_t
-    print_allowed_configuration_delegatedParameter_t
+foreach (test IN ITEMS
     print_allowed_configuration_conditional_t
-    print_allowed_configuration_defaults_t)
-foreach(test IN LISTS TESTS_WITH_REF_FILES)
-  cet_test(${test}
-           REF "${CMAKE_CURRENT_SOURCE_DIR}/${test}-ref.txt"
-           LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
+    print_allowed_configuration_defaults_t
+    print_allowed_configuration_delegatedParameter_t
+    print_allowed_configuration_optionalParameters_t
+    print_allowed_configuration_t
+    print_allowed_configuration_tableFragment_t
+    print_tupleAs_t
+)
+  cet_test(${test} LIBRARIES PRIVATE fhiclcpp::types
+    REF "${CMAKE_CURRENT_SOURCE_DIR}/${test}-ref.txt")
 endforeach()
 
-set(TESTS_WITH_DATAFILES
-    tableAs_t
-    tupleAs_t
+foreach (test IN ITEMS
     delegatedParameter_t
     optionalDelegatedParameter_t
-    return_values_from_fcl_t
     return_optionalValues_from_fcl_t
-    return_table_values_from_fcl_t)
-foreach(test IN LISTS TESTS_WITH_DATAFILES)
-  cet_test(${test} USE_BOOST_UNIT
-           DATAFILES ${test}.fcl
-           LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
+    return_table_values_from_fcl_t
+    return_values_from_fcl_t
+    tableAs_t
+    tupleAs_t
+)
+  cet_test(${test} USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::types
+    DATAFILES "${test}.fcl"
+  )
 endforeach()
 
 cet_test(conditional_t USE_BOOST_UNIT
-  DATAFILES
-    cond_01_t.fcl
-    cond_02_t.fcl
-    cond_03_t.fcl
+  LIBRARIES PRIVATE fhiclcpp::types fhiclcpp::fhiclcpp
   REF "${CMAKE_CURRENT_SOURCE_DIR}/conditional_t-ref.txt"
-  LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
+  DATAFILES cond_01_t.fcl cond_02_t.fcl cond_03_t.fcl
+)
 
 cet_test(validate_ParameterSet_t
-  DATAFILES validate_ParameterSet_t.fcl
+  LIBRARIES PRIVATE fhiclcpp::types fhiclcpp::fhiclcpp
   REF "${CMAKE_CURRENT_SOURCE_DIR}/validate_ParameterSet_t-ref.txt"
-  LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
+  DATAFILES validate_ParameterSet_t.fcl
+)
 
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
-cet_test(tables_in_parallel_t
-  LIBRARIES PRIVATE fhiclcpp::fhiclcpp Threads::Threads)
+cet_test(tables_in_parallel_t LIBRARIES PRIVATE
+    fhiclcpp::types hep_concurrency::simultaneous_function_spawner)

@@ -1,4 +1,4 @@
-#include "fhiclcpp/test/types/CondConfig.h"
+#include "CondConfig.h"
 #include "fhiclcpp/types/Table.h"
 #include <iostream>
 

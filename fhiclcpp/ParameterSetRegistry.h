@@ -10,10 +10,17 @@
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/ParameterSetID.h"
 #include "fhiclcpp/fwd.h"
-#include "hep_concurrency/RecursiveMutex.h"
 
-#include "sqlite3.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+  typedef struct sqlite3 sqlite3;
+  typedef struct sqlite3_stmt sqlite3_stmt;
+#ifdef __cplusplus
+}
+#endif
 
+#include <mutex>
 #include <unordered_map>
 
 namespace fhicl {
@@ -95,20 +102,20 @@ private:
   sqlite3* primaryDB_;
   sqlite3_stmt* stmt_{nullptr};
   collection_type registry_{};
-  static hep::concurrency::RecursiveMutex mutex_;
+  static std::recursive_mutex mutex_;
 };
 
 inline bool
 fhicl::ParameterSetRegistry::empty()
 {
-  hep::concurrency::RecursiveMutexSentry sentry{mutex_, __func__};
+  std::lock_guard sentry{mutex_};
   return instance_().registry_.empty();
 }
 
 inline auto
 fhicl::ParameterSetRegistry::size() -> size_type
 {
-  hep::concurrency::RecursiveMutexSentry sentry{mutex_, __func__};
+  std::lock_guard sentry{mutex_};
   return instance_().registry_.size();
 }
 
@@ -117,7 +124,7 @@ inline auto
 fhicl::ParameterSetRegistry::put(ParameterSet const& ps)
   -> ParameterSetID const&
 {
-  hep::concurrency::RecursiveMutexSentry sentry{mutex_, __func__};
+  std::lock_guard sentry{mutex_};
   return instance_().registry_.emplace(ps.id(), ps).first->first;
 }
 
@@ -141,7 +148,7 @@ fhicl::ParameterSetRegistry::put(FwdIt const b, FwdIt const e)
     std::is_same_v<typename std::iterator_traits<FwdIt>::value_type,
                    value_type>>
 {
-  hep::concurrency::RecursiveMutexSentry sentry{mutex_, __func__};
+  std::lock_guard sentry{mutex_};
   instance_().registry_.insert(b, e);
 }
 
@@ -156,7 +163,7 @@ fhicl::ParameterSetRegistry::put(collection_type const& c)
 inline auto
 fhicl::ParameterSetRegistry::get() noexcept -> collection_type const&
 {
-  hep::concurrency::RecursiveMutexSentry sentry{mutex_, __func__};
+  std::lock_guard sentry{mutex_};
   return instance_().registry_;
 }
 
@@ -164,7 +171,7 @@ inline auto
 fhicl::ParameterSetRegistry::get(ParameterSetID const& id)
   -> ParameterSet const&
 {
-  hep::concurrency::RecursiveMutexSentry sentry{mutex_, __func__};
+  std::lock_guard sentry{mutex_};
   auto it = instance_().find_(id);
   if (it == instance_().registry_.cend()) {
     throw exception(error::cant_find, "Can't find ParameterSet")
@@ -176,7 +183,7 @@ fhicl::ParameterSetRegistry::get(ParameterSetID const& id)
 inline bool
 fhicl::ParameterSetRegistry::get(ParameterSetID const& id, ParameterSet& ps)
 {
-  hep::concurrency::RecursiveMutexSentry sentry{mutex_, __func__};
+  std::lock_guard sentry{mutex_};
   bool result{false};
   auto it = instance_().find_(id);
   if (it != instance_().registry_.cend()) {
@@ -189,7 +196,7 @@ fhicl::ParameterSetRegistry::get(ParameterSetID const& id, ParameterSet& ps)
 inline bool
 fhicl::ParameterSetRegistry::has(ParameterSetID const& id)
 {
-  hep::concurrency::RecursiveMutexSentry sentry{mutex_, __func__};
+  std::lock_guard sentry{mutex_};
   auto const& reg = instance_().registry_;
   return reg.find(id) != reg.cend();
 }

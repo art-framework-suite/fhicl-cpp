@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "fhiclcpp/DatabaseSupport.h"
+#include "sqlite3.h"
 
 using namespace std;
 

@@ -1,13 +1,12 @@
 #define BOOST_TEST_MODULE (ParameterSet test)
 
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/intermediate_table.h"
 #include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/test/boost_test_print_pset.h"
 
 #include <cstddef>
-#include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -21,7 +20,6 @@ struct SampleConfigFixture {
 
 SampleConfigFixture::SampleConfigFixture()
 {
-  putenv(const_cast<char*>("FHICL_FILE_PATH=./test:."));
   cet::filepath_lookup policy("FHICL_FILE_PATH");
   intermediate_table tbl;
   std::string cfg_in("Sample.cfg");

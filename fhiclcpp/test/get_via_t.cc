@@ -1,5 +1,5 @@
 #define BOOST_TEST_MODULE (get via converter test)
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "cetlib/container_algorithms.h"
 #include "fhiclcpp/ParameterSet.h"

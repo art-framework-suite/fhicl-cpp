@@ -9,7 +9,7 @@
 
 #define BOOST_TEST_MODULE (return optional values from fcl)
 
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "fhiclcpp/types/OptionalAtom.h"
 #include "fhiclcpp/types/OptionalSequence.h"
@@ -19,7 +19,7 @@
 #include "fhiclcpp/types/Table.h"
 #include "fhiclcpp/types/Tuple.h"
 
-#include "fhiclcpp/test/types/FixtureBase.h"
+#include "FixtureBase.h"
 
 #include <iostream>
 #include <string>
