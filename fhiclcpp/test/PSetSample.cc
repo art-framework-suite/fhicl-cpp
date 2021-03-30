@@ -1,7 +1,4 @@
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
-#include "fhiclcpp/parse.h"
 
 #include <cassert>
 #include <cstdlib>
@@ -12,15 +9,8 @@ int
 main()
 {
   cet::filepath_lookup policy("FHICL_FILE_PATH");
-
-  // parse a configuration file; obtain intermediate form
-  fhicl::intermediate_table tbl;
   std::string in("Sample.cfg");
-  fhicl::parse_document(in, policy, tbl);
-
-  // convert to ParameterSet
-  fhicl::ParameterSet pset;
-  fhicl::make_ParameterSet(tbl, pset);
+  auto const pset = fhicl::ParameterSet::make(in, policy);
 
   assert(pset.get<int>("a") == 1);
   assert(pset.get<unsigned int>("a") == 1);

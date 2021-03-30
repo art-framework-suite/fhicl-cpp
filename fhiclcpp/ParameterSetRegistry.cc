@@ -6,7 +6,6 @@
 #include "cetlib/sqlite/select.h"
 #include "fhiclcpp/ParameterSetID.h"
 #include "fhiclcpp/exception.h"
-#include "fhiclcpp/make_ParameterSet.h"
 
 #include "sqlite3.h"
 
@@ -196,8 +195,7 @@ fhicl::ParameterSetRegistry::stageIn()
                      std::inserter(registry, std::begin(registry)),
                      [](auto const& row) {
                        auto const& [idString, psBlob] = row;
-                       ParameterSet pset;
-                       fhicl::make_ParameterSet(psBlob, pset);
+                       auto const pset = ParameterSet::make(psBlob);
                        return std::make_pair(ParameterSetID{idString}, pset);
                      });
 }
@@ -229,9 +227,8 @@ fhicl::ParameterSetRegistry::find_(ParameterSetID const& id) -> const_iterator
     switch (result) {
       case SQLITE_ROW: // Found the ID in the DB.
       {
-        ParameterSet pset;
-        fhicl::make_ParameterSet(
-          reinterpret_cast<char const*>(sqlite3_column_text(stmt_, 0)), pset);
+        auto const pset = ParameterSet::make(
+          reinterpret_cast<char const*>(sqlite3_column_text(stmt_, 0)));
         // Put into the registry without triggering ParameterSet::id().
         it = registry_.emplace(id, pset).first;
       } break;

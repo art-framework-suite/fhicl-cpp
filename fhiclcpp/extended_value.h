@@ -81,11 +81,8 @@ public:
   std::string pretty_src_info() const;
 
   operator atom_t() const { return std::any_cast<atom_t>(value); }
-
   operator complex_t() const { return std::any_cast<complex_t>(value); }
-
   operator sequence_t() const { return std::any_cast<sequence_t>(value); }
-
   operator table_t() const { return std::any_cast<table_t>(value); }
 
   bool in_prolog{false};

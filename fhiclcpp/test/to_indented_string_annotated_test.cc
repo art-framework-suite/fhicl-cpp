@@ -6,7 +6,6 @@
 
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/parse.h"
 
 #include <cstdlib>
@@ -31,10 +30,8 @@ main()
   cet::filepath_lookup policy(search_path);
   std::string const in{"to_indented_string_annotated_test.fcl"};
 
-  fhicl::intermediate_table tbl1;
-  fhicl::parse_document(in, policy, tbl1);
-  fhicl::ParameterSet pset;
-  fhicl::make_ParameterSet(tbl1, pset);
+  auto const tbl = fhicl::parse_document(in, policy);
+  auto pset = fhicl::ParameterSet::make(tbl);
 
   pset.put<int>("another_number", 4);
   pset.put_or_replace<int>("some_number", 8);

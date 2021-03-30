@@ -12,6 +12,7 @@
 #include "fhiclcpp/detail/Prettifier.h"
 #include "fhiclcpp/detail/PrettifierAnnotated.h"
 #include "fhiclcpp/detail/PrettifierPrefixAnnotated.h"
+#include "fhiclcpp/intermediate_table.h"
 
 #include <cassert>
 #include <cstddef>
@@ -28,7 +29,7 @@ using std::any_cast;
 
 using ps_atom_t = ParameterSet::ps_atom_t;
 using ps_sequence_t = ParameterSet::ps_sequence_t;
-
+using table_t = intermediate_table::table_t;
 using ldbl = long double;
 
 // ======================================================================
@@ -59,6 +60,55 @@ namespace {
     ParameterSetID const& psid = std::any_cast<ParameterSetID>(a);
     return ParameterSetRegistry::get(psid);
   }
+}
+
+// ----------------------------------------------------------------------
+
+fhicl::ParameterSet
+fhicl::ParameterSet::make(intermediate_table const& tbl)
+{
+  ParameterSet result;
+  for (auto const& [key, value] : tbl) {
+    if (!value.in_prolog)
+      result.put(key, value);
+  }
+  return result;
+}
+
+// ----------------------------------------------------------------------
+
+fhicl::ParameterSet
+fhicl::ParameterSet::make(extended_value const& xval)
+{
+  if (!xval.is_a(TABLE))
+    throw fhicl::exception(type_mismatch, "extended value not a table");
+
+  ParameterSet result;
+  auto const& tbl = table_t(xval);
+  for (auto const& [key, value] : tbl) {
+    if (!value.in_prolog)
+      result.put(key, value);
+  }
+  return result;
+}
+
+// ----------------------------------------------------------------------
+
+fhicl::ParameterSet
+fhicl::ParameterSet::make(std::string const& str)
+{
+  auto const tbl = parse_document(str);
+  return ParameterSet::make(tbl);
+}
+
+// ----------------------------------------------------------------------
+
+fhicl::ParameterSet
+fhicl::ParameterSet::make(std::string const& filename,
+                          cet::filepath_maker& maker)
+{
+  auto const tbl = parse_document(filename, maker);
+  return ParameterSet::make(tbl);
 }
 
 // ======================================================================

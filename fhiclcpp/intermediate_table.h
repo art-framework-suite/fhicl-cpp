@@ -229,7 +229,7 @@ namespace fhicl {
     class it_value_get<intermediate_table::sequence_t const&> {
     public:
       intermediate_table::sequence_t const&
-      operator()(intermediate_table const& table, std::string const& name)
+      operator()(intermediate_table& table, std::string const& name)
       {
         return std::any_cast<intermediate_table::sequence_t const&>(
           table.find(name).value);
@@ -270,7 +270,7 @@ namespace fhicl {
     class it_value_get<intermediate_table::table_t const&> {
     public:
       intermediate_table::table_t const&
-      operator()(intermediate_table const& table, std::string const& name)
+      operator()(intermediate_table& table, std::string const& name)
       {
         return std::any_cast<intermediate_table::table_t const&>(
           table.find(name).value);

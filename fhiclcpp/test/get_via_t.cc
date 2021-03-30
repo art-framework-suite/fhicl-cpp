@@ -3,7 +3,6 @@
 
 #include "cetlib/container_algorithms.h"
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/make_ParameterSet.h"
 
 #include <string>
 #include <vector>
@@ -31,9 +30,7 @@ BOOST_AUTO_TEST_CASE(via_test)
 {
   auto const config = "number: 5 "
                       "names: ['Esther', 'Julian', 'Bobby']"s;
-  ParameterSet pset;
-  make_ParameterSet(config, pset);
-
+  auto const pset = ParameterSet::make(config);
   BOOST_TEST(pset.get<int>("number") == 5);
 
   auto check_value = [](int const& i) { return i == 5; };

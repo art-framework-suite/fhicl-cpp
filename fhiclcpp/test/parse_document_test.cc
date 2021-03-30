@@ -9,7 +9,6 @@
 #include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/parse.h"
 
 #include <ostream>
@@ -32,10 +31,8 @@ BOOST_AUTO_TEST_SUITE(document_test)
 BOOST_AUTO_TEST_CASE(empty_document)
 {
   std::string document;
-  intermediate_table tbl;
-  BOOST_REQUIRE_NO_THROW(parse_document(document, tbl));
-  ParameterSet pset;
-  make_ParameterSet(tbl, pset);
+  auto const tbl = parse_document(document);
+  auto const pset = ParameterSet::make(tbl);
   BOOST_TEST(pset.is_empty());
 }
 
@@ -43,10 +40,8 @@ BOOST_AUTO_TEST_CASE(nonempty_document)
 {
   std::string document = "a : 1\n"
                          "b : 2\n";
-  intermediate_table tbl;
-  BOOST_REQUIRE_NO_THROW(parse_document(document, tbl));
-  ParameterSet pset;
-  make_ParameterSet(tbl, pset);
+  auto const tbl = parse_document(document);
+  auto const pset = ParameterSet::make(tbl);
   BOOST_TEST(!pset.is_empty());
   BOOST_TEST(pset.get<int>("a") == 1);
   BOOST_TEST(pset.get<int>("b") == 2);
@@ -60,10 +55,8 @@ BOOST_AUTO_TEST_CASE(nested_document)
 {
   std::string document = "x.a : 1\n"
                          "x.b : 2\n";
-  intermediate_table tbl;
-  BOOST_REQUIRE_NO_THROW(parse_document(document, tbl));
-  ParameterSet pset;
-  make_ParameterSet(tbl, pset);
+  auto const tbl = parse_document(document);
+  auto const pset = ParameterSet::make(tbl);
   BOOST_TEST(!pset.is_empty());
   BOOST_REQUIRE_NO_THROW(pset.get<ParameterSet>("x"));
   BOOST_TEST_REQUIRE(!pset.get<ParameterSet>("x").is_empty());
@@ -80,8 +73,7 @@ BOOST_AUTO_TEST_CASE(badly_nested_document)
   std::string document = "{ x.a : 1\n"
                          "  x.b : 2\n"
                          "}\n";
-  intermediate_table tbl;
-  BOOST_CHECK_THROW(parse_document(document, tbl), cet::exception);
+  BOOST_CHECK_THROW(parse_document(document), cet::exception);
 }
 
 BOOST_AUTO_TEST_CASE(overridden_prolog_document)
@@ -94,10 +86,8 @@ BOOST_AUTO_TEST_CASE(overridden_prolog_document)
                          "END_PROLOG\n"
                          "a   : 2\n"
                          "t.a : @local::t.b\n";
-  intermediate_table tbl;
-  BOOST_REQUIRE_NO_THROW(parse_document(document, tbl));
-  ParameterSet pset;
-  make_ParameterSet(tbl, pset);
+  auto const tbl = parse_document(document);
+  auto const pset = ParameterSet::make(tbl);
   BOOST_TEST(pset.get<int>("a") == 2);
   BOOST_REQUIRE_NO_THROW(pset.get<ParameterSet>("t"));
   BOOST_TEST_REQUIRE(!pset.get<ParameterSet>("t").is_empty());
@@ -116,8 +106,7 @@ BOOST_AUTO_TEST_CASE(contiguous_prolog)
                          "BEGIN_PROLOG\n"
                          " c: 47\n"
                          "END_PROLOG\n";
-  intermediate_table tbl;
-  BOOST_REQUIRE_NO_THROW(parse_document(document, tbl));
+  auto const tbl = parse_document(document);
   BOOST_TEST(tbl.exists("c"));
 }
 
@@ -133,8 +122,7 @@ BOOST_AUTO_TEST_CASE(noncontiguous_prolog)
                          "BEGIN_PROLOG\n"
                          " c: 47\n"
                          "END_PROLOG\n";
-  intermediate_table tbl;
-  BOOST_REQUIRE_THROW(parse_document(document, tbl), cet::exception);
+  BOOST_REQUIRE_THROW(parse_document(document), cet::exception);
 }
 
 BOOST_AUTO_TEST_CASE(overridden_toplevel_document)
@@ -145,10 +133,7 @@ BOOST_AUTO_TEST_CASE(overridden_toplevel_document)
                          "c : 4\n"
                          "b : 5\n"
                          "a : 6\n";
-  intermediate_table tbl;
-  BOOST_REQUIRE_NO_THROW(parse_document(document, tbl));
-  ParameterSet pset;
-  make_ParameterSet(tbl, pset);
+  auto const pset = ParameterSet::make(document);
   BOOST_TEST(pset.get<int>("a") == 6);
   BOOST_TEST(pset.get<int>("b") == 5);
   BOOST_TEST(pset.get<int>("c") == 4);
@@ -163,10 +148,7 @@ BOOST_AUTO_TEST_CASE(overridden_nested_document)
                          "      b : 5\n"
                          "      a : 6\n"
                          "    }\n";
-  intermediate_table tbl;
-  BOOST_REQUIRE_NO_THROW(parse_document(document, tbl));
-  ParameterSet pset;
-  make_ParameterSet(tbl, pset);
+  auto const pset = ParameterSet::make(document);
   BOOST_TEST(pset.get<int>("t.a") == 6);
   BOOST_TEST(pset.get<int>("t.b") == 5);
   BOOST_TEST(pset.get<int>("t.c") == 4);
@@ -183,10 +165,8 @@ BOOST_AUTO_TEST_CASE(nil_value)
                          "      c : \"@nil\"\n"
                          "      d : \"nil\"\n"
                          "    }\n";
-  intermediate_table tbl;
-  BOOST_REQUIRE_NO_THROW(parse_document(document, tbl));
-  ParameterSet pset;
-  make_ParameterSet(tbl, pset);
+  auto const tbl = parse_document(document);
+  auto const pset = ParameterSet::make(tbl);
 
   typedef void* nil_t;
   nil_t nil_value = 0;
@@ -215,8 +195,7 @@ BOOST_AUTO_TEST_CASE(erase_value)
                          "c: { x: 7 y: 12 x: @erase }\n"
                          "a: @erase\n"
                          "b.x: @erase\n";
-  intermediate_table tbl;
-  BOOST_REQUIRE_NO_THROW(parse_document(document, tbl));
+  auto const tbl = parse_document(document);
   BOOST_TEST(tbl.exists("x"));
   BOOST_TEST(!tbl.exists("z"));
   BOOST_TEST(!tbl.exists("a"));
@@ -239,8 +218,7 @@ BOOST_AUTO_TEST_CASE(expand_nested_tables)
                          "      B:{ @table::A.B x:bar }\n"
                          "   }\n"
                          "}\n";
-  intermediate_table tbl;
-  parse_document(document, tbl);
+  auto tbl = parse_document(document);
   BOOST_TEST(tbl.get<std::string>("modules.A.B.x") == std::string("bar"));
 }
 
@@ -253,8 +231,7 @@ BOOST_AUTO_TEST_CASE(expand_table)
                          "x: { ethel: 14 bill: 12 @table::fred }\n"
                          "@table::fred\n"
                          "y: @local::y\n";
-  intermediate_table tbl;
-  parse_document(document, tbl);
+  auto tbl = parse_document(document);
   BOOST_TEST(tbl.exists("x.ethel"));
   BOOST_TEST(tbl.exists("x.charlie"));
   BOOST_TEST(tbl.exists("bill"));
@@ -274,15 +251,13 @@ BOOST_AUTO_TEST_CASE(expand_sequence)
                          "bill: [ one, two, @sequence::fred, six ]\n"
                          "charlie: @local::fred\n"
                          "ethel: [ @sequence::fred, six ]\n";
-  intermediate_table tbl;
-  parse_document(document, tbl);
+  auto const tbl = parse_document(document);
   BOOST_TEST(tbl.exists("fred"));
   BOOST_TEST(tbl.exists("bill"));
   BOOST_TEST(tbl.exists("charlie"));
   BOOST_TEST(tbl.exists("ethel"));
 
-  ParameterSet pset;
-  make_ParameterSet(tbl, pset);
+  auto const pset = ParameterSet::make(tbl);
 
   BOOST_TEST(pset.get<std::vector<std::string>>("charlie").size() == 3ul);
 
@@ -305,17 +280,15 @@ BOOST_AUTO_TEST_CASE(expand_sequence)
 
 BOOST_AUTO_TEST_CASE(string_escaping)
 {
-  intermediate_table tbl;
-  BOOST_CHECK_THROW(parse_document(R"(x: "$\d+^")", tbl), cet::exception);
-  BOOST_CHECK_NO_THROW(parse_document(R"(x: "$\\d+^")", tbl));
-  BOOST_CHECK_NO_THROW(parse_document(R"(x: '$\d+^')", tbl));
+  BOOST_CHECK_THROW(parse_document(R"(x: "$\d+^")"), cet::exception);
+  BOOST_CHECK_NO_THROW(parse_document(R"(x: "$\\d+^")"));
+  BOOST_CHECK_NO_THROW(parse_document(R"(x: '$\d+^')"));
 }
 
 BOOST_AUTO_TEST_CASE(bad_lookup)
 {
   std::string document = "x: @local::dead\n";
-  intermediate_table tbl;
-  BOOST_CHECK_THROW(parse_document(document, tbl), cet::exception);
+  BOOST_CHECK_THROW(parse_document(document), cet::exception);
 }
 
 BOOST_AUTO_TEST_CASE(bad_expand_table)
@@ -324,8 +297,7 @@ BOOST_AUTO_TEST_CASE(bad_expand_table)
                          "bad: John\n"
                          "END_PROLOG\n"
                          "@table::bad\n";
-  intermediate_table tbl;
-  BOOST_CHECK_THROW(parse_document(document, tbl), cet::exception);
+  BOOST_CHECK_THROW(parse_document(document), cet::exception);
 }
 
 BOOST_AUTO_TEST_CASE(bad_expand_sequence)
@@ -334,8 +306,7 @@ BOOST_AUTO_TEST_CASE(bad_expand_sequence)
                          "bad: John\n"
                          "END_PROLOG\n"
                          "f: [ @sequence::bad ]\n";
-  intermediate_table tbl;
-  BOOST_CHECK_THROW(parse_document(document, tbl), cet::exception);
+  BOOST_CHECK_THROW(parse_document(document), cet::exception);
 }
 
 BOOST_AUTO_TEST_CASE(colon_spacing)
@@ -344,7 +315,6 @@ BOOST_AUTO_TEST_CASE(colon_spacing)
                              "t: { a: 7 b: 6}\n"
                              "s: [ 7, 6, 7 ]\n"
                              "END_PROLOG\n";
-  intermediate_table tbl;
   std::vector<std::string> refs{
     "t1: @local::t\n",
     "@table::t\n",
@@ -356,15 +326,15 @@ BOOST_AUTO_TEST_CASE(colon_spacing)
     "t1: { a: @id::0001020304050607080910111213141516171819 }\n",
   };
   for (auto const& ref : refs) {
-    BOOST_CHECK_NO_THROW(parse_document(prolog + ref, tbl));
+    BOOST_CHECK_NO_THROW(parse_document(prolog + ref));
     auto const cpos = ref.find("::");
     BOOST_TEST_REQUIRE(cpos != std::string::npos);
     std::string bad1{ref};
     std::string bad2{ref};
     bad1.insert(cpos, " ");
-    BOOST_CHECK_THROW(parse_document(prolog + bad1, tbl), cet::exception);
+    BOOST_CHECK_THROW(parse_document(prolog + bad1), cet::exception);
     bad2.insert(cpos + 2, " ");
-    BOOST_CHECK_THROW(parse_document(prolog + bad2, tbl), cet::exception);
+    BOOST_CHECK_THROW(parse_document(prolog + bad2), cet::exception);
   }
 }
 
@@ -373,8 +343,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_01)
   std::string const doc = "x @protect_ignore: 29\n"
                           "x : 33\n"
                           "x : 37\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("x") == 29ul);
 }
 
@@ -385,8 +354,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_02)
                           "x : 33\n"
                           "END_PROLOG\n"
                           "x : 37\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("x") == 37ul);
 }
 
@@ -397,13 +365,12 @@ BOOST_AUTO_TEST_CASE(protect_ignore_03)
                           "END_PROLOG\n"
                           "x @protect_ignore: 33\n"
                           "x : 37\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("x") == 33ul);
 }
 
 #define PV_EXCEPTION                                                           \
-  BOOST_CHECK_EXCEPTION(parse_document(doc, tbl),                              \
+  BOOST_CHECK_EXCEPTION(parse_document(doc),                                   \
                         fhicl::exception,                                      \
                         [](fhicl::exception const& e) -> bool {                \
                           return e.categoryCode() ==                           \
@@ -415,8 +382,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_04)
 {
   std::string const doc = "x @protect_ignore: 29\n"
                           "x @protect_ignore: 33\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("x") == 29ul);
 }
 
@@ -426,8 +392,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_05)
                           "x @protect_ignore: 29\n"
                           "x @protect_ignore: 33\n"
                           "END_PROLOG\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("x") == 29ul);
 }
 
@@ -436,8 +401,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_06)
   std::string const doc = "a : { x @protect_ignore: 29 }\n"
                           "a.x : 33\n"
                           "a.x : 37\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.x") == 29ul);
 }
 
@@ -448,8 +412,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_07)
                           "a.x : 33\n"
                           "END_PROLOG\n"
                           "a.x : 37\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.x") == 37ul);
   BOOST_TEST(tbl.find("a.x").protection == fhicl::Protection::NONE);
 }
@@ -461,8 +424,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_08)
                           "END_PROLOG\n"
                           "a.x @protect_ignore: 33\n"
                           "a.x : 37\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.x") == 33ul);
 }
 
@@ -470,8 +432,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_09)
 {
   std::string const doc = "a : { x @protect_ignore: 29 }\n"
                           "a.x @protect_ignore: 33\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.x") == 29ul);
 }
 
@@ -481,8 +442,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_10)
                           "a : { x @protect_ignore: 29 }\n"
                           "a.x @protect_ignore: 33\n"
                           "END_PROLOG\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.x") == 29ul);
 }
 
@@ -491,8 +451,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_11)
   std::string const doc = "a @protect_ignore: { x : 29 }\n"
                           "a.x : 33\n"
                           "a.x : 37\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.x") == 29ul);
 }
 
@@ -503,8 +462,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_12)
                           "a.x : 33\n"
                           "END_PROLOG\n"
                           "a.x : 37\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.x") == 37ul);
 }
 
@@ -515,8 +473,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_13)
                           "END_PROLOG\n"
                           "a @protect_ignore: { x : 33 }\n"
                           "a.x : 37\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.x") == 33ul);
 }
 
@@ -524,8 +481,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_14)
 {
   std::string const doc = "a @protect_ignore: { x : 29 }\n"
                           "a @protect_ignore: { x : 33 }\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.x") == 29ul);
 }
 
@@ -535,8 +491,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_15)
                           "a @protect_ignore: { x : 29 }\n"
                           "a @protect_ignore: { x : 33 }\n"
                           "END_PROLOG\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.x") == 29ul);
 }
 
@@ -545,8 +500,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_16)
   std::string const doc = "a : { b @protect_ignore: { x : 29 } }\n"
                           "a.b.x : 33\n"
                           "a.b.x : 37\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 29ul);
 }
 
@@ -558,8 +512,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_17)
                           "END_PROLOG\n"
                           "a : { b @protect_ignore: { x : 37 } }\n"
                           "a.b.x : 41\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 37ul);
 }
 
@@ -570,8 +523,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_18)
                           "END_PROLOG\n"
                           "a : { b @protect_ignore: { x : 33 } }\n"
                           "a.b.x : 37\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 33ul);
 }
 
@@ -579,8 +531,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_19)
 {
   std::string const doc = "a : { b @protect_ignore: { x : 29 } }\n"
                           "a : { b @protect_ignore: { x : 33 } }\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 33ul);
 }
 
@@ -590,8 +541,7 @@ BOOST_AUTO_TEST_CASE(protect_ignore_20)
                           "a : { b @protect_ignore: { x : 29 } }\n"
                           "a : { b @protect_ignore: { x : 33 } }\n"
                           "END_PROLOG\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 33ul);
 }
 
@@ -599,7 +549,6 @@ BOOST_AUTO_TEST_CASE(protect_ignore_21)
 {
   std::string const doc = "a : { x : 29 }\n"
                           "a.x @protect_ignore: 33\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -609,7 +558,6 @@ BOOST_AUTO_TEST_CASE(protect_ignore_22)
                           "a : { x : 29 }\n"
                           "a.x @protect_ignore: 33\n"
                           "END_PROLOG\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -619,7 +567,6 @@ BOOST_AUTO_TEST_CASE(protect_error_01)
                           "x @protect_error: 29\n"
                           "x : 37\n"
                           "END_PROLOG\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -629,8 +576,7 @@ BOOST_AUTO_TEST_CASE(protect_error_02)
                           "x @protect_error: 29\n"
                           "END_PROLOG\n"
                           "x : 33\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("x") == 33ul);
 }
 
@@ -641,7 +587,6 @@ BOOST_AUTO_TEST_CASE(protect_error_03)
                           "END_PROLOG\n"
                           "x @protect_error: 33\n"
                           "x : 37\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -651,7 +596,6 @@ BOOST_AUTO_TEST_CASE(protect_error_04)
                           "x @protect_ignore: 29\n"
                           "x @protect_error: 33\n"
                           "END_PROLOG\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -659,7 +603,6 @@ BOOST_AUTO_TEST_CASE(protect_error_05)
 {
   std::string const doc = "x @protect_ignore: 29\n"
                           "x @protect_error: 33\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -667,8 +610,7 @@ BOOST_AUTO_TEST_CASE(protect_error_06)
 {
   std::string const doc = "a : { x @protect_error: 29 }\n"
                           "a : { x @protect_error: 33 }\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.x") == 33ul);
 }
 
@@ -678,8 +620,7 @@ BOOST_AUTO_TEST_CASE(protect_error_07)
                           "a : { x @protect_error: 29 }\n"
                           "a : { x @protect_error: 33 }\n"
                           "END_PROLOG\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.x") == 33ul);
 }
 
@@ -689,7 +630,6 @@ BOOST_AUTO_TEST_CASE(protect_error_08)
                           "a : { x @protect_error: 29 }\n"
                           "a.x : 33\n"
                           "END_PROLOG\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -697,7 +637,6 @@ BOOST_AUTO_TEST_CASE(protect_error_09)
 {
   std::string const doc = "a : { x @protect_error: 29 }\n"
                           "a.x : 33\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -707,7 +646,6 @@ BOOST_AUTO_TEST_CASE(protect_error_10)
                           "a : { b : { x @protect_error: 29 } } \n"
                           "a.b.x : 33\n"
                           "END_PROLOG\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -717,7 +655,6 @@ BOOST_AUTO_TEST_CASE(protect_error_11)
                           "a : { b @protect_error: { x : 29 } }\n"
                           "a.b : { x : 33 }\n"
                           "END_PROLOG\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -725,8 +662,7 @@ BOOST_AUTO_TEST_CASE(erase_01)
 {
   std::string const doc = "x : 29\n"
                           "x : @erase";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto const tbl = parse_document(doc);
   BOOST_TEST(tbl.empty());
 }
 
@@ -736,8 +672,7 @@ BOOST_AUTO_TEST_CASE(erase_02)
                           "x : 29\n"
                           "x : @erase"
                           "END_PROLOG\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto const tbl = parse_document(doc);
   BOOST_TEST(tbl.empty());
 }
 
@@ -745,8 +680,7 @@ BOOST_AUTO_TEST_CASE(erase_03)
 {
   std::string const doc = "x @protect_ignore: 29\n"
                           "x : @erase";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("x") == 29ul);
 }
 
@@ -754,7 +688,6 @@ BOOST_AUTO_TEST_CASE(erase_04)
 {
   std::string const doc = "x @protect_error: 29\n"
                           "x : @erase";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -762,8 +695,7 @@ BOOST_AUTO_TEST_CASE(erase_05)
 {
   std::string const doc = "a : { b @protect_ignore: { x : 29 } }\n"
                           "a : @erase\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto const tbl = parse_document(doc);
   BOOST_TEST(tbl.empty());
 }
 
@@ -771,8 +703,7 @@ BOOST_AUTO_TEST_CASE(erase_06)
 {
   std::string const doc = "a : { b @protect_ignore: { x : 29 } }\n"
                           "a.b : @erase\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 29ul);
 }
 
@@ -780,8 +711,7 @@ BOOST_AUTO_TEST_CASE(erase_07)
 {
   std::string const doc = "a : { b @protect_ignore: { x : 29 } }\n"
                           "a.b.x : @erase\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 29ul);
 }
 
@@ -789,8 +719,7 @@ BOOST_AUTO_TEST_CASE(erase_08)
 {
   std::string const doc = "a : { b @protect_ignore: { c: { x : 29 } } }\n"
                           "a.b.c : @erase\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.b.c.x") == 29ul);
 }
 
@@ -798,7 +727,6 @@ BOOST_AUTO_TEST_CASE(erase_09)
 {
   std::string const doc = "a : { b @protect_error: { c: { x : 29 } } }\n"
                           "a.b.c : @erase\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -806,7 +734,6 @@ BOOST_AUTO_TEST_CASE(erase_10)
 {
   std::string const doc = "a : { b @protect_error: { c: { x : 29 } } }\n"
                           "a.b : @erase\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -814,8 +741,7 @@ BOOST_AUTO_TEST_CASE(erase_11)
 {
   std::string const doc = "a : { b @protect_error: { x : 29 } }\n"
                           "a : @erase\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto const tbl = parse_document(doc);
   BOOST_TEST(tbl.empty());
 }
 
@@ -823,8 +749,7 @@ BOOST_AUTO_TEST_CASE(protect_local_01)
 {
   std::string const doc = "a @protect_ignore: 42\n"
                           "b: @local::a\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.find("b").protection == Protection::PROTECT_IGNORE);
 }
 
@@ -833,7 +758,6 @@ BOOST_AUTO_TEST_CASE(protect_local_02)
   std::string const doc = "a @protect_error: 42\n"
                           "b: 43\n"
                           "b: @local::a\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -843,8 +767,7 @@ BOOST_AUTO_TEST_CASE(protect_local_03)
                           "b: @local::a\n"
                           "b: @erase\n"
                           "b: 43\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("b") == 42ul);
 }
 
@@ -853,7 +776,6 @@ BOOST_AUTO_TEST_CASE(protect_local_04)
   std::string const doc = "a @protect_error: 42\n"
                           "b: @local::a\n"
                           "b: 43\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -865,8 +787,7 @@ BOOST_AUTO_TEST_CASE(protect_local_05)
                           "END_PROLOG\n"
                           "a: @local::a\n"
                           "a.b.x: 29\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 27ul);
   BOOST_TEST(tbl.find("a.b.x").protection == Protection::PROTECT_IGNORE);
 }
@@ -879,7 +800,6 @@ BOOST_AUTO_TEST_CASE(protect_local_06)
                           "END_PROLOG\n"
                           "a @protect_error: @local::a\n"
                           "a.b.x: 29\n";
-  intermediate_table tbl;
   PV_EXCEPTION;
 }
 
@@ -891,8 +811,7 @@ BOOST_AUTO_TEST_CASE(protect_local_07)
                           "END_PROLOG\n"
                           "a @protect_ignore: @local::a\n"
                           "a.b.x: 29\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
+  auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 27ul);
   BOOST_TEST(tbl.find("a.b.x").protection == Protection::PROTECT_IGNORE);
   BOOST_TEST(tbl.find("a").protection == Protection::PROTECT_IGNORE);
@@ -919,7 +838,7 @@ namespace {
 
 #define PARSE_ERROR(line, charpos)                                             \
   BOOST_CHECK_EXCEPTION(                                                       \
-    parse_document(doc, tbl),                                                  \
+    parse_document(doc),                                                       \
     fhicl::exception,                                                          \
     std::bind(&is_parse_error_at, std::placeholders::_1, line, charpos));
 
@@ -927,7 +846,6 @@ BOOST_AUTO_TEST_CASE(bad_par_01)
 {
   std::string const doc = "x : 26\n"
                           "a 36\n";
-  intermediate_table tbl;
   PARSE_ERROR(2, 1);
 }
 
@@ -939,7 +857,6 @@ BOOST_AUTO_TEST_CASE(bad_par_02)
                           "END_PROLOG\n"
                           "y : 26\n"
                           "b 36\n";
-  intermediate_table tbl;
   PARSE_ERROR(6, 1);
 }
 
@@ -949,7 +866,6 @@ BOOST_AUTO_TEST_CASE(bad_prolog)
                           "x : 26\n"
                           "a 36\n"
                           "END_PROLOG\n";
-  intermediate_table tbl;
   PARSE_ERROR(3, 1);
 }
 

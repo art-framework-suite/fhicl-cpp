@@ -3,7 +3,6 @@
 
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/extended_value.h"
-#include "fhiclcpp/make_ParameterSet.h"
 
 #include <cassert>
 #include <iostream>

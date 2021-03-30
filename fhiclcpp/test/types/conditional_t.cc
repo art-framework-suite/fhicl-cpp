@@ -3,7 +3,6 @@
 #include "CondConfig.h"
 #include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/types/Table.h"
 
 #include <iostream>
@@ -17,9 +16,7 @@ namespace {
   create_PSet(std::string const& file)
   {
     cet::filepath_maker fpm;
-    ParameterSet pset;
-    make_ParameterSet(file, fpm, pset);
-    return pset;
+    return ParameterSet::make(file, fpm);
   }
 }
 

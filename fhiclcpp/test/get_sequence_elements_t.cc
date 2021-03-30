@@ -3,11 +3,9 @@
 #include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/parse.h"
 
 #include <iostream>
-#include <string>
 #include <vector>
 
 using namespace fhicl;
@@ -15,17 +13,14 @@ using namespace std;
 
 struct SampleConfigFixture {
   SampleConfigFixture();
-
   ParameterSet pset;
 };
 
 SampleConfigFixture::SampleConfigFixture()
 {
   cet::filepath_lookup policy("FHICL_FILE_PATH");
-  intermediate_table tbl;
   std::string cfg_in("Sample.cfg");
-  parse_document(cfg_in, policy, tbl);
-  make_ParameterSet(tbl, pset);
+  pset = ParameterSet::make(cfg_in, policy);
 }
 
 BOOST_FIXTURE_TEST_SUITE(sampleConfig, SampleConfigFixture)

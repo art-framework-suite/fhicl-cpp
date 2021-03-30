@@ -14,11 +14,7 @@
 // ======================================================================
 
 #include "cetlib_except/demangle.h"
-
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
-#include "fhiclcpp/parse.h"
 
 #include <array>
 #include <iomanip>
@@ -47,11 +43,7 @@ main()
 {
   cet::filepath_lookup policy("FHICL_FILE_PATH");
   std::string const in("to_tupleTypes_test.fcl");
-
-  fhicl::intermediate_table tbl1;
-  fhicl::parse_document(in, policy, tbl1);
-  fhicl::ParameterSet pset;
-  fhicl::make_ParameterSet(tbl1, pset);
+  auto const pset = ParameterSet::make(in, policy);
 
   //======================================================================
   // array checking
@@ -98,7 +90,7 @@ main()
   auto const vofp =
     pset.get<std::vector<std::pair<std::string, unsigned>>>("pair2");
   std::cout << std::endl;
-  for (const auto& entry : vofp) {
+  for (auto const& entry : vofp) {
     std::cout << entry.first << " " << entry.second << std::endl;
   }
 
@@ -144,7 +136,7 @@ main()
       .get<std::vector<std::tuple<std::size_t, std::string, unsigned, double>>>(
         "tup2");
 
-  for (const auto& composer : composers) {
+  for (auto const& composer : composers) {
     std::cout << std::endl;
     print(std::get<0>(composer));
     print(std::get<1>(composer));
@@ -174,20 +166,20 @@ main()
                           unsigned,
                           unsigned>>>("tup3");
 
-  const auto nine_symphonies = std::get<0>(factoids);
+  auto const nine_symphonies = std::get<0>(factoids);
   std::cout << std::endl;
   print(std::get<0>(nine_symphonies));
   print(std::get<1>(nine_symphonies));
   print(std::get<2>(nine_symphonies));
   print(std::get<3>(nine_symphonies));
 
-  const auto less_than_9_symphonies = std::get<1>(factoids);
+  auto const less_than_9_symphonies = std::get<1>(factoids);
   std::cout << std::endl;
   print(std::get<0>(less_than_9_symphonies));
   print(std::get<1>(less_than_9_symphonies));
   print(std::get<2>(less_than_9_symphonies));
 
-  const auto piano_sonatas = std::get<2>(factoids);
+  auto const piano_sonatas = std::get<2>(factoids);
   std::cout << std::endl;
   print(std::get<0>(piano_sonatas));
   print(std::get<1>(piano_sonatas));

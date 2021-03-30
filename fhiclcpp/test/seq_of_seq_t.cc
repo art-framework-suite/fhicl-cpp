@@ -1,5 +1,4 @@
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/make_ParameterSet.h"
 
 #include <cassert>
 #include <string>
@@ -13,8 +12,7 @@ int
 main()
 {
   string const doc = "v1: [[ ],[ 1],[-1, 2,3]]";
-  ParameterSet p;
-  fhicl::make_ParameterSet(doc, p);
+  auto const p = ParameterSet::make(doc);
   assert(p.get_names() == vector<string>({"v1"}));
   auto vvi = p.get<vector<vector<int>>>("v1");
   assert(vvi.size() == 3);

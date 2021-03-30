@@ -1,9 +1,5 @@
 #include "cetlib/filepath_maker.h"
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/ParameterSetID.h"
-#include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
-#include "fhiclcpp/parse.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -19,10 +15,10 @@ main(int argc, char** argv)
     std::cerr << "ERROR: expect exactly one filename!\n";
     exit(1);
   }
-  intermediate_table tbl_ref;
+  ParameterSet pset_ref;
   cet::filepath_lookup policy(".:");
   try {
-    parse_document(argv[1], policy, tbl_ref);
+    pset_ref = ParameterSet::make(argv[1], policy);
   }
   catch (std::exception& e) {
     std::cerr << "ERROR: unable to parse FHiCL file "
@@ -30,13 +26,10 @@ main(int argc, char** argv)
               << e.what();
     exit(1);
   }
-  ParameterSet pset_ref;
-  make_ParameterSet(tbl_ref, pset_ref);
-  string pset_string(pset_ref.to_string());
-  intermediate_table tbl_test;
-  parse_document(pset_string, tbl_test);
-  ParameterSet pset_test;
-  make_ParameterSet(tbl_test, pset_test);
+
+  string const pset_string(pset_ref.to_string());
+  auto const pset_test = ParameterSet::make(pset_string);
+
   string pset_test_string(pset_test.to_string());
   if (pset_string != pset_test_string) {
     std::cerr << "ERROR: \n"

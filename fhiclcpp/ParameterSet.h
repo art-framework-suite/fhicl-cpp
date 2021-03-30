@@ -39,6 +39,12 @@ public:
 
   // compiler generates default c'tor, d'tor, copy c'tor, copy assignment
 
+  static ParameterSet make(intermediate_table const& tbl);
+  static ParameterSet make(extended_value const& xval);
+  static ParameterSet make(std::string const& str);
+  static ParameterSet make(std::string const& filename,
+                           cet::filepath_maker& maker);
+
   // observers:
   bool is_empty() const;
   ParameterSetID id() const;

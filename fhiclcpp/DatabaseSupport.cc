@@ -1,5 +1,6 @@
 #include "fhiclcpp/DatabaseSupport.h"
 #include "fhiclcpp/ParameterSetRegistry.h"
+#include "fhiclcpp/ParameterSet.h"
 
 void
 fhicl::decompose_fhicl(std::string const& filename,
@@ -7,9 +8,8 @@ fhicl::decompose_fhicl(std::string const& filename,
                        std::vector<std::string>& hashes)
 {
   // Parse file into a ParameterSet.
-  fhicl::ParameterSet top;
   cet::filepath_maker fpm;
-  make_ParameterSet(filename, fpm, top);
+  auto const top = ParameterSet::make(filename, fpm);
   decompose_parameterset(top, records, hashes);
 }
 
@@ -47,9 +47,8 @@ fhicl::decompose_parameterset(fhicl::ParameterSet const& top,
 void
 fhicl::parse_file_and_fill_db(std::string const& filename, sqlite3* out)
 {
-  fhicl::ParameterSet top;
   cet::filepath_maker fpm;
-  make_ParameterSet(filename, fpm, top);
+  auto const top = ParameterSet::make(filename, fpm);
   fhicl::ParameterSetRegistry::put(top);
   fhicl::ParameterSetRegistry::exportTo(out);
 }
