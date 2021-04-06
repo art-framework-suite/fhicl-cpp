@@ -263,15 +263,13 @@ ParameterSet::get_src_info(std::string const& key) const
 void
 ParameterSet::put(std::string const& key)
 {
-  void* const value{nullptr};
-  put(key, value);
+  put(key, nullptr);
 }
 
 void
 ParameterSet::put_or_replace(std::string const& key)
 {
-  void* const value{nullptr};
-  put_or_replace(key, value); // Replace with nil is always OK.
+  put_or_replace(key, nullptr); // Replace with nil is always OK.
 }
 
 // ----------------------------------------------------------------------

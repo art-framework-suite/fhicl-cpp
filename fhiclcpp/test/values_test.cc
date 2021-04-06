@@ -16,15 +16,15 @@
 using namespace fhicl;
 using namespace std;
 
-typedef unsigned int uint;
+using uint = unsigned int;
 
-typedef double dbl;
-typedef long double ldbl;
+using dbl = double;
+using ldbl = long double;
 
-typedef complex<dbl> cdbl;
-typedef complex<ldbl> cldbl;
+using cdbl = complex<dbl>;
+using cldbl = complex<ldbl>;
 
-typedef vector<uint> uvec;
+using uvec = vector<uint>;
 
 BOOST_AUTO_TEST_SUITE(values_test)
 
@@ -65,15 +65,14 @@ BOOST_AUTO_TEST_CASE(bool_values) // test atoms "true" and "false"
 
 BOOST_AUTO_TEST_CASE(nil_value) // test atom "nil"
 {
-  typedef void* nil_t;
-  nil_t nil_value = nullptr;
+  using nil_t = std::nullptr_t;
 
   ParameterSet pset;
   BOOST_TEST(pset.is_empty());
   BOOST_TEST(pset.to_string() == "");
 
-  pset.put<void*>("n11", nil_value);
-  BOOST_TEST(pset.get<nil_t>("n11") == nil_value);
+  pset.put("n11", nil_t{});
+  BOOST_TEST(pset.get<nil_t>("n11") == nil_t{});
   BOOST_TEST(pset.to_string() == "n11:@nil");
   BOOST_CHECK_THROW(pset.get<bool>("n11"), fhicl::exception);
   BOOST_CHECK_THROW(pset.get<uint>("n11"), fhicl::exception);

@@ -165,14 +165,11 @@ BOOST_AUTO_TEST_CASE(nil_value)
                          "      c : \"@nil\"\n"
                          "      d : \"nil\"\n"
                          "    }\n";
-  auto const tbl = parse_document(document);
-  auto const pset = ParameterSet::make(tbl);
+  auto const pset = ParameterSet::make(document);
 
-  typedef void* nil_t;
-  nil_t nil_value = 0;
-
-  BOOST_TEST(pset.get<nil_t>("a") == nil_value);
-  BOOST_TEST(pset.get<nil_t>("t.a") == nil_value);
+  using nil_t = std::nullptr_t;
+  BOOST_TEST(pset.get<nil_t>("a") == nil_t{});
+  BOOST_TEST(pset.get<nil_t>("t.a") == nil_t{});
   BOOST_CHECK_THROW(pset.get<string>("a"), fhicl::exception);
   BOOST_CHECK_THROW(pset.get<string>("t.a"), fhicl::exception);
   BOOST_TEST(pset.get<string>("b") == "nil");

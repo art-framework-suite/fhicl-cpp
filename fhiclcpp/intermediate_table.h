@@ -368,7 +368,7 @@ inline bool fhicl::intermediate_table::putEmptyTable(
 inline bool fhicl::intermediate_table::putNil(std::string const& name,
                                               bool const in_prolog) // Nil.
 {
-  return insert(name, in_prolog, NIL, detail::encode((void*)0));
+  return insert(name, in_prolog, NIL, detail::encode(nullptr));
 }
 
 inline fhicl::extended_value*
