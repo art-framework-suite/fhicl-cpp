@@ -1,6 +1,6 @@
 #include "fhiclcpp/DatabaseSupport.h"
-#include "fhiclcpp/ParameterSetRegistry.h"
 #include "fhiclcpp/ParameterSet.h"
+#include "fhiclcpp/ParameterSetRegistry.h"
 
 void
 fhicl::decompose_fhicl(std::string const& filename,

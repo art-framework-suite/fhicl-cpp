@@ -488,24 +488,24 @@ ParameterSet::to_indented_string(unsigned const initial_indent_level,
 {
   std::string result;
   switch (pm) {
-    case print_mode::raw: {
-      Prettifier p{initial_indent_level};
-      walk(p);
-      result = p.result();
-      break;
-    }
-    case print_mode::annotated: {
-      PrettifierAnnotated p{initial_indent_level};
-      walk(p);
-      result = p.result();
-      break;
-    }
-    case print_mode::prefix_annotated: {
-      PrettifierPrefixAnnotated p;
-      walk(p);
-      result = p.result();
-      break;
-    }
+  case print_mode::raw: {
+    Prettifier p{initial_indent_level};
+    walk(p);
+    result = p.result();
+    break;
+  }
+  case print_mode::annotated: {
+    PrettifierAnnotated p{initial_indent_level};
+    walk(p);
+    result = p.result();
+    break;
+  }
+  case print_mode::prefix_annotated: {
+    PrettifierPrefixAnnotated p;
+    walk(p);
+    result = p.result();
+    break;
+  }
   }
   return result;
 }

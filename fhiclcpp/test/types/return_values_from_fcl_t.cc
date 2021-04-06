@@ -9,8 +9,8 @@
 
 #define BOOST_TEST_MODULE (return values from fcl)
 
-#include "boost/test/unit_test.hpp"
 #include "FixtureBase.h"
+#include "boost/test/unit_test.hpp"
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/Sequence.h"
 #include "fhiclcpp/types/Tuple.h"

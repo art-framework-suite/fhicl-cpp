@@ -14,8 +14,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  typedef struct sqlite3 sqlite3;
-  typedef struct sqlite3_stmt sqlite3_stmt;
+typedef struct sqlite3 sqlite3;
+typedef struct sqlite3_stmt sqlite3_stmt;
 #ifdef __cplusplus
 }
 #endif

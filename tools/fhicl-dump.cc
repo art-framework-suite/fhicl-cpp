@@ -58,7 +58,8 @@ main(int argc, char** argv)
   }
 
   auto const& opts = std::get<Options>(opts_or_help);
-  auto const pset = fhicl::ParameterSet::make(opts.input_filename, *opts.policy);
+  auto const pset =
+    fhicl::ParameterSet::make(opts.input_filename, *opts.policy);
 
   if (opts.quiet)
     return 0;

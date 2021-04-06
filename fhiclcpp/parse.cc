@@ -283,15 +283,15 @@ namespace {
           << i->second.pretty_src_info() << ")\n";
       }
       switch (i->second.protection) {
-        case Protection::NONE:
-          break;
-        case Protection::PROTECT_IGNORE:
-          // Do not overwrite protected binding.
-          return;
-        case Protection::PROTECT_ERROR:
-          throw fhicl::exception(fhicl::error::protection_violation)
-            << '"' << name << "\" is protected on "
-            << i->second.pretty_src_info() << '\n';
+      case Protection::NONE:
+        break;
+      case Protection::PROTECT_IGNORE:
+        // Do not overwrite protected binding.
+        return;
+      case Protection::PROTECT_ERROR:
+        throw fhicl::exception(fhicl::error::protection_violation)
+          << '"' << name << "\" is protected on " << i->second.pretty_src_info()
+          << '\n';
       }
     }
     t[name] = value;
@@ -342,16 +342,16 @@ namespace {
             << element.pretty_src_info() << ")\n";
         }
         switch (element.protection) {
-          case Protection::NONE:
-            break;
-          case Protection::PROTECT_IGNORE:
-            continue;
-          case Protection::PROTECT_ERROR:
-            throw fhicl::exception(fhicl::error::protection_violation)
-              << "@table::" << name << ": inserting name " << name
-              << "would violate protection on existing item"
-              << "\n(previous definition on " << element.pretty_src_info()
-              << ")\n";
+        case Protection::NONE:
+          break;
+        case Protection::PROTECT_IGNORE:
+          continue;
+        case Protection::PROTECT_ERROR:
+          throw fhicl::exception(fhicl::error::protection_violation)
+            << "@table::" << name << ": inserting name " << name
+            << "would violate protection on existing item"
+            << "\n(previous definition on " << element.pretty_src_info()
+            << ")\n";
         }
       }
       element = value;
@@ -423,13 +423,13 @@ namespace {
       return;
 
     switch (i->second.protection) {
-      case Protection::NONE:
-        t.erase(name);
-      case Protection::PROTECT_IGNORE:
-        break;
-      case Protection::PROTECT_ERROR:
-        throw fhicl::exception(fhicl::error::protection_violation)
-          << "Unable to erase " << name << " due to protection.\n";
+    case Protection::NONE:
+      t.erase(name);
+    case Protection::PROTECT_IGNORE:
+      break;
+    case Protection::PROTECT_ERROR:
+      throw fhicl::exception(fhicl::error::protection_violation)
+        << "Unable to erase " << name << " due to protection.\n";
     }
   }
 
@@ -827,15 +827,13 @@ namespace {
 }
 
 fhicl::intermediate_table
-fhicl::parse_document(std::string const& filename,
-                      cet::filepath_maker& maker)
+fhicl::parse_document(std::string const& filename, cet::filepath_maker& maker)
 {
   return parse_document_(cet::includer{filename, maker});
 }
 
 fhicl::intermediate_table
-fhicl::parse_document(std::istream& is,
-                      cet::filepath_maker& maker)
+fhicl::parse_document(std::istream& is, cet::filepath_maker& maker)
 {
   return parse_document_(cet::includer(is, maker));
 }

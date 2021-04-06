@@ -21,48 +21,48 @@ fhicl::extended_value::to_string() const
 
   switch (tag) {
 
-    case NIL:
-    case BOOL:
-    case NUMBER:
-    case STRING: {
-      return any_cast<atom_t>(value);
-    }
+  case NIL:
+  case BOOL:
+  case NUMBER:
+  case STRING: {
+    return any_cast<atom_t>(value);
+  }
 
-    case COMPLEX: {
-      auto c = any_cast<complex_t>(value);
-      return '(' + c.first + ',' + c.second + ')';
-    }
+  case COMPLEX: {
+    auto c = any_cast<complex_t>(value);
+    return '(' + c.first + ',' + c.second + ')';
+  }
 
-    case SEQUENCE: {
-      auto q = any_cast<sequence_t>(value);
-      string s("[");
-      string sep;
-      for (auto const& v : q) {
-        s.append(sep).append(v.to_string());
-        sep = ",";
-      }
-      return s + ']';
+  case SEQUENCE: {
+    auto q = any_cast<sequence_t>(value);
+    string s("[");
+    string sep;
+    for (auto const& v : q) {
+      s.append(sep).append(v.to_string());
+      sep = ",";
     }
+    return s + ']';
+  }
 
-    case TABLE: {
-      auto t = any_cast<table_t>(value);
-      string s("{");
-      string sep;
-      for (auto const& pr : t) {
-        s.append(sep).append(pr.first + ':' + pr.second.to_string());
-        sep = " ";
-      }
-      return s + '}';
+  case TABLE: {
+    auto t = any_cast<table_t>(value);
+    string s("{");
+    string sep;
+    for (auto const& pr : t) {
+      s.append(sep).append(pr.first + ':' + pr.second.to_string());
+      sep = " ";
     }
+    return s + '}';
+  }
 
-    case TABLEID: {
-      return string("@id::") + any_cast<atom_t>(value);
-    }
+  case TABLEID: {
+    return string("@id::") + any_cast<atom_t>(value);
+  }
 
-    case UNKNOWN:
-    default: {
-      return "";
-    }
+  case UNKNOWN:
+  default: {
+    return "";
+  }
 
   }; // switch
 
@@ -77,35 +77,35 @@ fhicl::extended_value::set_prolog(bool new_prolog_state)
 
   switch (tag) {
 
-    case NIL:
-    case BOOL:
-    case NUMBER:
-    case STRING:
-    case COMPLEX:
-    case TABLEID: {
-      break;
-    }
+  case NIL:
+  case BOOL:
+  case NUMBER:
+  case STRING:
+  case COMPLEX:
+  case TABLEID: {
+    break;
+  }
 
-    case SEQUENCE: {
-      auto& q = any_cast<sequence_t&>(value);
-      for (auto& e : q) {
-        e.set_prolog(new_prolog_state);
-      }
-      break;
+  case SEQUENCE: {
+    auto& q = any_cast<sequence_t&>(value);
+    for (auto& e : q) {
+      e.set_prolog(new_prolog_state);
     }
+    break;
+  }
 
-    case TABLE: {
-      auto& t = any_cast<table_t&>(value);
-      for (auto& pr : t) {
-        pr.second.set_prolog(new_prolog_state);
-      }
-      break;
+  case TABLE: {
+    auto& t = any_cast<table_t&>(value);
+    for (auto& pr : t) {
+      pr.second.set_prolog(new_prolog_state);
     }
+    break;
+  }
 
-    case UNKNOWN:
-    default: {
-      break;
-    }
+  case UNKNOWN:
+  default: {
+    break;
+  }
 
   }; // switch
 

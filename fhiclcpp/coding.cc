@@ -272,12 +272,12 @@ fhicl::detail::decode(any const& a, ldbl& result)
   atom_t const& atom = atom_t(xval);
   if (atom.substr(1) == literal_infinity()) {
     switch (atom[0]) {
-      case '+':
-        result = +std::numeric_limits<ldbl>::infinity();
-        return;
-      case '-':
-        result = -std::numeric_limits<ldbl>::infinity();
-        return;
+    case '+':
+      result = +std::numeric_limits<ldbl>::infinity();
+      return;
+    case '-':
+      result = -std::numeric_limits<ldbl>::infinity();
+      return;
     }
   } else
     result = lexical_cast<ldbl>(atom);
