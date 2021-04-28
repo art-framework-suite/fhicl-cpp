@@ -12,6 +12,7 @@
 #include "fhiclcpp/types/detail/check_nargs_for_bounded_sequences.h"
 #include "fhiclcpp/types/detail/type_traits_error_msgs.h"
 
+#include <optional>
 #include <string>
 #include <utility>
 
@@ -46,7 +47,8 @@ namespace fhicl {
                            Comment&& comment,
                            std::function<bool()> maybeUse);
 
-    bool operator()(value_type&) const;
+    auto operator()() const -> std::optional<value_type>;
+    auto operator()(value_type&) const -> bool;
 
     bool
     hasValue() const
@@ -179,14 +181,24 @@ namespace fhicl {
   }
 
   template <typename... T>
-  bool
-  OptionalTuple<T...>::operator()(value_type& r) const
+  auto
+  OptionalTuple<T...>::operator()() const -> std::optional<value_type>
   {
     if (!has_value_)
-      return false;
-    auto result = get_rtype_result(std::index_sequence_for<T...>());
-    std::swap(result, r);
-    return true;
+      return std::nullopt;
+    return std::make_optional(
+      get_rtype_result(std::index_sequence_for<T...>()));
+  }
+
+  template <typename... T>
+  auto
+  OptionalTuple<T...>::operator()(value_type& r) const -> bool
+  {
+    auto result = operator()();
+    if (result) {
+      r = *result;
+    }
+    return result.has_value();
   }
 }
 

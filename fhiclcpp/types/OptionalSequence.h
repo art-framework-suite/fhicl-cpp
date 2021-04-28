@@ -13,6 +13,7 @@
 #include "fhiclcpp/types/detail/check_nargs_for_bounded_sequences.h"
 
 #include <array>
+#include <optional>
 #include <string>
 #include <type_traits>
 
@@ -40,18 +41,28 @@ namespace fhicl {
                               Comment&& comment,
                               std::function<bool()> maybeUse);
 
-    bool
-    operator()(value_type& t) const
+    std::optional<value_type>
+    operator()() const
     {
       if (!has_value_)
-        return false;
+        return std::nullopt;
 
       value_type result = {{tt::return_type<T>()}};
       cet::transform_all(
         value_, result.begin(), [](auto const& elem) { return (*elem)(); });
 
-      std::swap(result, t);
-      return true;
+      return std::make_optional(std::move(result));
+    }
+
+    // Obsolete interface
+    bool
+    operator()(value_type& t) const
+    {
+      auto const result = operator()();
+      if (result) {
+        t = *result;
+      }
+      return result.has_value();
     }
 
     bool
@@ -115,19 +126,28 @@ namespace fhicl {
                               Comment&& comment,
                               std::function<bool()> maybeUse);
 
-    bool
-    operator()(value_type& t) const
+    std::optional<value_type>
+    operator()() const
     {
       if (!has_value_)
-        return false;
+        return std::nullopt;
 
       value_type result;
       cet::transform_all(value_, std::back_inserter(result), [](auto const& e) {
         return (*e)();
       });
+      return std::make_optional(std::move(result));
+    }
 
-      std::swap(result, t);
-      return true;
+    // Obsolete
+    bool
+    operator()(value_type& t) const
+    {
+      if (auto result = operator()()) {
+        t = *result;
+        return true;
+      }
+      return false;
     }
 
     bool

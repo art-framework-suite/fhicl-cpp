@@ -74,13 +74,13 @@ BOOST_AUTO_TEST_CASE(optAtom_t)
 // [2] OptionalTable<T>
 BOOST_AUTO_TEST_CASE(optTable_t)
 {
-  Physics phys;
-  std::string name;
-  BOOST_TEST(config().physics(phys));
-  BOOST_TEST(phys.moniker(name));
-  BOOST_TEST(name == "Johnny");
-  BOOST_TEST(phys.energyCutoff.get<0>() == "QGSP");
-  BOOST_TEST(phys.energyCutoff.get<1>() == 14.6, tolerance);
+  auto phys = config().physics();
+  BOOST_REQUIRE(phys.has_value());
+  auto name = phys->moniker();
+  BOOST_REQUIRE(name.has_value());
+  BOOST_TEST(*name == "Johnny");
+  BOOST_TEST(phys->energyCutoff.get<0>() == "QGSP");
+  BOOST_TEST(phys->energyCutoff.get<1>() == 14.6, tolerance);
 }
 
 // [3] OptionalSequence<T>
@@ -104,12 +104,13 @@ BOOST_AUTO_TEST_CASE(optSeqVector_t2)
 // [5] OptionalSequence<T>
 BOOST_AUTO_TEST_CASE(optSeqVector_t3)
 {
-  std::vector<std::array<int, 2>> intLists;
-  BOOST_TEST(config().list3(intLists));
+  auto intLists = config().list3();
+  BOOST_TEST(intLists.has_value());
 
-  decltype(intLists) const ref{{{0, 1}}, {{1, 2}}, {{2, 4}}, {{3, 8}}};
+  decltype(intLists)::value_type const ref{
+    {{0, 1}}, {{1, 2}}, {{2, 4}}, {{3, 8}}};
   std::size_t i{};
-  for (auto const& list : intLists) {
+  for (auto const& list : *intLists) {
     BOOST_TEST(list == ref[i], boost::test_tools::per_element{});
     ++i;
   }

@@ -31,15 +31,27 @@ namespace fhicl {
     }
 
     template <typename T>
-    bool
-    get_if_present(T& t) const
+    std::optional<T>
+    get_if_present() const
     {
       if (not pset_) {
-        return false;
+        return std::nullopt;
       }
 
       auto const trimmed_key = detail::strip_first_containing_name(key());
-      return pset_->get_if_present<T>(trimmed_key, t);
+      return pset_->get_if_present<T>(trimmed_key);
+    }
+
+    // Obsolete interface
+    template <typename T>
+    bool
+    get_if_present(T& t) const
+    {
+      if (auto result = get_if_present<T>()) {
+        t = *result;
+        return true;
+      }
+      return false;
     }
 
   private:

@@ -41,6 +41,13 @@ namespace fhicl {
                   std::set<std::string> const& keysToIgnore);
 
     // ... Accessors
+    std::optional<T>
+    operator()() const
+    {
+      return value_ ? std::make_optional(*value_) : std::nullopt;
+    }
+
+    // Obsolete
     bool
     operator()(T& value) const
     {

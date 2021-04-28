@@ -219,34 +219,36 @@ ParameterSet::find_one_(std::string const& simple_key) const
   return detail::find_an_any(skey.indices().cbegin(), skey.indices().cend(), a);
 }
 
-bool
-ParameterSet::descend_(std::vector<std::string> const& names,
-                       ParameterSet& ps) const
+std::optional<ParameterSet>
+ParameterSet::descend_(std::vector<std::string> const& names) const
 {
+  if (empty(names)) {
+    return std::make_optional(*this);
+  }
   ParameterSet const* p{this};
-  ParameterSet tmp;
+  std::optional<ParameterSet> result;
   for (auto const& name : names) {
     if (!p->find_one_(name)) {
-      return false;
+      return std::nullopt;
     }
     if (!p->is_key_to_table(name)) {
-      return false;
+      return std::nullopt;
     }
-    if (!p->get_one_(name, tmp)) {
-      return false;
+
+    if (result = p->get_one_<ParameterSet>(name); not result) {
+      return std::nullopt;
     }
-    p = &tmp;
+    p = &result.value();
   }
-  ps = *p; // Can't be 'tmp'.  Sometimes 'names' is empty.
-  return true;
+  return result;
 }
 
 bool
 ParameterSet::has_key(std::string const& key) const
 {
   auto keys = detail::get_names(key);
-  ParameterSet ps;
-  return descend_(keys.tables(), ps) ? ps.find_one_(keys.last()) : false;
+  auto ps = descend_(keys.tables());
+  return ps ? ps->find_one_(keys.last()) : false;
 }
 
 // ----------------------------------------------------------------------
@@ -345,15 +347,15 @@ ParameterSet::key_is_type_(std::string const& key,
                            std::function<bool(std::any const&)> func) const
 {
   auto split_keys = detail::get_names(key);
-  ParameterSet ps;
-  if (!descend_(split_keys.tables(), ps)) {
+  auto ps = descend_(split_keys.tables());
+  if (not ps) {
     throw exception(error::cant_find, key);
   }
 
   auto skey = detail::get_sequence_indices(split_keys.last());
 
-  auto it = ps.mapping_.find(skey.name());
-  if (it == ps.mapping_.end()) {
+  auto it = ps->mapping_.find(skey.name());
+  if (it == ps->mapping_.end()) {
     throw exception(error::cant_find, key);
   }
 

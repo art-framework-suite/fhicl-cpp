@@ -25,15 +25,24 @@ namespace fhicl {
                              Comment&& comment,
                              std::function<bool()> maybeUse);
 
+    std::optional<T>
+    operator()() const
+    {
+      if (auto via = tableObj_()) {
+        return std::make_optional(convert(*via));
+      }
+      return std::nullopt;
+    }
+
+    // Obsolete
     bool
     operator()(T& result) const
     {
-      typename OptionalTable<Config>::value_type via;
-      if (tableObj_(via)) {
-        result = convert(via);
-        return true;
+      auto t = operator()();
+      if (t) {
+        result = *t;
       }
-      return false;
+      return t.has_value();
     }
 
     bool

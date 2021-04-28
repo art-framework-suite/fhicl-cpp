@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(DeepInjection)
 BOOST_AUTO_TEST_CASE(DoubleStringMismatchDefaulted)
 {
   std::string s;
-  BOOST_CHECK_MESSAGE(pset.get_if_present("e", s), "Failed to get string");
+  BOOST_TEST(pset.get_if_present("e", s));
   BOOST_TEST(s == "rain");
 
   try {

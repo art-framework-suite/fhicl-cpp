@@ -30,15 +30,24 @@ namespace fhicl {
                              Comment&& comment,
                              std::function<bool()> maybeUse);
 
+    std::optional<T>
+    operator()() const
+    {
+      if (auto via = tupleObj_()) {
+        return make_optional(std::make_from_tuple(*via));
+      }
+      return std::nullopt;
+    }
+
+    // Obsolete
     bool
     operator()(T& result) const
     {
-      typename OptionalTuple<ARGS...>::value_type via;
-      if (tupleObj_(via)) {
-        result = std::make_from_tuple(via);
-        return true;
+      auto t = operator()();
+      if (t) {
+        result = *t;
       }
-      return false;
+      return t.has_value();
     }
 
     bool
