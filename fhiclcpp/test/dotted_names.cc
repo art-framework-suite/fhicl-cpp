@@ -2,7 +2,6 @@
 #include "cetlib/quiet_unit_test.hpp"
 
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/make_ParameterSet.h"
 
 #include <string>
 
@@ -10,9 +9,8 @@ BOOST_AUTO_TEST_SUITE(dotted_names_test)
 
 BOOST_AUTO_TEST_CASE(dotted_names_t)
 {
-  fhicl::ParameterSet ps;
   std::string text("m1: { val: 3 name: boo} ");
-  fhicl::make_ParameterSet(text, ps);
+  auto const ps = fhicl::ParameterSet::make(text);
 
   BOOST_TEST(ps.has_key("m1.val"));
   BOOST_TEST(!ps.has_key("m1.val.three"));

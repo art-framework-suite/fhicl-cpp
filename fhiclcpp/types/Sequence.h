@@ -220,7 +220,8 @@ namespace fhicl {
         }
 
         for (auto i = value_.size(); i != n; ++i) {
-          value_.push_back(std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(key_fragment, i)));
+          value_.push_back(std::make_shared<tt::fhicl_type<T>>(
+            Name::sequence_element(key_fragment, i)));
         }
       }
     }
@@ -413,7 +414,8 @@ namespace fhicl {
     static_assert(!tt::is_table_v<T>, NO_DEFAULTS_FOR_TABLE);
     std::size_t i{};
     for (auto const& t : defaults) {
-      value_.push_back(std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(i), t));
+      value_.push_back(
+        std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(i), t));
       ++i;
     }
     NameStackRegistry::end_of_ctor();
@@ -434,7 +436,8 @@ namespace fhicl {
     static_assert(!tt::is_table_v<T>, NO_DEFAULTS_FOR_TABLE);
     std::size_t i{};
     for (auto const& t : defaults) {
-      value_.emplace_back(std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(i), t));
+      value_.emplace_back(
+        std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(i), t));
       ++i;
     }
     NameStackRegistry::end_of_ctor();

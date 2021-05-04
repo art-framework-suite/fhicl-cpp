@@ -63,7 +63,7 @@ namespace fhicl::detail {
 
   ps_atom_t encode(std::string const&);       // string (w/ quotes)
   ps_atom_t encode(char const*);              // string (w/ quotes)
-  ps_atom_t encode(void*);                    // nil
+  ps_atom_t encode(std::nullptr_t);           // nil
   ps_atom_t encode(bool);                     // bool
   ParameterSetID encode(ParameterSet const&); // table
   ps_atom_t encode(std::uintmax_t);           // unsigned
@@ -88,7 +88,7 @@ namespace fhicl::detail {
   // ----------------------------------------------------------------------
 
   void decode(std::any const&, std::string&);    // string
-  void decode(std::any const&, void*&);          // nil
+  void decode(std::any const&, std::nullptr_t&); // nil
   void decode(std::any const&, bool&);           // bool
   void decode(std::any const&, ParameterSet&);   // table
   void decode(std::any const&, std::uintmax_t&); // unsigned

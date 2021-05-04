@@ -3,9 +3,6 @@
 #include "boost/test/unit_test.hpp"
 
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
-#include "fhiclcpp/parse.h"
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/Name.h"
 #include "fhiclcpp/types/Sequence.h"
@@ -32,8 +29,7 @@ namespace {
   Table<T>
   validateConfig(std::string const& cfg)
   {
-    ParameterSet ps;
-    make_ParameterSet(cfg, ps);
+    auto const ps = ParameterSet::make(cfg);
     Table<T> validatedConfig{Name("validatedConfig")};
     validatedConfig.validate_ParameterSet(ps);
     return validatedConfig;

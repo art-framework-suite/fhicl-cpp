@@ -11,7 +11,6 @@
 #include "fhiclcpp/fwd.h"
 
 #include <istream>
-#include <sstream>
 #include <string>
 
 namespace fhicl {
@@ -20,21 +19,13 @@ namespace fhicl {
                           extended_value& v,
                           std::string& unparsed);
 
-  void parse_document(std::string const& filename,
-                      cet::filepath_maker& maker,
-                      intermediate_table& result);
+  intermediate_table parse_document(std::string const& filename,
+                                    cet::filepath_maker& maker);
 
-  void parse_document(std::istream& is,
-                      cet::filepath_maker& maker,
-                      intermediate_table& result);
+  intermediate_table parse_document(std::istream& is,
+                                    cet::filepath_maker& maker);
 
-  inline void
-  parse_document(std::string const& s, intermediate_table& result)
-  {
-    std::istringstream is{s};
-    cet::filepath_maker m;
-    parse_document(is, m, result);
-  }
+  intermediate_table parse_document(std::string const& s);
 
 } // namespace fhicl
 

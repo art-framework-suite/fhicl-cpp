@@ -2,8 +2,6 @@
 
 #include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/test/boost_test_print_pset.h"
 
 #include <cstddef>
@@ -21,10 +19,8 @@ struct SampleConfigFixture {
 SampleConfigFixture::SampleConfigFixture()
 {
   cet::filepath_lookup policy("FHICL_FILE_PATH");
-  intermediate_table tbl;
   std::string cfg_in("Sample.cfg");
-  parse_document(cfg_in, policy, tbl);
-  make_ParameterSet(tbl, pset);
+  pset = ParameterSet::make(cfg_in, policy);
 }
 
 BOOST_FIXTURE_TEST_SUITE(sampleConfig, SampleConfigFixture)
@@ -57,7 +53,7 @@ BOOST_AUTO_TEST_CASE(DeepInjection)
 BOOST_AUTO_TEST_CASE(DoubleStringMismatchDefaulted)
 {
   std::string s;
-  BOOST_CHECK_MESSAGE(pset.get_if_present("e", s), "Failed to get string");
+  BOOST_TEST(pset.get_if_present("e", s));
   BOOST_TEST(s == "rain");
 
   try {
@@ -289,33 +285,33 @@ unsigned
 ctox(char c)
 {
   switch (c) {
-    case '0':
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-      return c - '0';
-    case 'a':
-    case 'b':
-    case 'c':
-    case 'd':
-    case 'e':
-    case 'f':
-      return 10 + c - 'a';
-    case 'A':
-    case 'B':
-    case 'C':
-    case 'D':
-    case 'E':
-    case 'F':
-      return 10 + c - 'A';
-    default:
-      throw std::string("ctox(): invalid hex character");
+  case '0':
+  case '1':
+  case '2':
+  case '3':
+  case '4':
+  case '5':
+  case '6':
+  case '7':
+  case '8':
+  case '9':
+    return c - '0';
+  case 'a':
+  case 'b':
+  case 'c':
+  case 'd':
+  case 'e':
+  case 'f':
+    return 10 + c - 'a';
+  case 'A':
+  case 'B':
+  case 'C':
+  case 'D':
+  case 'E':
+  case 'F':
+    return 10 + c - 'A';
+  default:
+    throw std::string("ctox(): invalid hex character");
   }
 }
 

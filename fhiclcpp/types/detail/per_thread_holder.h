@@ -9,19 +9,20 @@ namespace fhicl::detail {
   struct thread_hash_compare {
     static size_t
     hash(std::thread::id id)
-      {
-        static std::hash<std::thread::id> const hasher{};
-        return hasher(id);
-      }
+    {
+      static std::hash<std::thread::id> const hasher{};
+      return hasher(id);
+    }
     static bool
     equal(std::thread::id id1, std::thread::id id2)
-      {
-        return id1 == id2;
-      }
+    {
+      return id1 == id2;
+    }
   };
   template <typename T>
   class per_thread_holder {
-    using registry_t = tbb::concurrent_hash_map<std::thread::id, T, thread_hash_compare>;
+    using registry_t =
+      tbb::concurrent_hash_map<std::thread::id, T, thread_hash_compare>;
     using accessor = typename registry_t::accessor;
 
   public:

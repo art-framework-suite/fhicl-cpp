@@ -9,7 +9,6 @@
 #include "boost/test/unit_test.hpp"
 
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/types/KeysToIgnore.h"
 #include "fhiclcpp/types/Table.h"
 
@@ -43,8 +42,7 @@ BOOST_AUTO_TEST_SUITE(keys_to_ignore_t)
 BOOST_AUTO_TEST_CASE(simple_case)
 {
   std::string const config{"testing: \"it works\""};
-  ParameterSet pset;
-  make_ParameterSet(config, pset);
+  auto const pset = ParameterSet::make(config);
   auto test = Table<Config, Config::KeysToIgnore>{pset};
   test.print_allowed_configuration(std::cout);
 }
@@ -52,8 +50,7 @@ BOOST_AUTO_TEST_CASE(simple_case)
 BOOST_AUTO_TEST_CASE(simple_case_2)
 {
   std::string const config{"testing: { if: \"it works\" }"};
-  ParameterSet pset;
-  make_ParameterSet(config, pset);
+  auto const pset = ParameterSet::make(config);
   auto test = Table<Config>{pset, Config::KeysToIgnore{}()};
   test.print_allowed_configuration(std::cout);
 }

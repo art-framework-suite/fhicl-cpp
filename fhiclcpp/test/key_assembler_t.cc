@@ -2,8 +2,6 @@
 
 #include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
 
 #include <set>
 #include <string>
@@ -25,10 +23,7 @@ BOOST_AUTO_TEST_CASE(t1)
                           "   p4: { e: f }\n"
                           "   g: [ {h1: i1}, {h2: i2} ]\n"
                           "}\n";
-  intermediate_table tbl;
-  parse_document(doc, tbl);
-  ParameterSet pset;
-  make_ParameterSet(tbl, pset);
+  auto const pset = ParameterSet::make(doc);
   auto const keys = pset.get_all_keys();
   std::set<std::string> const sorted_keys{keys.begin(), keys.end()};
 

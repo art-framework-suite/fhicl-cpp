@@ -9,8 +9,8 @@
 #include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/parse.h"
+
 #include <iostream>
 #include <string>
 
@@ -37,15 +37,12 @@ BOOST_AUTO_TEST_CASE(can_access_prolog_01)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "BEGIN_PROLOG\n"
-                         " a: 1\n"
-                         " b: \"bb\"\n"
-                         "END_PROLOG\n"
-                         "c: 3\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "BEGIN_PROLOG\n"
+                               " a: 1\n"
+                               " b: \"bb\"\n"
+                               "END_PROLOG\n"
+                               "c: 3\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
 
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 3);
 
@@ -73,14 +70,11 @@ BOOST_AUTO_TEST_CASE(preserved_order_of_values_01)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "BEGIN_PROLOG\n"
-                         " z: 1.1\n"
-                         " a: aa\n"
-                         "END_PROLOG\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "BEGIN_PROLOG\n"
+                               " z: 1.1\n"
+                               " a: aa\n"
+                               "END_PROLOG\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
 
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 2);
 
@@ -105,12 +99,9 @@ BOOST_AUTO_TEST_CASE(preserved_order_of_values_02)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "z: 1.1\n"
-                         "a: aa\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "z: 1.1\n"
+                               "a: aa\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
 
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 2);
 
@@ -135,16 +126,13 @@ BOOST_AUTO_TEST_CASE(preserved_order_of_values_03)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "BEGIN_PROLOG\n"
-                         " z: 1.1\n"
-                         " a: aa\n"
-                         "END_PROLOG\n"
-                         "x:xx\n"
-                         "c:cc\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "BEGIN_PROLOG\n"
+                               " z: 1.1\n"
+                               " a: aa\n"
+                               "END_PROLOG\n"
+                               "x:xx\n"
+                               "c:cc\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
 
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 4);
 
@@ -177,13 +165,10 @@ BOOST_AUTO_TEST_CASE(keep_unresolved_references_01)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "z: 1.1\n"
-                         "ss: {rr: zz}\n"
-                         "mm: @local::ss\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "z: 1.1\n"
+                               "ss: {rr: zz}\n"
+                               "mm: @local::ss\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
 
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 3);
 
@@ -201,15 +186,12 @@ BOOST_AUTO_TEST_CASE(keep_unresolved_references_02)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "BEGIN_PROLOG\n"
-                         " z: 1.1\n"
-                         " ss: {rr: zz}\n"
-                         "END_PROLOG\n"
-                         "mm: @local::ss\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "BEGIN_PROLOG\n"
+                               " z: 1.1\n"
+                               " ss: {rr: zz}\n"
+                               "END_PROLOG\n"
+                               "mm: @local::ss\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
 
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 3);
 
@@ -227,14 +209,11 @@ BOOST_AUTO_TEST_CASE(keep_unresolved_references_03)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "BEGIN_PROLOG\n"
-                         " tt: { a:1 b: 2 }\n"
-                         "END_PROLOG\n"
-                         "placeholder_table_001:@table::tt\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "BEGIN_PROLOG\n"
+                               " tt: { a:1 b: 2 }\n"
+                               "END_PROLOG\n"
+                               "placeholder_table_001:@table::tt\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
 
   BOOST_TEST(fhicl_table.exists("placeholder_table_001"));
 
@@ -253,14 +232,11 @@ BOOST_AUTO_TEST_CASE(keep_unresolved_references_04)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "BEGIN_PROLOG\n"
-                         " tt: { a:1 b: 2 }\n"
-                         " placeholder_table_001:@table::tt\n"
-                         "END_PROLOG\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "BEGIN_PROLOG\n"
+                               " tt: { a:1 b: 2 }\n"
+                               " placeholder_table_001:@table::tt\n"
+                               "END_PROLOG\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
 
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 2);
 
@@ -279,15 +255,12 @@ BOOST_AUTO_TEST_CASE(keep_unresolved_references_05)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "BEGIN_PROLOG\n"
-                         " z: 1.1\n"
-                         " ss: [23,24,25]\n"
-                         "END_PROLOG\n"
-                         "sss:[@sequence::ss, 34, 35]\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "BEGIN_PROLOG\n"
+                               " z: 1.1\n"
+                               " ss: [23,24,25]\n"
+                               "END_PROLOG\n"
+                               "sss:[@sequence::ss, 34, 35]\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
 
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 3);
 
@@ -306,15 +279,12 @@ BOOST_AUTO_TEST_CASE(keep_unresolved_references_06)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "BEGIN_PROLOG\n"
-                         " z: 1.1\n"
-                         " ss: [23,24,25]\n"
-                         "sss:[@sequence::ss, 34, 35]\n"
-                         "END_PROLOG\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "BEGIN_PROLOG\n"
+                               " z: 1.1\n"
+                               " ss: [23,24,25]\n"
+                               "sss:[@sequence::ss, 34, 35]\n"
+                               "END_PROLOG\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 3);
 
   auto const& sss = fhicl_table.find("sss");
@@ -331,16 +301,13 @@ BOOST_AUTO_TEST_CASE(keep_unresolved_references_07)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "BEGIN_PROLOG\n"
-                         " z: 1.1\n"
-                         " ss: {rr: zz}\n"
-                         "END_PROLOG\n"
-                         "mm:@local::ss\n"
-                         "mm:@erase\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "BEGIN_PROLOG\n"
+                               " z: 1.1\n"
+                               " ss: {rr: zz}\n"
+                               "END_PROLOG\n"
+                               "mm:@local::ss\n"
+                               "mm:@erase\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 4);
 
   BOOST_TEST(fhicl_table.exists("mm"));
@@ -364,15 +331,12 @@ BOOST_AUTO_TEST_CASE(keep_nil_01)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "BEGIN_PROLOG\n"
-                         " a: @nil\n"
-                         " ss: {rr: zz}\n"
-                         "END_PROLOG\n"
-                         "mm:@nil\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "BEGIN_PROLOG\n"
+                               " a: @nil\n"
+                               " ss: {rr: zz}\n"
+                               "END_PROLOG\n"
+                               "mm:@nil\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
 
   BOOST_TEST(fhicl_table.exists("mm"));
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 3);
@@ -393,16 +357,13 @@ BOOST_AUTO_TEST_CASE(keep_dots_in_keynames_01)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "BEGIN_PROLOG\n"
-                         " z: 1.1\n"
-                         " ss: {rr: zz\n"
-                         " h: { hh: {hhh:hhhh } } }\n"
-                         "END_PROLOG\n"
-                         "h.hh.hhh:h\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "BEGIN_PROLOG\n"
+                               " z: 1.1\n"
+                               " ss: {rr: zz\n"
+                               " h: { hh: {hhh:hhhh } } }\n"
+                               "END_PROLOG\n"
+                               "h.hh.hhh:h\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 3);
 
   BOOST_TEST(fhicl_table.exists("h.hh.hhh"));
@@ -419,16 +380,13 @@ BOOST_AUTO_TEST_CASE(keep_dots_in_keynames_02)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "BEGIN_PROLOG\n"
-                         " z: 1.1\n"
-                         " c:c1\n"
-                         "END_PROLOG\n"
-                         "h.hh.hhh:h\n"
-                         "c.cc.ccc:@local::c\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "BEGIN_PROLOG\n"
+                               " z: 1.1\n"
+                               " c:c1\n"
+                               "END_PROLOG\n"
+                               "h.hh.hhh:h\n"
+                               "c.cc.ccc:@local::c\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 4);
 
   BOOST_TEST(fhicl_table.exists("c"));
@@ -457,14 +415,11 @@ BOOST_AUTO_TEST_CASE(allow_duplicate_kvp_01)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "c:c1\n"
-                         "c:c2\n"
-                         "h:h1\n"
-                         "c:c3\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "c:c1\n"
+                               "c:c2\n"
+                               "h:h1\n"
+                               "c:c3\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 4);
 
   BOOST_TEST(fhicl_table.exists("c"));
@@ -499,14 +454,11 @@ BOOST_AUTO_TEST_CASE(allow_duplicate_kvp_02)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "c.cc:c1\n"
-                         "c.cc:c2\n"
-                         "h:h1\n"
-                         "c.cc:c3\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "c.cc:c1\n"
+                               "c.cc:c2\n"
+                               "h:h1\n"
+                               "c.cc:c3\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 4);
 
   BOOST_TEST(fhicl_table.exists("c.cc"));
@@ -541,14 +493,11 @@ BOOST_AUTO_TEST_CASE(allow_duplicate_kvp_03)
 {
   BOOST_TEST(::shims::isSnippetMode());
 
-  std::string document = "c.cc:c1\n"
-                         "c.cc:c2\n"
-                         "h:h1\n"
-                         "c.cc:@local::h\n";
-
-  ::fhicl::intermediate_table fhicl_table;
-
-  BOOST_REQUIRE_NO_THROW(::fhicl::parse_document(document, fhicl_table));
+  std::string const document = "c.cc:c1\n"
+                               "c.cc:c2\n"
+                               "h:h1\n"
+                               "c.cc:@local::h\n";
+  auto fhicl_table = ::fhicl::parse_document(document);
   BOOST_TEST(std::distance(fhicl_table.begin(), fhicl_table.end()) == 4);
 
   BOOST_TEST(fhicl_table.exists("c.cc"));

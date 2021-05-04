@@ -5,9 +5,6 @@
 #include "cetlib_except/demangle.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/detail/ValuePrinter.h"
-#include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
-#include "fhiclcpp/parse.h"
 #include "tools/Printer.h"
 
 #include <iostream>
@@ -156,16 +153,6 @@ interpreted according to the user-specified command-line.
     return opts;
   }
 
-  fhicl::ParameterSet
-  form_pset(std::string const& filename, cet::filepath_maker& lookup_policy)
-  {
-    fhicl::intermediate_table tbl;
-    fhicl::parse_document(filename, lookup_policy, tbl);
-    fhicl::ParameterSet pset;
-    fhicl::make_ParameterSet(tbl, pset);
-    return pset;
-  }
-
   void
   print_table_names(fhicl::ParameterSet const& pset, std::string const& key)
   {
@@ -193,7 +180,8 @@ main(int argc, char** argv)
 
   auto const& opts = std::get<Options>(maybe_opts);
 
-  auto const pset = form_pset(opts.input_filename, *opts.policy);
+  auto const pset =
+    fhicl::ParameterSet::make(opts.input_filename, *opts.policy);
 
   auto const& key = opts.parameter_key;
 

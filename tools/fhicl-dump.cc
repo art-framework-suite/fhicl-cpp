@@ -10,9 +10,6 @@
 #include "cetlib_except/demangle.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/detail/print_mode.h"
-#include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
-#include "fhiclcpp/parse.h"
 
 #include <fstream>
 #include <iostream>
@@ -46,11 +43,7 @@ namespace {
     string lookup_path;
   };
 
-  std::variant<Options, Help>
-  process_arguments(int argc, char** argv);
-
-  fhicl::ParameterSet form_pset(string const& filename,
-                                cet::filepath_maker& lookup_policy);
+  std::variant<Options, Help> process_arguments(int argc, char** argv);
 }
 
 //======================================================================
@@ -65,7 +58,8 @@ main(int argc, char** argv)
   }
 
   auto const& opts = std::get<Options>(opts_or_help);
-  auto const pset = form_pset(opts.input_filename, *opts.policy);
+  auto const pset =
+    fhicl::ParameterSet::make(opts.input_filename, *opts.policy);
 
   if (opts.quiet)
     return 0;
@@ -162,15 +156,5 @@ namespace {
       throw cet::exception(config) << err_stream.str();
     }
     return opts;
-  }
-
-  fhicl::ParameterSet
-  form_pset(std::string const& filename, cet::filepath_maker& lookup_policy)
-  {
-    fhicl::intermediate_table tbl;
-    fhicl::parse_document(filename, lookup_policy, tbl);
-    fhicl::ParameterSet pset;
-    fhicl::make_ParameterSet(tbl, pset);
-    return pset;
   }
 }

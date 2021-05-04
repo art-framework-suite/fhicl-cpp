@@ -283,15 +283,15 @@ namespace {
           << i->second.pretty_src_info() << ")\n";
       }
       switch (i->second.protection) {
-        case Protection::NONE:
-          break;
-        case Protection::PROTECT_IGNORE:
-          // Do not overwrite protected binding.
-          return;
-        case Protection::PROTECT_ERROR:
-          throw fhicl::exception(fhicl::error::protection_violation)
-            << '"' << name << "\" is protected on "
-            << i->second.pretty_src_info() << '\n';
+      case Protection::NONE:
+        break;
+      case Protection::PROTECT_IGNORE:
+        // Do not overwrite protected binding.
+        return;
+      case Protection::PROTECT_ERROR:
+        throw fhicl::exception(fhicl::error::protection_violation)
+          << '"' << name << "\" is protected on " << i->second.pretty_src_info()
+          << '\n';
       }
     }
     t[name] = value;
@@ -342,16 +342,16 @@ namespace {
             << element.pretty_src_info() << ")\n";
         }
         switch (element.protection) {
-          case Protection::NONE:
-            break;
-          case Protection::PROTECT_IGNORE:
-            continue;
-          case Protection::PROTECT_ERROR:
-            throw fhicl::exception(fhicl::error::protection_violation)
-              << "@table::" << name << ": inserting name " << name
-              << "would violate protection on existing item"
-              << "\n(previous definition on " << element.pretty_src_info()
-              << ")\n";
+        case Protection::NONE:
+          break;
+        case Protection::PROTECT_IGNORE:
+          continue;
+        case Protection::PROTECT_ERROR:
+          throw fhicl::exception(fhicl::error::protection_violation)
+            << "@table::" << name << ": inserting name " << name
+            << "would violate protection on existing item"
+            << "\n(previous definition on " << element.pretty_src_info()
+            << ")\n";
         }
       }
       element = value;
@@ -423,13 +423,13 @@ namespace {
       return;
 
     switch (i->second.protection) {
-      case Protection::NONE:
-        t.erase(name);
-      case Protection::PROTECT_IGNORE:
-        break;
-      case Protection::PROTECT_ERROR:
-        throw fhicl::exception(fhicl::error::protection_violation)
-          << "Unable to erase " << name << " due to protection.\n";
+    case Protection::NONE:
+      t.erase(name);
+    case Protection::PROTECT_IGNORE:
+      break;
+    case Protection::PROTECT_ERROR:
+      throw fhicl::exception(fhicl::error::protection_violation)
+        << "Unable to erase " << name << " due to protection.\n";
     }
   }
 
@@ -793,9 +793,10 @@ fhicl::parse_value_string(std::string const& s,
 // ----------------------------------------------------------------------
 
 namespace {
-  void
-  parse_document_(cet::includer s, intermediate_table& result)
+  intermediate_table
+  parse_document_(cet::includer s)
   {
+    intermediate_table result;
     using namespace std::string_literals;
     using iter_t = cet::includer::const_iterator;
     using ws_t = qi::rule<iter_t>;
@@ -813,32 +814,36 @@ namespace {
     }
     std::string const unparsed(begin, end);
     if (b && unparsed.empty()) {
-      result = std::move(p.tbl);
-    } else {
-      auto e = fhicl::exception(fhicl::parse_error, "detected at or near")
-               << s.highlighted_whereis(begin) << "\n";
-      if (unparsed.find("BEGIN_PROLOG"s) == 0ull) {
-        e << "PROLOG blocks must be both contiguous and not nested.\n";
-      }
-      throw e;
+      return std::move(p.tbl);
     }
+
+    auto e = fhicl::exception(fhicl::parse_error, "detected at or near")
+             << s.highlighted_whereis(begin) << "\n";
+    if (unparsed.find("BEGIN_PROLOG"s) == 0ull) {
+      e << "PROLOG blocks must be both contiguous and not nested.\n";
+    }
+    throw e;
   }
 }
 
-void
-fhicl::parse_document(std::string const& filename,
-                      cet::filepath_maker& maker,
-                      intermediate_table& result)
+fhicl::intermediate_table
+fhicl::parse_document(std::string const& filename, cet::filepath_maker& maker)
 {
-  parse_document_(cet::includer{filename, maker}, result);
+  return parse_document_(cet::includer{filename, maker});
 }
 
-void
-fhicl::parse_document(std::istream& is,
-                      cet::filepath_maker& maker,
-                      intermediate_table& result)
+fhicl::intermediate_table
+fhicl::parse_document(std::istream& is, cet::filepath_maker& maker)
 {
-  parse_document_(cet::includer(is, maker), result);
+  return parse_document_(cet::includer(is, maker));
+}
+
+fhicl::intermediate_table
+fhicl::parse_document(std::string const& s)
+{
+  std::istringstream is{s};
+  cet::filepath_maker m;
+  return parse_document(is, m);
 }
 
 // ======================================================================

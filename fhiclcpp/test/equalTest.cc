@@ -2,31 +2,18 @@
 
 #include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
-#include "fhiclcpp/parse.h"
 #include "fhiclcpp/test/boost_test_print_pset.h"
-#include <string>
 
 using namespace fhicl;
-using namespace std;
 
 BOOST_AUTO_TEST_SUITE(document_test)
 
 BOOST_AUTO_TEST_CASE(leading_zeros)
 {
-  std::string doc1 = "x : 5";
-  std::string doc2 = "x : 005";
-  intermediate_table tbl1;
-  intermediate_table tbl2;
-  BOOST_CHECK_NO_THROW(parse_document(doc1, tbl1));
-  BOOST_CHECK_NO_THROW(parse_document(doc2, tbl2));
-  ParameterSet pset1;
-  ParameterSet pset2;
-  make_ParameterSet(tbl1, pset1);
-  make_ParameterSet(tbl2, pset2);
-  BOOST_TEST(pset1.get<int>("x") == pset2.get<int>("x"));
+  auto const pset1 = ParameterSet::make("x : 5");
+  auto const pset2 = ParameterSet::make("x : 005");
   BOOST_TEST(pset1 == pset2);
+  BOOST_TEST(pset1.get<int>("x") == pset2.get<int>("x"));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

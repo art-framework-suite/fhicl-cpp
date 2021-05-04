@@ -8,9 +8,7 @@
 
 #include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include <complex>
-#include <iostream>
 #include <limits>
 #include <string>
 #include <vector>
@@ -18,15 +16,15 @@
 using namespace fhicl;
 using namespace std;
 
-typedef unsigned int uint;
+using uint = unsigned int;
 
-typedef double dbl;
-typedef long double ldbl;
+using dbl = double;
+using ldbl = long double;
 
-typedef complex<dbl> cdbl;
-typedef complex<ldbl> cldbl;
+using cdbl = complex<dbl>;
+using cldbl = complex<ldbl>;
 
-typedef vector<uint> uvec;
+using uvec = vector<uint>;
 
 BOOST_AUTO_TEST_SUITE(values_test)
 
@@ -67,15 +65,14 @@ BOOST_AUTO_TEST_CASE(bool_values) // test atoms "true" and "false"
 
 BOOST_AUTO_TEST_CASE(nil_value) // test atom "nil"
 {
-  typedef void* nil_t;
-  nil_t nil_value = 0;
+  using nil_t = std::nullptr_t;
 
   ParameterSet pset;
   BOOST_TEST(pset.is_empty());
   BOOST_TEST(pset.to_string() == "");
 
-  pset.put<nil_t>("n11", 0);
-  BOOST_TEST(pset.get<nil_t>("n11") == nil_value);
+  pset.put("n11", nil_t{});
+  BOOST_TEST(pset.get<nil_t>("n11") == nil_t{});
   BOOST_TEST(pset.to_string() == "n11:@nil");
   BOOST_CHECK_THROW(pset.get<bool>("n11"), fhicl::exception);
   BOOST_CHECK_THROW(pset.get<uint>("n11"), fhicl::exception);
@@ -93,12 +90,10 @@ BOOST_AUTO_TEST_CASE(nil_value) // test atom "nil"
   BOOST_TEST(pset.to_string() == "n11:@nil n21:\"nil\" n31:\"NIL\"");
   BOOST_CHECK_THROW(pset.get<nil_t>("n31"), fhicl::exception);
 
-  ParameterSet pset2;
-  make_ParameterSet(pset.to_string(), pset2);
+  auto const pset2 = ParameterSet::make(pset.to_string());
   BOOST_TEST(pset.to_string() == pset2.to_string());
 
-  ParameterSet pset3;
-  make_ParameterSet("n11:@nil n21:nil n31:\"@nil\"", pset3);
+  auto const pset3 = ParameterSet::make("n11:@nil n21:nil n31:\"@nil\"");
   BOOST_TEST(pset3.to_string() == "n11:@nil n21:\"nil\" n31:\"@nil\"");
   BOOST_CHECK_THROW(pset3.get<string>("n11"), fhicl::exception);
   BOOST_TEST(pset3.get<string>("n21") == "nil");

@@ -12,6 +12,7 @@
 #include "fhiclcpp/detail/Prettifier.h"
 #include "fhiclcpp/detail/PrettifierAnnotated.h"
 #include "fhiclcpp/detail/PrettifierPrefixAnnotated.h"
+#include "fhiclcpp/intermediate_table.h"
 
 #include <cassert>
 #include <cstddef>
@@ -28,7 +29,7 @@ using std::any_cast;
 
 using ps_atom_t = ParameterSet::ps_atom_t;
 using ps_sequence_t = ParameterSet::ps_sequence_t;
-
+using table_t = intermediate_table::table_t;
 using ldbl = long double;
 
 // ======================================================================
@@ -59,6 +60,55 @@ namespace {
     ParameterSetID const& psid = std::any_cast<ParameterSetID>(a);
     return ParameterSetRegistry::get(psid);
   }
+}
+
+// ----------------------------------------------------------------------
+
+fhicl::ParameterSet
+fhicl::ParameterSet::make(intermediate_table const& tbl)
+{
+  ParameterSet result;
+  for (auto const& [key, value] : tbl) {
+    if (!value.in_prolog)
+      result.put(key, value);
+  }
+  return result;
+}
+
+// ----------------------------------------------------------------------
+
+fhicl::ParameterSet
+fhicl::ParameterSet::make(extended_value const& xval)
+{
+  if (!xval.is_a(TABLE))
+    throw fhicl::exception(type_mismatch, "extended value not a table");
+
+  ParameterSet result;
+  auto const& tbl = table_t(xval);
+  for (auto const& [key, value] : tbl) {
+    if (!value.in_prolog)
+      result.put(key, value);
+  }
+  return result;
+}
+
+// ----------------------------------------------------------------------
+
+fhicl::ParameterSet
+fhicl::ParameterSet::make(std::string const& str)
+{
+  auto const tbl = parse_document(str);
+  return ParameterSet::make(tbl);
+}
+
+// ----------------------------------------------------------------------
+
+fhicl::ParameterSet
+fhicl::ParameterSet::make(std::string const& filename,
+                          cet::filepath_maker& maker)
+{
+  auto const tbl = parse_document(filename, maker);
+  return ParameterSet::make(tbl);
 }
 
 // ======================================================================
@@ -169,34 +219,36 @@ ParameterSet::find_one_(std::string const& simple_key) const
   return detail::find_an_any(skey.indices().cbegin(), skey.indices().cend(), a);
 }
 
-bool
-ParameterSet::descend_(std::vector<std::string> const& names,
-                       ParameterSet& ps) const
+std::optional<ParameterSet>
+ParameterSet::descend_(std::vector<std::string> const& names) const
 {
+  if (empty(names)) {
+    return std::make_optional(*this);
+  }
   ParameterSet const* p{this};
-  ParameterSet tmp;
+  std::optional<ParameterSet> result;
   for (auto const& name : names) {
     if (!p->find_one_(name)) {
-      return false;
+      return std::nullopt;
     }
     if (!p->is_key_to_table(name)) {
-      return false;
+      return std::nullopt;
     }
-    if (!p->get_one_(name, tmp)) {
-      return false;
+
+    if (result = p->get_one_<ParameterSet>(name); not result) {
+      return std::nullopt;
     }
-    p = &tmp;
+    p = &result.value();
   }
-  ps = *p; // Can't be 'tmp'.  Sometimes 'names' is empty.
-  return true;
+  return result;
 }
 
 bool
 ParameterSet::has_key(std::string const& key) const
 {
   auto keys = detail::get_names(key);
-  ParameterSet ps;
-  return descend_(keys.tables(), ps) ? ps.find_one_(keys.last()) : false;
+  auto ps = descend_(keys.tables());
+  return ps ? ps->find_one_(keys.last()) : false;
 }
 
 // ----------------------------------------------------------------------
@@ -213,15 +265,13 @@ ParameterSet::get_src_info(std::string const& key) const
 void
 ParameterSet::put(std::string const& key)
 {
-  void* const value{nullptr};
-  put(key, value);
+  put(key, nullptr);
 }
 
 void
 ParameterSet::put_or_replace(std::string const& key)
 {
-  void* const value{nullptr};
-  put_or_replace(key, value); // Replace with nil is always OK.
+  put_or_replace(key, nullptr); // Replace with nil is always OK.
 }
 
 // ----------------------------------------------------------------------
@@ -297,15 +347,15 @@ ParameterSet::key_is_type_(std::string const& key,
                            std::function<bool(std::any const&)> func) const
 {
   auto split_keys = detail::get_names(key);
-  ParameterSet ps;
-  if (!descend_(split_keys.tables(), ps)) {
+  auto ps = descend_(split_keys.tables());
+  if (not ps) {
     throw exception(error::cant_find, key);
   }
 
   auto skey = detail::get_sequence_indices(split_keys.last());
 
-  auto it = ps.mapping_.find(skey.name());
-  if (it == ps.mapping_.end()) {
+  auto it = ps->mapping_.find(skey.name());
+  if (it == ps->mapping_.end()) {
     throw exception(error::cant_find, key);
   }
 
@@ -440,24 +490,24 @@ ParameterSet::to_indented_string(unsigned const initial_indent_level,
 {
   std::string result;
   switch (pm) {
-    case print_mode::raw: {
-      Prettifier p{initial_indent_level};
-      walk(p);
-      result = p.result();
-      break;
-    }
-    case print_mode::annotated: {
-      PrettifierAnnotated p{initial_indent_level};
-      walk(p);
-      result = p.result();
-      break;
-    }
-    case print_mode::prefix_annotated: {
-      PrettifierPrefixAnnotated p;
-      walk(p);
-      result = p.result();
-      break;
-    }
+  case print_mode::raw: {
+    Prettifier p{initial_indent_level};
+    walk(p);
+    result = p.result();
+    break;
+  }
+  case print_mode::annotated: {
+    PrettifierAnnotated p{initial_indent_level};
+    walk(p);
+    result = p.result();
+    break;
+  }
+  case print_mode::prefix_annotated: {
+    PrettifierPrefixAnnotated p;
+    walk(p);
+    result = p.result();
+    break;
+  }
   }
   return result;
 }

@@ -39,6 +39,13 @@ namespace fhicl {
                           std::function<bool()> maybeUse);
 
     // ... Accessors
+    std::optional<T>
+    operator()() const
+    {
+      return value_;
+    }
+
+    // Obsolete
     bool
     operator()(T& value) const
     {

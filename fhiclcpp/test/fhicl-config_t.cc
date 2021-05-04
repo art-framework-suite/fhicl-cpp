@@ -1,6 +1,5 @@
 #include "cetlib/filepath_maker.h"
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/make_ParameterSet.h"
 
 #include <iostream>
 #include <string>
@@ -18,8 +17,7 @@ main(int argc, char* argv[])
   cet::filepath_lookup policy("FHICL_FILE_PATH");
 
   std::string cfg_in(argv[1]);
-  ParameterSet pset;
-  make_ParameterSet(cfg_in, policy, pset);
+  auto const pset = ParameterSet::make(cfg_in, policy);
   std::cout << pset.to_string() << std::endl;
 
   return 0;

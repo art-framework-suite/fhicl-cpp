@@ -7,11 +7,8 @@
 //
 // ======================================================================
 
-#include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
+#include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/types/Table.h"
-
-#include <iostream>
 
 namespace fhiclcpp_types {
 
@@ -33,13 +30,8 @@ namespace fhiclcpp_types {
       using namespace fhicl;
       putenv(const_cast<char*>("FHICL_FILE_PATH=./test:."));
       cet::filepath_lookup policy("FHICL_FILE_PATH");
-      intermediate_table tbl;
       std::string cfg_in(filename);
-      parse_document(cfg_in, policy, tbl);
-
-      ParameterSet pset;
-      make_ParameterSet(tbl, pset);
-      return pset;
+      return ParameterSet::make(cfg_in, policy);
     }
   };
 }

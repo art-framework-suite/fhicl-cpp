@@ -108,7 +108,7 @@ fhicl::detail::encode(char const* value)
 }
 
 ps_atom_t // nil
-fhicl::detail::encode(void*)
+fhicl::detail::encode(std::nullptr_t)
 {
   return canon_nil();
 }
@@ -177,7 +177,7 @@ fhicl::detail::decode(any const& a, std::string& result)
 }
 
 void // nil
-fhicl::detail::decode(any const& a, void*& result)
+fhicl::detail::decode(any const& a, std::nullptr_t& result)
 {
   std::string str;
   atom_rep(a, str);
@@ -185,7 +185,7 @@ fhicl::detail::decode(any const& a, void*& result)
   if (str != canon_nil())
     throw fhicl::exception(type_mismatch, "error in nil string:\n") << str;
 
-  result = 0;
+  result = nullptr;
 }
 
 void // bool
@@ -272,12 +272,12 @@ fhicl::detail::decode(any const& a, ldbl& result)
   atom_t const& atom = atom_t(xval);
   if (atom.substr(1) == literal_infinity()) {
     switch (atom[0]) {
-      case '+':
-        result = +std::numeric_limits<ldbl>::infinity();
-        return;
-      case '-':
-        result = -std::numeric_limits<ldbl>::infinity();
-        return;
+    case '+':
+      result = +std::numeric_limits<ldbl>::infinity();
+      return;
+    case '-':
+      result = -std::numeric_limits<ldbl>::infinity();
+      return;
     }
   } else
     result = lexical_cast<ldbl>(atom);

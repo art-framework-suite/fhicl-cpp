@@ -4,7 +4,6 @@
 
 #include "cetlib/container_algorithms.h"
 #include "fhiclcpp/ParameterSetRegistry.h"
-#include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/test/boost_test_print_pset.h"
 #include "hep_concurrency/simultaneous_function_spawner.h"
 
@@ -45,9 +44,8 @@ BOOST_AUTO_TEST_CASE(MakeAndAdd)
 {
   BOOST_TEST_REQUIRE(ParameterSetRegistry::empty());
   BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == 0ul);
-  ParameterSet pset;
-  make_ParameterSet(
-    "x: 5 y: { a: \"oops\" b: 9 } z: { c: \"Looooong striiiiiing.\" }", pset);
+  auto const pset = ParameterSet::make(
+    "x: 5 y: { a: \"oops\" b: 9 } z: { c: \"Looooong striiiiiing.\" }");
   BOOST_TEST_REQUIRE(!ParameterSetRegistry::empty());
   BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == 2ul);
   ParameterSetRegistry::put(pset);
@@ -65,9 +63,7 @@ BOOST_AUTO_TEST_CASE(AddFromIterAndGet)
        {"a1: 4 b1: 7.0 c1: [ 5, 4, 3 ]",
         "a2: [ oh, my, stars ]",
         "a3: { x: { y: [ now, is, the, time, for, all, good, men ] } }"}) {
-    ParameterSet pset;
-    make_ParameterSet(s, pset);
-    v1.emplace_back(pset);
+    v1.push_back(ParameterSet::make(s));
   }
   BOOST_TEST_REQUIRE(ParameterSetRegistry::size() == expected_size);
   vector<ParameterSetRegistry::value_type> v2;
@@ -119,8 +115,7 @@ BOOST_AUTO_TEST_CASE(TestImport)
                             [&v1, &tasks](size_t const i, auto const& p) {
                               auto& entry = v1[i];
                               tasks.push_back([&entry, &p] {
-                                ParameterSet pset;
-                                make_ParameterSet(p.first, pset);
+                                auto pset = ParameterSet::make(p.first);
                                 entry = make_pair(pset, p.second);
                               });
                             });

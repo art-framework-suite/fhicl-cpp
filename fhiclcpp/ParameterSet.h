@@ -23,6 +23,7 @@
 #include <any>
 #include <cctype>
 #include <map>
+#include <optional>
 #include <sstream>
 #include <string>
 #include <typeinfo>
@@ -38,6 +39,12 @@ public:
   using annot_t = std::unordered_map<std::string, std::string>;
 
   // compiler generates default c'tor, d'tor, copy c'tor, copy assignment
+
+  static ParameterSet make(intermediate_table const& tbl);
+  static ParameterSet make(extended_value const& xval);
+  static ParameterSet make(std::string const& str);
+  static ParameterSet make(std::string const& filename,
+                           cet::filepath_maker& maker);
 
   // observers:
   bool is_empty() const;
@@ -63,6 +70,13 @@ public:
   bool is_key_to_sequence(std::string const& key) const;
   bool is_key_to_atom(std::string const& key) const;
 
+  template <class T>
+  std::optional<T> get_if_present(std::string const& key) const;
+  template <class T, class Via>
+  std::optional<T> get_if_present(std::string const& key,
+                                  T convert(Via const&)) const;
+
+  // Obsolete interface
   template <class T>
   bool get_if_present(std::string const& key, T& value) const;
   template <class T, class Via>
@@ -125,9 +139,10 @@ private:
 
   // Local retrieval only.
   template <class T>
-  bool get_one_(std::string const& key, T& value) const;
+  std::optional<T> get_one_(std::string const& key) const;
   bool find_one_(std::string const& key) const;
-  bool descend_(std::vector<std::string> const& names, ParameterSet& ps) const;
+  std::optional<ParameterSet> descend_(
+    std::vector<std::string> const& names) const;
 
 }; // ParameterSet
 
@@ -204,12 +219,37 @@ fhicl::ParameterSet::put_or_replace_compatible(std::string const& key,
 // ----------------------------------------------------------------------
 
 template <class T>
+std::optional<T>
+fhicl::ParameterSet::get_if_present(std::string const& key) const
+{
+  auto keys = detail::get_names(key);
+  if (auto ps = descend_(keys.tables())) {
+    return ps->get_one_<T>(keys.last());
+  }
+  return std::nullopt;
+}
+
+template <class T, class Via>
+std::optional<T>
+fhicl::ParameterSet::get_if_present(std::string const& key,
+                                    T convert(Via const&)) const
+{
+  auto go_between = get_if_present<Via>(key);
+  if (not go_between) {
+    return std::nullopt;
+  }
+  return std::make_optional(convert(*go_between));
+} // get_if_present<>()
+
+template <class T>
 bool
 fhicl::ParameterSet::get_if_present(std::string const& key, T& value) const
 {
-  auto keys = detail::get_names(key);
-  ParameterSet ps;
-  return descend_(keys.tables(), ps) ? ps.get_one_(keys.last(), value) : false;
+  if (auto present_parameter = get_if_present<T>(key)) {
+    value = *present_parameter;
+    return true;
+  }
+  return false;
 }
 
 template <class T, class Via>
@@ -218,39 +258,35 @@ fhicl::ParameterSet::get_if_present(std::string const& key,
                                     T& result,
                                     T convert(Via const&)) const
 {
-  Via go_between;
-  if (!get_if_present(key, go_between)) {
-    return false;
+  if (auto present_parameter = get_if_present<T>(key, convert)) {
+    result = *present_parameter;
+    return true;
   }
-  result = convert(go_between);
-  return true;
+  return false;
 } // get_if_present<>()
 
 template <class T>
 T
 fhicl::ParameterSet::get(std::string const& key) const
 {
-  T result;
-  return get_if_present(key, result) ? result :
-                                       throw fhicl::exception(cant_find, key);
+  auto result = get_if_present<T>(key);
+  return result ? *result : throw fhicl::exception(cant_find, key);
 }
 
 template <class T, class Via>
 T
 fhicl::ParameterSet::get(std::string const& key, T convert(Via const&)) const
 {
-  T result;
-  return get_if_present(key, result, convert) ?
-           result :
-           throw fhicl::exception(cant_find, key);
+  auto result = get_if_present<T>(key, convert);
+  return result ? *result : throw fhicl::exception(cant_find, key);
 }
 
 template <class T>
 T
 fhicl::ParameterSet::get(std::string const& key, T const& default_value) const
 {
-  T result;
-  return get_if_present(key, result) ? result : default_value;
+  auto result = get_if_present<T>(key);
+  return result ? *result : default_value;
 }
 
 template <class T, class Via>
@@ -259,8 +295,8 @@ fhicl::ParameterSet::get(std::string const& key,
                          T const& default_value,
                          T convert(Via const&)) const
 {
-  T result;
-  return get_if_present(key, result, convert) ? result : default_value;
+  auto result = get_if_present<T>(key, convert);
+  return result ? *result : default_value;
 }
 
 // ----------------------------------------------------------------------
@@ -280,40 +316,45 @@ fhicl::ParameterSet::operator!=(ParameterSet const& other) const
 // ----------------------------------------------------------------------
 
 template <class T>
-bool
-fhicl::ParameterSet::get_one_(std::string const& key, T& value) const try {
-  auto skey = detail::get_sequence_indices(key);
+std::optional<T>
+fhicl::ParameterSet::get_one_(std::string const& key) const
+{
+  T value;
+  try {
+    auto skey = detail::get_sequence_indices(key);
 
-  map_iter_t it = mapping_.find(skey.name());
-  if (it == mapping_.end()) {
-    return false;
+    map_iter_t it = mapping_.find(skey.name());
+    if (it == mapping_.end()) {
+      return std::nullopt;
+    }
+
+    auto a = it->second;
+    if (!detail::find_an_any(
+          skey.indices().cbegin(), skey.indices().cend(), a)) {
+      throw fhicl::exception(error::cant_find);
+    }
+
+    using detail::decode;
+    decode(a, value);
+    return std::make_optional(value);
   }
-
-  auto a = it->second;
-  if (!detail::find_an_any(skey.indices().cbegin(), skey.indices().cend(), a)) {
-    throw fhicl::exception(error::cant_find);
+  catch (fhicl::exception const& e) {
+    std::ostringstream errmsg;
+    errmsg << "\nUnsuccessful attempt to convert FHiCL parameter '" << key
+           << "' to type '" << cet::demangle_symbol(typeid(value).name())
+           << "'.\n\n"
+           << "[Specific error:]";
+    throw fhicl::exception(type_mismatch, errmsg.str(), e);
   }
-
-  using detail::decode;
-  decode(a, value);
-  return true;
-}
-catch (fhicl::exception const& e) {
-  std::ostringstream errmsg;
-  errmsg << "\nUnsuccessful attempt to convert FHiCL parameter '" << key
-         << "' to type '" << cet::demangle_symbol(typeid(value).name())
-         << "'.\n\n"
-         << "[Specific error:]";
-  throw fhicl::exception(type_mismatch, errmsg.str(), e);
-}
-catch (std::exception const& e) {
-  std::ostringstream errmsg;
-  errmsg << "\nUnsuccessful attempt to convert FHiCL parameter '" << key
-         << "' to type '" << cet::demangle_symbol(typeid(value).name())
-         << "'.\n\n"
-         << "[Specific error:]\n"
-         << e.what() << "\n\n";
-  throw fhicl::exception(type_mismatch, errmsg.str());
+  catch (std::exception const& e) {
+    std::ostringstream errmsg;
+    errmsg << "\nUnsuccessful attempt to convert FHiCL parameter '" << key
+           << "' to type '" << cet::demangle_symbol(typeid(value).name())
+           << "'.\n\n"
+           << "[Specific error:]\n"
+           << e.what() << "\n\n";
+    throw fhicl::exception(type_mismatch, errmsg.str());
+  }
 }
 
 // ----------------------------------------------------------------------

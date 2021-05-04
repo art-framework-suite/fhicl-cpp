@@ -229,7 +229,7 @@ namespace fhicl {
     class it_value_get<intermediate_table::sequence_t const&> {
     public:
       intermediate_table::sequence_t const&
-      operator()(intermediate_table const& table, std::string const& name)
+      operator()(intermediate_table& table, std::string const& name)
       {
         return std::any_cast<intermediate_table::sequence_t const&>(
           table.find(name).value);
@@ -270,7 +270,7 @@ namespace fhicl {
     class it_value_get<intermediate_table::table_t const&> {
     public:
       intermediate_table::table_t const&
-      operator()(intermediate_table const& table, std::string const& name)
+      operator()(intermediate_table& table, std::string const& name)
       {
         return std::any_cast<intermediate_table::table_t const&>(
           table.find(name).value);
@@ -368,7 +368,7 @@ inline bool fhicl::intermediate_table::putEmptyTable(
 inline bool fhicl::intermediate_table::putNil(std::string const& name,
                                               bool const in_prolog) // Nil.
 {
-  return insert(name, in_prolog, NIL, detail::encode((void*)0));
+  return insert(name, in_prolog, NIL, detail::encode(nullptr));
 }
 
 inline fhicl::extended_value*

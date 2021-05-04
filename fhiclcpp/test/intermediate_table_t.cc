@@ -3,10 +3,7 @@
 
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
 
-#include <cassert>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -40,8 +37,6 @@ BOOST_AUTO_TEST_CASE(main)
   BOOST_CHECK_THROW(table.get<int>("sequence[5]"), fhicl::exception); // Nil
   BOOST_TEST(table.get<table_t const&>("table").size() == 2u);
   BOOST_TEST(table.get<table_t const&>("table.t1").size() == 0u);
-  ParameterSet pset;
-  make_ParameterSet(table, pset);
 }
 
 BOOST_AUTO_TEST_CASE(prolog_erase_nested)
@@ -50,8 +45,7 @@ BOOST_AUTO_TEST_CASE(prolog_erase_nested)
 w: { x: { y: { z: { a: 2 b: 3 } } } }
 END_PROLOG
 q: { @table::w.x.y })";
-  ParameterSet pset;
-  make_ParameterSet(cfg, pset);
+  auto const pset = ParameterSet::make(cfg);
   BOOST_TEST(pset.has_key("q.z"));
   BOOST_TEST(!pset.has_key("w"));
 }
@@ -62,8 +56,7 @@ BOOST_AUTO_TEST_CASE(prolog_erase_dotted)
 w.x.y: { z: { a: 2 b: 3 } }
 END_PROLOG
 q: { @table::w.x.y })";
-  ParameterSet pset;
-  make_ParameterSet(cfg, pset);
+  auto const pset = ParameterSet::make(cfg);
   BOOST_TEST(pset.has_key("q.z"));
   BOOST_TEST(!pset.has_key("w"));
 }
@@ -74,8 +67,7 @@ BOOST_AUTO_TEST_CASE(prolog_nested_partial_dup_nested)
 w: { x: { y: 7 } }
 END_PROLOG
 w: { b: { c: 6 } })";
-  ParameterSet pset;
-  make_ParameterSet(cfg, pset);
+  auto const pset = ParameterSet::make(cfg);
   BOOST_TEST(pset.has_key("w.b"));
   BOOST_TEST(!pset.has_key("w.x"));
 }
@@ -86,8 +78,7 @@ BOOST_AUTO_TEST_CASE(prolog_nested_partial_dup_dotted)
 w: { x: { y: 7 } }
 END_PROLOG
 w.b.c: 6)";
-  ParameterSet pset;
-  make_ParameterSet(cfg, pset);
+  auto const pset = ParameterSet::make(cfg);
   BOOST_TEST(pset.has_key("w.b"));
   BOOST_TEST(!pset.has_key("w.x"));
 }
@@ -98,8 +89,7 @@ BOOST_AUTO_TEST_CASE(prolog_dotted_partial_dup_nested)
 w.x.y: 7
 END_PROLOG
 w: { b: { c: 6 } })";
-  ParameterSet pset;
-  make_ParameterSet(cfg, pset);
+  auto const pset = ParameterSet::make(cfg);
   BOOST_TEST(pset.has_key("w.b"));
   BOOST_TEST(!pset.has_key("w.x"));
 }
@@ -110,8 +100,7 @@ BOOST_AUTO_TEST_CASE(prolog_dotted_partial_dup_dotted)
 w.x.y: 7
 END_PROLOG
 w.b.c: 6)";
-  ParameterSet pset;
-  make_ParameterSet(cfg, pset);
+  auto const pset = ParameterSet::make(cfg);
   BOOST_TEST(pset.has_key("w.b"));
   BOOST_TEST(!pset.has_key("w.x"));
 }
@@ -122,8 +111,7 @@ BOOST_AUTO_TEST_CASE(prolog_nested_dup_nested)
 w: { x: { y: 7 } }
 END_PROLOG
 w: { x: { c: 6 } })";
-  ParameterSet pset;
-  make_ParameterSet(cfg, pset);
+  auto const pset = ParameterSet::make(cfg);
   BOOST_TEST(pset.has_key("w.x.c"));
   BOOST_TEST(!pset.has_key("w.x.y"));
 }
@@ -134,8 +122,7 @@ BOOST_AUTO_TEST_CASE(prolog_nested_dup_dotted)
 w: { x: { y: 7 } }
 END_PROLOG
 w.x.c: 6)";
-  ParameterSet pset;
-  make_ParameterSet(cfg, pset);
+  auto const pset = ParameterSet::make(cfg);
   BOOST_TEST(pset.has_key("w.x.c"));
   BOOST_TEST(!pset.has_key("w.x.y"));
 }
@@ -146,8 +133,7 @@ BOOST_AUTO_TEST_CASE(prolog_dotted_dup_nested)
 w.x.y: 7
 END_PROLOG
 w: { x: { c: 6 } })";
-  ParameterSet pset;
-  make_ParameterSet(cfg, pset);
+  auto const pset = ParameterSet::make(cfg);
   BOOST_TEST(pset.has_key("w.x.c"));
   BOOST_TEST(!pset.has_key("w.x.y"));
 }
@@ -158,8 +144,7 @@ BOOST_AUTO_TEST_CASE(prolog_dotted_dup_dotted)
 w.x.y: 7
 END_PROLOG
 w.x.c: 6)";
-  ParameterSet pset;
-  make_ParameterSet(cfg, pset);
+  auto const pset = ParameterSet::make(cfg);
   BOOST_TEST(pset.has_key("w.x.c"));
   BOOST_TEST(!pset.has_key("w.x.y"));
 }

@@ -1,6 +1,4 @@
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
 
 #include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/Sequence.h"
@@ -70,11 +68,8 @@ main()
 {
   putenv(const_cast<char*>("FHICL_FILE_PATH=./test:."));
   cet::filepath_lookup policy("FHICL_FILE_PATH");
-  fhicl::intermediate_table tbl;
   std::string cfg_in("validate_ParameterSet_t.fcl");
-  parse_document(cfg_in, policy, tbl);
-  fhicl::ParameterSet pset;
-  make_ParameterSet(tbl, pset);
+  auto const pset = fhicl::ParameterSet::make(cfg_in, policy);
 
   try {
     Table<Configuration> table{Name("pset")};

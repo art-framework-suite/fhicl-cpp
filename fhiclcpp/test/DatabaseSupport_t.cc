@@ -2,11 +2,11 @@
 
 #include "boost/test/unit_test.hpp"
 
-#include <iostream>
 #include <string>
 #include <vector>
 
 #include "fhiclcpp/DatabaseSupport.h"
+#include "fhiclcpp/ParameterSet.h"
 
 BOOST_AUTO_TEST_SUITE(database_support_test)
 
@@ -25,9 +25,8 @@ BOOST_AUTO_TEST_CASE(two_nested)
   std::vector<std::string> records;
   std::vector<std::string> hashes;
 
-  fhicl::ParameterSet p;
   cet::filepath_maker fpm;
-  make_ParameterSet("db_1.fcl", fpm, p);
+  auto const p = fhicl::ParameterSet::make("db_1.fcl", fpm);
   std::cout << "\n";
   std::cout << "Compact string:\n";
   std::cout << p.to_compact_string() << std::endl;
@@ -44,11 +43,9 @@ BOOST_AUTO_TEST_CASE(nested_vector)
   std::vector<std::string> records;
   std::vector<std::string> hashes;
 
-  fhicl::ParameterSet p;
   cet::filepath_maker fpm;
-  make_ParameterSet("db_2.fcl", fpm, p);
-  std::vector<fhicl::ParameterSet> v =
-    p.get<std::vector<fhicl::ParameterSet>>("a");
+  auto const p = fhicl::ParameterSet::make("db_2.fcl", fpm);
+  auto const v = p.get<std::vector<fhicl::ParameterSet>>("a");
   std::cout << "\n";
   std::cout << p.to_compact_string() << std::endl;
   BOOST_TEST(v.size() == 2ul);
