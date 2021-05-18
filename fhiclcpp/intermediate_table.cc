@@ -7,7 +7,10 @@
 #include "fhiclcpp/intermediate_table.h"
 
 #include "boost/algorithm/string.hpp"
+#include "fhiclcpp/Protection.h"
 #include "fhiclcpp/exception.h"
+#include "fhiclcpp/parse_shims_opts.h"
+#include "fhiclcpp/stdmap_shims.h"
 
 #include <cctype>
 #include <cstdlib>
@@ -47,10 +50,6 @@ namespace {
     return empty_tbl;
   }
 }
-
-// ----------------------------------------------------------------------
-
-intermediate_table::intermediate_table() : ex_val{false, TABLE, table_t{}} {}
 
 // ----------------------------------------------------------------------
 

@@ -5,6 +5,8 @@
 // ======================================================================
 
 #include "fhiclcpp/extended_value.h"
+#include "fhiclcpp/parse_shims_opts.h"
+#include "fhiclcpp/stdmap_shims.h"
 
 #include <regex>
 

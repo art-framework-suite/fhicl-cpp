@@ -5,6 +5,7 @@
 
 #include <ostream>
 #include <string>
+#include <typeinfo>
 
 namespace fhicl::detail::yes_defaults {
 

@@ -15,7 +15,6 @@
 #include "fhiclcpp/types/TableAs.h"
 
 #include <string>
-#include <vector>
 
 using namespace fhicl;
 using namespace std;

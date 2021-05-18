@@ -2,6 +2,7 @@
 #include "fhiclcpp/types/detail/validationException.h"
 
 #include <cstddef>
+#include <sstream>
 #include <string>
 
 void

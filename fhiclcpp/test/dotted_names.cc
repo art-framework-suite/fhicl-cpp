@@ -1,5 +1,5 @@
 #define BOOST_TEST_MODULE (has_key of dotted names test)
-#include "cetlib/quiet_unit_test.hpp"
+#include "boost/test/unit_test.hpp"
 
 #include "fhiclcpp/ParameterSet.h"
 

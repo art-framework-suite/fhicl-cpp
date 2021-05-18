@@ -1,13 +1,7 @@
 #define BOOST_TEST_MODULE (table_t_iterator_t)
 #include "boost/test/unit_test.hpp"
 
-#include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/extended_value.h"
-
-#include <cassert>
-#include <iostream>
-#include <string>
-#include <vector>
 
 using namespace fhicl;
 using table_t = fhicl::extended_value::table_t;

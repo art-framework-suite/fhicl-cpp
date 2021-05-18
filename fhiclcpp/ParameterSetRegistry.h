@@ -9,6 +9,7 @@
 
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/ParameterSetID.h"
+#include "fhiclcpp/exception.h"
 #include "fhiclcpp/fwd.h"
 
 #ifdef __cplusplus

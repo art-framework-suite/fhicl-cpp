@@ -13,10 +13,8 @@
 #include "fhiclcpp/types/Table.h"
 #include "fhiclcpp/types/detail/optional_parameter_message.h"
 
-#include <algorithm>
 #include <iostream>
 #include <string>
-#include <vector>
 
 using namespace fhicl;
 using namespace std;

@@ -2,9 +2,9 @@
 #include "fhiclcpp/test/type_traits_old.h"
 #include "fhiclcpp/type_traits.h"
 
-#include <cassert>
 #include <cstdint>
 #include <iostream>
+#include <string>
 #include <type_traits>
 #include <typeinfo>
 

@@ -1,4 +1,6 @@
 #include "fhiclcpp/DatabaseSupport.h"
+
+#include "cetlib/filepath_maker.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/ParameterSetRegistry.h"
 

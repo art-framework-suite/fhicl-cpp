@@ -9,11 +9,11 @@
 
 #include "fhiclcpp/Protection.h"
 #include "fhiclcpp/fwd.h"
-#include "stdmap_shims.h"
+#include "fhiclcpp/stdmap_shims.h"
 
 #include <any>
-#include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 // ----------------------------------------------------------------------

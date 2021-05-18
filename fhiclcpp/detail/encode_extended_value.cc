@@ -4,7 +4,6 @@
 //
 // ======================================================================
 
-#include "cetlib/includer.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/ParameterSetRegistry.h"
 #include "fhiclcpp/exception.h"

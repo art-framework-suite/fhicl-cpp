@@ -17,9 +17,7 @@
 #include "fhiclcpp/types/Sequence.h"
 #include "fhiclcpp/types/Tuple.h"
 
-#include <iostream>
 #include <string>
-#include <vector>
 
 using namespace fhicl;
 using namespace fhicl::detail;

@@ -1,8 +1,7 @@
+#include "cetlib/filepath_maker.h"
 #include "fhiclcpp/ParameterSet.h"
 
 #include <cassert>
-#include <cstdlib>
-#include <fstream>
 #include <string>
 
 int

@@ -8,7 +8,6 @@
 #include "fhiclcpp/types/detail/SequenceBase.h"
 #include "fhiclcpp/types/detail/TableBase.h"
 
-#include <iomanip>
 #include <regex>
 
 using namespace fhicl::detail;

@@ -10,7 +10,7 @@
 
   Class used when
 
-    'ParameterSet::to_indented_string(unsigned,print_mode::raw)'
+    'ParameterSet::to_indented_string(unsigned, print_mode::raw)'
 
   is called.  This class provides a human-readable string
   representing the entire (nested) contents of a ParameterSet object.
@@ -74,7 +74,6 @@
 */
 
 #include "fhiclcpp/ParameterSetWalker.h"
-#include "fhiclcpp/coding.h"
 #include "fhiclcpp/detail/Indentation.h"
 #include "fhiclcpp/fwd.h"
 

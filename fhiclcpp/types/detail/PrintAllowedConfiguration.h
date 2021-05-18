@@ -1,8 +1,6 @@
 #ifndef fhiclcpp_types_detail_PrintAllowedConfiguration_h
 #define fhiclcpp_types_detail_PrintAllowedConfiguration_h
 
-#include "cetlib/exempt_ptr.h"
-#include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/detail/Indentation.h"
 #include "fhiclcpp/types/detail/MaybeDisplayParent.h"
 #include "fhiclcpp/types/detail/ParameterBase.h"

@@ -7,11 +7,9 @@
 #define BOOST_TEST_MODULE (document test)
 
 #include "boost/test/unit_test.hpp"
-#include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/intermediate_table.h"
 #include "fhiclcpp/parse.h"
 
-#include <iostream>
 #include <string>
 
 using namespace fhicl;

@@ -2,12 +2,11 @@
 
 #include "boost/test/unit_test.hpp"
 
+#include "cetlib/filepath_maker.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/test/boost_test_print_pset.h"
 
 #include <fstream>
-#include <iostream>
-#include <sstream>
 #include <string>
 
 using namespace fhicl;

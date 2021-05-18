@@ -15,7 +15,6 @@
 #include "fhiclcpp/types/Tuple.h"
 
 #include <string>
-#include <vector>
 
 using namespace fhicl;
 using namespace fhicl::detail;

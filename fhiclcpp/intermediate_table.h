@@ -49,23 +49,21 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include "fhiclcpp/coding.h"
+#include "fhiclcpp/exception.h"
 #include "fhiclcpp/extended_value.h"
 #include "fhiclcpp/fwd.h"
 #include "fhiclcpp/type_traits.h"
 
 #include <any>
 #include <complex>
-#include <map>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 // ----------------------------------------------------------------------
 
 class fhicl::intermediate_table {
 public:
-  // Constructor
-  intermediate_table();
-
   ////////////////////
   // Simple interface:
   bool empty() const;
@@ -95,10 +93,9 @@ public:
            std::vector<T> const& value, // Sequence.
            bool in_prolog = false);
   template <typename T>
-  typename std::enable_if<tt::is_numeric<T>::value, bool>::type put(
-    std::string const& name,
-    T value, // Number
-    bool in_prolog = false);
+  std::enable_if_t<tt::is_numeric<T>::value, bool> put(std::string const& name,
+                                                       T value, // Number
+                                                       bool in_prolog = false);
 
   bool putEmptySequence(std::string const& name,
                         bool in_prolog = false); // Empty Sequence.
@@ -149,134 +146,130 @@ private:
 
   std::vector<std::string> split(std::string const& name) const;
 
-  extended_value ex_val;
+  extended_value ex_val{false, TABLE, table_t{}};
 
 }; // intermediate_table
 
-namespace fhicl {
-  namespace detail {
+namespace fhicl::detail {
 
-    // Template declaration (no general definition).
-    template <typename T, typename Enable = void>
-    class it_value_get;
+  // Template declaration (no general definition).
+  template <typename T, typename Enable = void>
+  class it_value_get;
 
-    // Partial specialization for value types.
-    template <typename T>
-    class it_value_get<
-      T,
-      typename tt::disable_if<std::is_reference<T>::value ||
-                              std::is_pointer<T>::value>::type> {
-    public:
-      T
-      operator()(intermediate_table& table, std::string const& name)
-      {
-        T result;
-        detail::decode(table.find(name).value, result);
-        return result;
+  // Partial specialization for value types.
+  template <typename T>
+  class it_value_get<T,
+                     typename tt::disable_if<std::is_reference<T>::value ||
+                                             std::is_pointer<T>::value>::type> {
+  public:
+    T
+    operator()(intermediate_table& table, std::string const& name)
+    {
+      T result;
+      detail::decode(table.find(name).value, result);
+      return result;
+    }
+  };
+
+  // Partial specialization for std::complex<U>.
+  template <typename U>
+  class it_value_get<
+    std::complex<U>,
+    typename tt::disable_if<std::is_reference<std::complex<U>>::value ||
+                            std::is_pointer<std::complex<U>>::value>::type> {
+  public:
+    std::complex<U>
+    operator()(intermediate_table& table, std::string const& name)
+    {
+      intermediate_table::complex_t c(table.find(name));
+      U r, i;
+      detail::decode(c.first, r);
+      detail::decode(c.second, i);
+      return std::complex<U>(r, i);
+    }
+  };
+
+  // Full specialization for sequence_t
+  template <>
+  class it_value_get<intermediate_table::sequence_t> {
+  public:
+    intermediate_table::sequence_t
+    operator()(intermediate_table& table, std::string const& name)
+    {
+      return std::any_cast<intermediate_table::sequence_t>(
+        table.find(name).value);
+    }
+  };
+
+  // Full specialization for sequence_t &: will throw if not writable
+  template <>
+  class it_value_get<intermediate_table::sequence_t&> {
+  public:
+    intermediate_table::sequence_t&
+    operator()(intermediate_table& sequence, std::string const& name)
+    {
+      auto item = sequence.locate(name);
+      if (item != nullptr) {
+        return std::any_cast<intermediate_table::sequence_t&>(item->value);
+      } else {
+        throw fhicl::exception(protection_violation)
+          << "Requested non-updatable parameter \"" << name
+          << "\" for update.\n";
       }
-    };
+    }
+  };
 
-    // Partial specialization for std::complex<U>.
-    template <typename U>
-    class it_value_get<
-      std::complex<U>,
-      typename tt::disable_if<std::is_reference<std::complex<U>>::value ||
-                              std::is_pointer<std::complex<U>>::value>::type> {
-    public:
-      std::complex<U>
-      operator()(intermediate_table& table, std::string const& name)
-      {
-        intermediate_table::complex_t c(table.find(name));
-        U r, i;
-        detail::decode(c.first, r);
-        detail::decode(c.second, i);
-        return std::complex<U>(r, i);
-      }
-    };
+  // Full specialization for sequence_t const &
+  template <>
+  class it_value_get<intermediate_table::sequence_t const&> {
+  public:
+    intermediate_table::sequence_t const&
+    operator()(intermediate_table& table, std::string const& name)
+    {
+      return std::any_cast<intermediate_table::sequence_t const&>(
+        table.find(name).value);
+    }
+  };
 
-    // Full specialization for sequence_t
-    template <>
-    class it_value_get<intermediate_table::sequence_t> {
-    public:
-      intermediate_table::sequence_t
-      operator()(intermediate_table& table, std::string const& name)
-      {
-        return std::any_cast<intermediate_table::sequence_t>(
-          table.find(name).value);
-      }
-    };
+  // Full specialization for table_t
+  template <>
+  class it_value_get<intermediate_table::table_t> {
+  public:
+    intermediate_table::table_t
+    operator()(intermediate_table& table, std::string const& name)
+    {
+      return std::any_cast<intermediate_table::table_t>(table.find(name).value);
+    }
+  };
 
-    // Full specialization for sequence_t &: will throw if not writable
-    template <>
-    class it_value_get<intermediate_table::sequence_t&> {
-    public:
-      intermediate_table::sequence_t&
-      operator()(intermediate_table& sequence, std::string const& name)
-      {
-        auto item = sequence.locate(name);
-        if (item != nullptr) {
-          return std::any_cast<intermediate_table::sequence_t&>(item->value);
-        } else {
-          throw fhicl::exception(protection_violation)
-            << "Requested non-updatable parameter \"" << name
-            << "\" for update.\n";
-        }
+  // Full specialization for table_t &: will throw if not writable
+  template <>
+  class it_value_get<intermediate_table::table_t&> {
+  public:
+    intermediate_table::table_t&
+    operator()(intermediate_table& table, std::string const& name)
+    {
+      auto item = table.locate(name);
+      if (item != nullptr) {
+        return std::any_cast<intermediate_table::table_t&>(item->value);
+      } else {
+        throw fhicl::exception(protection_violation)
+          << "Requested non-updatable parameter " << name << " for update.\n";
       }
-    };
+    }
+  };
 
-    // Full specialization for sequence_t const &
-    template <>
-    class it_value_get<intermediate_table::sequence_t const&> {
-    public:
-      intermediate_table::sequence_t const&
-      operator()(intermediate_table& table, std::string const& name)
-      {
-        return std::any_cast<intermediate_table::sequence_t const&>(
-          table.find(name).value);
-      }
-    };
-
-    // Full specialization for table_t
-    template <>
-    class it_value_get<intermediate_table::table_t> {
-    public:
-      intermediate_table::table_t
-      operator()(intermediate_table& table, std::string const& name)
-      {
-        return std::any_cast<intermediate_table::table_t>(
-          table.find(name).value);
-      }
-    };
-
-    // Full specialization for table_t &: will throw if not writable
-    template <>
-    class it_value_get<intermediate_table::table_t&> {
-    public:
-      intermediate_table::table_t&
-      operator()(intermediate_table& table, std::string const& name)
-      {
-        auto item = table.locate(name);
-        if (item != nullptr) {
-          return std::any_cast<intermediate_table::table_t&>(item->value);
-        } else {
-          throw fhicl::exception(protection_violation)
-            << "Requested non-updatable parameter " << name << " for update.\n";
-        }
-      }
-    };
-
-    // Full specialization for table_t const &
-    template <>
-    class it_value_get<intermediate_table::table_t const&> {
-    public:
-      intermediate_table::table_t const&
-      operator()(intermediate_table& table, std::string const& name)
-      {
-        return std::any_cast<intermediate_table::table_t const&>(
-          table.find(name).value);
-      }
-    };
-  }
+  // Full specialization for table_t const &
+  template <>
+  class it_value_get<intermediate_table::table_t const&> {
+  public:
+    intermediate_table::table_t const&
+    operator()(intermediate_table& table, std::string const& name)
+    {
+      return std::any_cast<intermediate_table::table_t const&>(
+        table.find(name).value);
+    }
+  };
 }
 
 template <typename T>

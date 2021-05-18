@@ -1,22 +1,12 @@
 #include "fhiclcpp/detail/PrettifierPrefixAnnotated.h"
 #include "cetlib/container_algorithms.h"
 #include "fhiclcpp/ParameterSet.h"
+#include "fhiclcpp/coding.h"
 #include "fhiclcpp/detail/Indentation.h"
 #include "fhiclcpp/detail/printing_helpers.h"
 
 using namespace fhicl;
 using namespace fhicl::detail;
-
-//===================================================================
-
-PrettifierPrefixAnnotated::PrettifierPrefixAnnotated()
-  : buffer_()
-  , indent_{}
-  , info_()
-  , sequence_sizes_{{-1u}}
-  , curr_size_{}
-  , name_stack_{}
-{}
 
 //==========================================================================
 void
