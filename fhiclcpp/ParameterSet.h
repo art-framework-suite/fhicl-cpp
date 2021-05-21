@@ -148,6 +148,19 @@ private:
 }; // ParameterSet
 
 // ======================================================================
+// Most commonly used instantiations
+
+#define _INSTANTIATE_GET(type)                                                 \
+  template type fhicl::ParameterSet::get<type>(std::string const&) const
+
+extern _INSTANTIATE_GET(bool);
+extern _INSTANTIATE_GET(double);
+extern _INSTANTIATE_GET(fhicl::ParameterSet);
+extern _INSTANTIATE_GET(float);
+extern _INSTANTIATE_GET(int);
+extern _INSTANTIATE_GET(std::string);
+
+// ======================================================================
 
 inline std::string
 fhicl::ParameterSet::to_string() const

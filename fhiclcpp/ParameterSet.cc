@@ -511,3 +511,13 @@ ParameterSet::to_indented_string(unsigned const initial_indent_level,
   }
   return result;
 }
+
+// ====================================================================
+// Explicit instantiations
+
+_INSTANTIATE_GET(bool);
+_INSTANTIATE_GET(double);
+_INSTANTIATE_GET(fhicl::ParameterSet);
+_INSTANTIATE_GET(float);
+_INSTANTIATE_GET(int);
+_INSTANTIATE_GET(std::string);
