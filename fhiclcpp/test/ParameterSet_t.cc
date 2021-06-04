@@ -29,11 +29,10 @@ BOOST_AUTO_TEST_CASE(Local)
 {
   fhicl::ParameterSet j;
   j.put("y", -1);
-  fhicl::ParameterSet orig(pset.get<fhicl::ParameterSet>("j"));
+  auto const orig = pset.get<fhicl::ParameterSet>("j");
   BOOST_TEST(j == orig);
   BOOST_TEST(orig.get<int>("y") == -1);
   BOOST_TEST(pset.get<std::vector<int>>("m")[0] == -1);
-
   for (auto n : pset.get_names())
     BOOST_TEST("x" != n);
 }
@@ -44,7 +43,7 @@ BOOST_AUTO_TEST_CASE(DeepInjection)
   l.put("zz", -2);
   fhicl::ParameterSet k;
   k.put("l", l);
-  fhicl::ParameterSet orig(pset.get<fhicl::ParameterSet>("k"));
+  auto const orig = pset.get<fhicl::ParameterSet>("k");
   BOOST_TEST(k == orig);
   BOOST_TEST(orig.get<fhicl::ParameterSet>("l").get<int>("zz") == -2);
   BOOST_TEST(orig.get<int>("l.zz") == -2);
