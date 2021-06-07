@@ -76,18 +76,18 @@ intermediate_table::empty() const
 // ----------------------------------------------------------------------
 
 bool
-intermediate_table::insert(std::string const& name,
+intermediate_table::insert(std::string const& key,
                            bool const in_prolog,
                            value_tag const tag,
                            std::any const& value)
 {
-  return insert(name, extended_value(in_prolog, tag, value));
+  return insert(key, extended_value(in_prolog, tag, value));
 }
 
 bool
-intermediate_table::insert(std::string const& name, extended_value const& value)
+intermediate_table::insert(std::string const& key, extended_value const& value)
 {
-  auto found_val = pre_insert_(name, value);
+  auto found_val = pre_insert_(key, value);
   bool result = (found_val != nullptr);
   if (result) {
     *found_val = value;
@@ -96,9 +96,9 @@ intermediate_table::insert(std::string const& name, extended_value const& value)
 }
 
 bool
-intermediate_table::insert(std::string const& name, extended_value&& value)
+intermediate_table::insert(std::string const& key, extended_value&& value)
 {
-  auto found_val = pre_insert_(name, value);
+  auto found_val = pre_insert_(key, value);
   bool result = (found_val != nullptr);
   if (result) {
     *found_val = std::move(value);
@@ -109,31 +109,28 @@ intermediate_table::insert(std::string const& name, extended_value&& value)
 // ----------------------------------------------------------------------
 
 extended_value const&
-intermediate_table::find(std::string const& name) const
+intermediate_table::find(std::string const& key) const
 {
-  std::vector<std::string> const& key = split(name);
   extended_value const* p = &ex_val;
-  for (unsigned k = 0, sz = key.size(); k != sz; ++k) {
-    std::string const& this_key = key[k];
-    if (this_key.empty())
-      ;
-    else if (std::isdigit(this_key[0])) {
+  for (auto const& name : split(key)) {
+    if (name.empty()) {
+    } else if (std::isdigit(name[0])) {
       if (!p->is_a(SEQUENCE))
-        throw exception(cant_find, name)
-          << "-- not a sequence (at part \"" << this_key << "\")";
+        throw exception(cant_find, key)
+          << "-- not a sequence (at part \"" << name << "\")";
       auto const& s = std::any_cast<sequence_t const&>(p->value);
-      unsigned i = std::atoi(this_key.c_str());
+      unsigned i = std::atoi(name.c_str());
       if (s.size() <= i)
-        throw exception(cant_find, name) << "(at part \"" << this_key << "\")";
+        throw exception(cant_find, key) << "(at part \"" << name << "\")";
       p = &s[i];
-    } else { /* this_key[0] is alpha or '_' */
+    } else { /* name[0] is alpha or '_' */
       if (!p->is_a(TABLE))
-        throw exception(cant_find, name)
-          << "-- not a table (at part \"" << this_key << "\")";
+        throw exception(cant_find, key)
+          << "-- not a table (at part \"" << name << "\")";
       auto const& t = std::any_cast<table_t const&>(p->value);
-      auto it = t.find(this_key);
+      auto it = t.find(name);
       if (it == t.end())
-        throw exception(cant_find, name) << "(at part \"" << this_key << "\")";
+        throw exception(cant_find, key) << "(at part \"" << name << "\")";
       p = &it->second;
     }
   } // for
@@ -143,30 +140,27 @@ intermediate_table::find(std::string const& name) const
 // ----------------------------------------------------------------------
 
 bool
-intermediate_table::exists(std::string const& name) const
+intermediate_table::exists(std::string const& key) const
 {
-  std::vector<std::string> const& key = split(name);
   extended_value const* p = &ex_val;
-  for (unsigned k = 0, sz = key.size(); k != sz; ++k) {
-    std::string const& this_key = key[k];
-    if (this_key.empty())
-      ;
-    else if (std::isdigit(this_key[0])) {
+  for (auto const& name : split(key)) {
+    if (name.empty()) {
+    } else if (std::isdigit(name[0])) {
       if (!p->is_a(SEQUENCE)) {
         return false;
       }
       auto const& s = std::any_cast<sequence_t const&>(p->value);
-      unsigned i = std::atoi(this_key.c_str());
+      unsigned i = std::atoi(name.c_str());
       if (s.size() <= i) {
         return false;
       }
       p = &s[i];
-    } else { /* this_key[0] is alpha or '_' */
+    } else { /* name[0] is alpha or '_' */
       if (!p->is_a(TABLE)) {
         return false;
       }
       auto const& t = std::any_cast<table_t const&>(p->value);
-      auto it = t.find(this_key);
+      auto it = t.find(name);
       if (it == t.end()) {
         return false;
       }
@@ -177,41 +171,40 @@ intermediate_table::exists(std::string const& name) const
 } // exists()
 
 void
-intermediate_table::erase(std::string const& name, bool const in_prolog)
+intermediate_table::erase(std::string const& key, bool const in_prolog)
 {
   // A missing part of the "a.b.c.d" chain will not cause an error; it
   // is an error for an intermediate link in the chain *not* to be a
   // table.
-  auto const& key(split(name));
   auto p(&ex_val);
   auto t(std::any_cast<table_t>(&p->value));
   auto it(t->end());
+  auto const names = split(key);
   if ((!in_prolog) &&
-      (((it = t->find(key[0])) == t->end()) || it->second.in_prolog)) {
+      (((it = t->find(names[0])) == t->end()) || it->second.in_prolog)) {
     return;
   }
   bool at_sequence(false);
-  for (auto const& this_key : key) {
-    if (this_key.empty())
-      ;
-    else if (std::isdigit(this_key[0])) {
+  for (auto const& name : names) {
+    if (name.empty()) {
+    } else if (std::isdigit(name[0])) {
       if (!p->is_a(SEQUENCE))
         throw exception(cant_find, name)
-          << "-- not a sequence (at part \"" << this_key << "\")";
+          << "-- not a sequence (at part \"" << name << "\")";
       auto& s = std::any_cast<sequence_t&>(p->value);
-      unsigned i = std::atoi(this_key.c_str());
+      unsigned i = std::atoi(name.c_str());
       if (s.size() <= i) {
         return;
       }
       p = &s[i];
       at_sequence = true;
-    } else { /* this_key[0] is alpha or '_' */
+    } else { /* name[0] is alpha or '_' */
       if (!p->is_a(TABLE))
         throw exception(cant_find, name)
-          << "-- not a table (at part \"" << this_key << "\")";
+          << "-- not a table (at part \"" << name << "\")";
       at_sequence = false;
       t = std::any_cast<table_t>(&p->value);
-      it = t->find(this_key);
+      it = t->find(name);
       if (it == t->end()) {
         return;
       }
@@ -219,9 +212,9 @@ intermediate_table::erase(std::string const& name, bool const in_prolog)
       auto prot = p->protection;
       if (prot == Protection::PROTECT_ERROR) {
         throw exception(protection_violation)
-          << ((this_key != name) ? (std::string("Part \"") + this_key +
-                                    "\" of specification to be erased\n") :
-                                   "")
+          << ((name != key) ? (std::string("Part \"") + name +
+                               "\" of specification to be erased\n") :
+                              "")
           << '"' << name << "\" is protected on " << p->pretty_src_info()
           << '\n';
       } else if (prot == Protection::PROTECT_IGNORE) {
@@ -238,74 +231,72 @@ intermediate_table::erase(std::string const& name, bool const in_prolog)
 }
 
 extended_value*
-intermediate_table::pre_insert_(std::string const& name,
+intermediate_table::pre_insert_(std::string const& key,
                                 extended_value const& value)
 {
   if (!value.in_prolog) {
     auto& t = std::any_cast<table_t&>(ex_val.value);
-    std::vector<std::string> const& key = split(name);
-    auto it = t.find(key[0]);
+    auto const names = split(key);
+    auto it = t.find(names[0]);
     if (it != t.end() && it->second.in_prolog) {
       t.erase(it);
     }
   }
-  auto located = locate_(name, value.in_prolog);
+  auto located = locate_(key, value.in_prolog);
   if ((!located.first->is_a(NIL)) &&
       value.protection > located.first->protection) {
     throw exception(protection_violation)
-      << '"' << name << "\" cannot be assigned with increased protection"
-      << "\n(previous definition on " << (located.first)->pretty_src_info()
+      << '"' << key << "\" cannot be assigned with increased protection"
+      << "\n(previous definition on " << located.first->pretty_src_info()
       << ")\n";
   }
   return located.second ? located.first : nullptr;
 }
 
 std::pair<extended_value*, bool>
-intermediate_table::locate_(std::string const& name, bool const in_prolog)
+intermediate_table::locate_(std::string const& key, bool const in_prolog)
 {
   std::pair<extended_value*, bool> result(nullptr, true);
-  std::vector<std::string> const& key = split(name);
   extended_value*& p = result.first;
   p = &ex_val;
-  for (unsigned k = 0, sz = key.size(); k != sz; ++k) {
-    std::string const& this_key = key[k];
-    if (this_key.empty())
-      ;
-    else if (std::isdigit(this_key[0])) {
+  for (auto const& name : split(key)) {
+    if (name.empty()) {
+    } else if (std::isdigit(name[0])) {
       if (p->is_a(NIL)) {
         *p = empty_seq();
       }
       if (!p->is_a(SEQUENCE))
         throw exception(cant_find, name)
-          << "-- not a sequence (at part \"" << this_key << "\")";
+          << "-- not a sequence (at part \"" << name << "\")";
       auto& s = std::any_cast<sequence_t&>(p->value);
-      unsigned i = std::atoi(this_key.c_str());
+      unsigned i = std::atoi(name.c_str());
       while (s.size() <= i) {
         s.push_back(nil_item());
       }
       p->set_prolog(in_prolog);
       p = &s[i];
-    } else { /* this_key[0] is alpha or '_' */
+    } else { /* name[0] is alpha or '_' */
       if (p->is_a(NIL)) {
         *p = empty_tbl();
         p->set_prolog(in_prolog);
       }
       if (!p->is_a(TABLE))
         throw exception(cant_find, name)
-          << "-- not a table (at part \"" << this_key << "\")";
+          << "-- not a table (at part \"" << name << "\")";
       auto& t = std::any_cast<table_t&>(p->value);
       // This will do what we need whether the key is already in the
       // map or not.
-      p = &t.emplace(this_key, nil_item()).first->second;
+      p = &t.emplace(name, nil_item()).first->second;
       p->set_prolog(in_prolog);
     }
+
     auto prot = p->protection;
     if (prot == Protection::PROTECT_ERROR) {
       throw exception(protection_violation)
-        << ((this_key != name) ? (std::string("Part \"") + this_key +
-                                  "\" of specification to be overwritten\n") :
-                                 "")
-        << '"' << name << "\" is protected on " << p->pretty_src_info() << '\n';
+        << ((name != key) ? (std::string("Part \"") + name +
+                             "\" of specification to be overwritten\n") :
+                            "")
+        << '"' << key << "\" is protected on " << p->pretty_src_info() << '\n';
     } else if (prot == Protection::PROTECT_IGNORE) {
       result.second = false;
       // Keep going since we might need definition location
@@ -316,12 +307,11 @@ intermediate_table::locate_(std::string const& name, bool const in_prolog)
 } // locate_()
 
 std::vector<std::string>
-intermediate_table::split(std::string const& name) const
+intermediate_table::split(std::string const& key)
 {
   static std::string const splitChars{shims::isSnippetMode() ? "[]" : ".[]"};
   std::vector<std::string> result;
-  boost::algorithm::split(
-    result, name, boost::algorithm::is_any_of(splitChars));
+  boost::algorithm::split(result, key, boost::algorithm::is_any_of(splitChars));
   return result;
 }
 

@@ -20,22 +20,20 @@ namespace shims {
             class Allocator = std::allocator<std::pair<const Key, T>>>
   class map {
   public:
-    using mapmap_t = typename std::map<const Key, T, Compare, Allocator>;
-    using listmap_t = typename std::list<std::pair<const Key, T>, Allocator>;
+    using mapmap_t = std::map<const Key, T, Compare, Allocator>;
+    using listmap_t = std::list<std::pair<const Key, T>, Allocator>;
 
-    static_assert(
-      std::is_same<typename mapmap_t::key_type,
-                   typename listmap_t::value_type::first_type>::value,
-      "type mismatch for key_type");
-    static_assert(
-      std::is_same<typename mapmap_t::mapped_type,
-                   typename listmap_t::value_type::second_type>::value,
-      "type mismatch for mapped_type");
-    static_assert(std::is_same<typename mapmap_t::value_type,
-                               typename listmap_t::value_type>::value,
+    static_assert(std::is_same_v<typename mapmap_t::key_type,
+                                 typename listmap_t::value_type::first_type>,
+                  "type mismatch for key_type");
+    static_assert(std::is_same_v<typename mapmap_t::mapped_type,
+                                 typename listmap_t::value_type::second_type>,
+                  "type mismatch for mapped_type");
+    static_assert(std::is_same_v<typename mapmap_t::value_type,
+                                 typename listmap_t::value_type>,
                   "type mismatch for value_type");
-    static_assert(std::is_same<typename mapmap_t::size_type,
-                               typename listmap_t::size_type>::value,
+    static_assert(std::is_same_v<typename mapmap_t::size_type,
+                                 typename listmap_t::size_type>,
                   "type mismatch for size_type");
 
     using size_type = typename mapmap_t::size_type;
@@ -93,37 +91,33 @@ namespace shims {
       }
 
       template <typename II>
-      typename std::enable_if<
-        std::is_same<typename mapmap_t::iterator, II>::value,
-        II>::type get(II)
+      std::enable_if_t<std::is_same_v<typename mapmap_t::iterator, II>, II> get(
+        II)
       {
         return _iters.mapmap_iter;
       }
 
       template <typename II>
-      typename std::enable_if<
-        std::is_same<typename listmap_t::iterator, II>::value,
-        II>::type get(II)
+      std::enable_if_t<std::is_same_v<typename listmap_t::iterator, II>, II>
+        get(II)
       {
         return _iters.listmap_iter;
       }
 
       template <typename IIL, typename IIR>
-      friend typename std::enable_if<
-        !std::is_same<IIL, IIR>::value &&
-          std::is_same<
-            typename std::remove_const<typename IIL::type>::type,
-            typename std::remove_const<typename IIR::type>::type>::value,
-        bool>::type
+      friend std::enable_if_t<
+        !std::is_same_v<IIL, IIR> &&
+          std::is_same_v<std::remove_const_t<typename IIL::type>,
+                         std::remove_const_t<typename IIR::type>>,
+        bool>
       operator==(IIL, IIR);
 
       template <typename IIL, typename IIR>
-      friend typename std::enable_if<
-        !std::is_same<IIL, IIR>::value &&
-          std::is_same<
-            typename std::remove_const<typename IIL::type>::type,
-            typename std::remove_const<typename IIR::type>::type>::value,
-        bool>::type
+      friend std::enable_if_t<
+        !std::is_same_v<IIL, IIR> &&
+          std::is_same_v<std::remove_const_t<typename IIL::type>,
+                         std::remove_const_t<typename IIR::type>>,
+        bool>
       operator!=(IIL, IIR);
 
     private:
@@ -163,7 +157,6 @@ namespace shims {
     begin() const
     {
       maps_tuple& maps = *const_cast<maps_tuple*>(&_maps);
-
       return isSnippetMode() ? const_iterator{std::begin(maps.listmap)} :
                                const_iterator{std::begin(maps.mapmap)};
     }
@@ -327,11 +320,10 @@ namespace shims {
     maps_tuple _maps;
   };
   template <typename IIL, typename IIR>
-  typename std::enable_if<
-    !std::is_same<IIL, IIR>::value &&
-      std::is_same<typename std::remove_const<typename IIL::type>::type,
-                   typename std::remove_const<typename IIR::type>::type>::value,
-    bool>::type
+  std::enable_if_t<!std::is_same_v<IIL, IIR> &&
+                     std::is_same_v<std::remove_const_t<typename IIL::type>,
+                                    std::remove_const_t<typename IIR::type>>,
+                   bool>
   operator==(IIL left, IIR right)
   {
     return isSnippetMode() ?
@@ -340,11 +332,10 @@ namespace shims {
   }
 
   template <typename IIL, typename IIR>
-  typename std::enable_if<
-    !std::is_same<IIL, IIR>::value &&
-      std::is_same<typename std::remove_const<typename IIL::type>::type,
-                   typename std::remove_const<typename IIR::type>::type>::value,
-    bool>::type
+  std::enable_if_t<!std::is_same_v<IIL, IIR> &&
+                     std::is_same_v<std::remove_const_t<typename IIL::type>,
+                                    std::remove_const_t<typename IIR::type>>,
+                   bool>
   operator!=(IIL left, IIR right)
   {
     return !operator==(left, right);
