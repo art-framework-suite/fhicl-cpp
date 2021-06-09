@@ -558,6 +558,18 @@ BOOST_AUTO_TEST_CASE(protect_ignore_22)
   PV_EXCEPTION;
 }
 
+BOOST_AUTO_TEST_CASE(protect_ignore_23)
+{
+  // Even though 'x' is nested inside of 'a', which has a protection
+  // of PROTECT_IGNORE, the protection of 'x' is still NONE.
+  std::string const doc = "a @protect_ignore: { x: 29 }\n"
+                          "a.x: 33";
+  auto tbl = parse_document(doc);
+  BOOST_TEST(tbl.get<std::size_t>("a.x") == 29ul);
+  BOOST_TEST(tbl.find("a").protection == Protection::PROTECT_IGNORE);
+  BOOST_TEST(tbl.find("a.x").protection == Protection::NONE);
+}
+
 BOOST_AUTO_TEST_CASE(protect_error_01)
 {
   std::string const doc = "BEGIN_PROLOG\n"
@@ -812,7 +824,6 @@ BOOST_AUTO_TEST_CASE(protect_local_07)
   BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 27ul);
   BOOST_TEST(tbl.find("a.b.x").protection == Protection::PROTECT_IGNORE);
   BOOST_TEST(tbl.find("a").protection == Protection::PROTECT_IGNORE);
-  BOOST_TEST(tbl.find("a.b.x").protection == Protection::PROTECT_IGNORE);
 }
 
 namespace {
