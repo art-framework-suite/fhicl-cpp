@@ -43,7 +43,6 @@
 #include <algorithm>
 #include <any>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 namespace ascii = ::boost::spirit::ascii;
@@ -337,6 +336,7 @@ namespace {
       extended_value result = tbl.find(name);
       result.set_prolog(in_prolog);
       result.set_src_info(sref.src_whereis(pos));
+      result.reset_protection();
       return result;
     }
     catch (fhicl::exception const& e) {
@@ -398,7 +398,7 @@ namespace {
     void
     insert_table(std::string const& name, iter_t const pos)
     {
-      extended_value const& xval = local_lookup(name, pos);
+      extended_value const xval = local_lookup(name, pos);
       if (!xval.is_a(fhicl::TABLE)) {
         throw fhicl::exception(fhicl::error::type_mismatch, "@table::")
           << "key \"" << name << "\" does not refer to a table at "

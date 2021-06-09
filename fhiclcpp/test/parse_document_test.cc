@@ -759,7 +759,7 @@ BOOST_AUTO_TEST_CASE(protect_local_01)
   std::string const doc = "a @protect_ignore: 42\n"
                           "b: @local::a\n";
   auto tbl = parse_document(doc);
-  BOOST_TEST(tbl.find("b").protection == Protection::PROTECT_IGNORE);
+  BOOST_TEST(tbl.find("b").protection == Protection::NONE);
 }
 
 BOOST_AUTO_TEST_CASE(protect_local_02)
@@ -767,7 +767,8 @@ BOOST_AUTO_TEST_CASE(protect_local_02)
   std::string const doc = "a @protect_error: 42\n"
                           "b: 43\n"
                           "b: @local::a\n";
-  PV_EXCEPTION;
+  auto tbl = parse_document(doc);
+  BOOST_TEST(tbl.get<std::size_t>("b") == 42ul);
 }
 
 BOOST_AUTO_TEST_CASE(protect_local_03)
@@ -777,7 +778,7 @@ BOOST_AUTO_TEST_CASE(protect_local_03)
                           "b: @erase\n"
                           "b: 43\n";
   auto tbl = parse_document(doc);
-  BOOST_TEST(tbl.get<std::size_t>("b") == 42ul);
+  BOOST_TEST(tbl.get<std::size_t>("b") == 43ul);
 }
 
 BOOST_AUTO_TEST_CASE(protect_local_04)
@@ -785,7 +786,8 @@ BOOST_AUTO_TEST_CASE(protect_local_04)
   std::string const doc = "a @protect_error: 42\n"
                           "b: @local::a\n"
                           "b: 43\n";
-  PV_EXCEPTION;
+  auto tbl = parse_document(doc);
+  BOOST_TEST(tbl.get<std::size_t>("b") == 43ul);
 }
 
 BOOST_AUTO_TEST_CASE(protect_local_05)
@@ -797,8 +799,8 @@ BOOST_AUTO_TEST_CASE(protect_local_05)
                           "a: @local::a\n"
                           "a.b.x: 29\n";
   auto tbl = parse_document(doc);
-  BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 27ul);
-  BOOST_TEST(tbl.find("a.b.x").protection == Protection::PROTECT_IGNORE);
+  BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 29ul);
+  BOOST_TEST(tbl.find("a.b.x").protection == Protection::NONE);
 }
 
 BOOST_AUTO_TEST_CASE(protect_local_06)
