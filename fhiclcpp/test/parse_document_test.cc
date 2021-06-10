@@ -824,7 +824,7 @@ BOOST_AUTO_TEST_CASE(protect_local_07)
                           "a.b.x: 29\n";
   auto tbl = parse_document(doc);
   BOOST_TEST(tbl.get<std::size_t>("a.b.x") == 27ul);
-  BOOST_TEST(tbl.find("a.b.x").protection == Protection::PROTECT_IGNORE);
+  BOOST_TEST(tbl.find("a.b.x").protection == Protection::NONE);
   BOOST_TEST(tbl.find("a").protection == Protection::PROTECT_IGNORE);
 }
 
