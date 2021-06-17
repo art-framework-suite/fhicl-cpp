@@ -6,22 +6,19 @@
 #include <exception>
 #include <string>
 
-namespace fhicl {
-  namespace detail {
+namespace fhicl::detail {
+  class validationException : public std::exception {
+  public:
+    validationException(std::string msg) : msg_{std::move(msg)} {}
+    char const*
+    what() const noexcept override
+    {
+      return msg_.c_str();
+    }
 
-    class validationException : public std::exception {
-    public:
-      validationException(std::string msg) : msg_{std::move(msg)} {}
-      char const*
-      what() const noexcept override
-      {
-        return msg_.c_str();
-      }
-
-    private:
-      std::string msg_;
-    };
-  }
+  private:
+    std::string msg_;
+  };
 }
 
 #endif /* fhiclcpp_types_detail_validationException_h */

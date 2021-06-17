@@ -100,44 +100,42 @@
 #include <stack>
 #include <string>
 
-namespace fhicl {
-  namespace detail {
+namespace fhicl::detail {
 
-    class PrettifierAnnotated : public ParameterSetWalker {
-    public:
-      PrettifierAnnotated(unsigned initial_indent_level = 0);
+  class PrettifierAnnotated : public ParameterSetWalker {
+  public:
+    PrettifierAnnotated(unsigned initial_indent_level = 0);
 
-      std::string
-      result() const
-      {
-        return buffer_.str();
-      }
+    std::string
+    result() const
+    {
+      return buffer_.str();
+    }
 
-    private:
-      void before_action(key_t const&,
-                         any_t const&,
-                         ParameterSet const*) override;
-      void after_action(key_t const&) override;
+  private:
+    void before_action(key_t const&,
+                       any_t const&,
+                       ParameterSet const*) override;
+    void after_action(key_t const&) override;
 
-      void enter_table(key_t const&, any_t const&) override;
-      void enter_sequence(key_t const&, any_t const&) override;
+    void enter_table(key_t const&, any_t const&) override;
+    void enter_sequence(key_t const&, any_t const&) override;
 
-      void exit_table(key_t const&, any_t const&) override;
-      void exit_sequence(key_t const&, any_t const&) override;
+    void exit_table(key_t const&, any_t const&) override;
+    void exit_sequence(key_t const&, any_t const&) override;
 
-      void atom(key_t const&, any_t const&) override;
+    void atom(key_t const&, any_t const&) override;
 
-      void push_size_(any_t const&);
-      void pop_size_();
+    void push_size_(any_t const&);
+    void pop_size_();
 
-      std::ostringstream buffer_;
-      Indentation indent_;
-      std::string curr_info_;
-      std::string cached_info_;
-      std::stack<std::size_t> sequence_sizes_;
-      std::size_t curr_size_;
-    };
-  }
+    std::ostringstream buffer_;
+    Indentation indent_;
+    std::string curr_info_;
+    std::string cached_info_;
+    std::stack<std::size_t> sequence_sizes_;
+    std::size_t curr_size_;
+  };
 }
 
 #endif /* fhiclcpp_detail_PrettifierAnnotated_h */
