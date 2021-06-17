@@ -1,6 +1,14 @@
 include(CetMake)
 include(CetMakeCompletions)
 
+cet_make_library(SOURCE fhicl_get_impl.cc
+  LIBRARIES PRIVATE
+    fhiclcpp::fhiclcpp
+    cetlib::parsed_program_options
+    cetlib_except::cetlib_except
+    Boost::program_options
+)
+
 cet_make_exec(NAME fhicl-dump
   LIBRARIES PRIVATE
     fhiclcpp::fhiclcpp
@@ -19,11 +27,7 @@ cet_make_exec(NAME fhicl-expand
 )
 
 cet_make_exec(NAME fhicl-get
-  LIBRARIES PRIVATE
-    fhiclcpp::fhiclcpp
-    cetlib::parsed_program_options
-    cetlib_except::cetlib_except
-    Boost::program_options
+  LIBRARIES PRIVATE fhiclcpp::tools
 )
 
 cet_make_exec(NAME fhicl-write-db
