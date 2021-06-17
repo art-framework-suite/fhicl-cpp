@@ -141,8 +141,3 @@ cet_test(fhicl-write-db-test HANDBUILT
 )
 
 cet_test(parse_shimmeddocument_test USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
-
-# Tests for facilities provided in the tools directory
-cet_test(fhicl-get-test USE_BOOST_UNIT
-  LIBRARIES PRIVATE fhiclcpp::tools
-  DATAFILES fhicl-get-t.fcl)

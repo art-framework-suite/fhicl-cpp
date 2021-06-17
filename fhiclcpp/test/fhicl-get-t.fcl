@@ -1,9 +1,0 @@
-a: {
-  billy: "the kid"
-}
-
-b: {}
-c: 1.25
-d: 42
-e: false
-f: [1, 3]
