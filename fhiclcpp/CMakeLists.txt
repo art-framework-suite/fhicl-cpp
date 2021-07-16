@@ -1,11 +1,11 @@
 include(CetMake)
 
-cet_find_package(Boost COMPONENTS headers REQUIRED)
-cet_find_package(SQLite3 PRIVATE REQUIRED)
-cet_find_package(TBB REQUIRED)
-cet_find_package(cetlib REQUIRED)
-cet_find_package(cetlib_except REQUIRED)
-cet_find_package(hep_concurrency REQUIRED)
+find_package(Boost COMPONENTS headers REQUIRED PUBLIC)
+find_package(SQLite3 PRIVATE REQUIRED)
+find_package(TBB REQUIRED PUBLIC)
+find_package(cetlib REQUIRED PUBLIC)
+find_package(cetlib_except REQUIRED PUBLIC)
+find_package(hep_concurrency REQUIRED PUBLIC)
 
 cet_make_library(HEADERS_TARGET WITH_STATIC_LIBRARY
   SOURCE
