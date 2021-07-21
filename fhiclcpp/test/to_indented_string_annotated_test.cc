@@ -4,6 +4,7 @@
 //
 // ======================================================================
 
+#include "cetlib/filepath_maker.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/intermediate_table.h"
 #include "fhiclcpp/parse.h"

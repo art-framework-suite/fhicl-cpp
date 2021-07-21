@@ -15,7 +15,6 @@
 //  used to send output to the named files.
 //  ======================================================================
 
-#include "boost/program_options.hpp"
 #include "cetlib/container_algorithms.h"
 #include "cetlib/filepath_maker.h"
 #include "cetlib/includer.h"
@@ -23,9 +22,7 @@
 #include "cetlib/parsed_program_options.h"
 #include "cetlib_except/exception.h"
 
-#include <fstream>
 #include <iostream>
-#include <istream>
 #include <memory>
 #include <string>
 #include <vector>

@@ -5,7 +5,6 @@
 // ======================================================================
 
 #include "fhiclcpp/parse.h"
-#include "cetlib/compiler_macros.h"
 
 #ifdef __ICC
 #pragma warning(push, disable : 780)
@@ -38,9 +37,8 @@
 #include "fhiclcpp/exception.h"
 #include "fhiclcpp/extended_value.h"
 #include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/tokens.h"
-
 #include "fhiclcpp/parse_shims.h"
+#include "fhiclcpp/tokens.h"
 
 #include <algorithm>
 #include <any>
@@ -83,7 +81,9 @@ using fhicl::TABLEID;
 namespace {
 
   void
-  check_protection(Protection const p, extended_value& v, std::string name = "")
+  check_element_protections(std::string const& name,
+                            Protection const p,
+                            extended_value& v)
   {
     using std::max;
     if (v.protection == Protection::NONE) {
@@ -97,13 +97,13 @@ namespace {
               "")
         << ", which is incompatible with an enclosing item's protection of "
         << to_string(p) << "\n";
-    };
+    }
+
     if (v.tag == fhicl::SEQUENCE) {
       std::size_t count = 0;
-      using std::to_string;
       for (auto& subv : sequence_t(v)) {
-        check_protection(
-          max(p, v.protection), subv, name + '[' + to_string(count) + ']');
+        check_element_protections(
+          name + '[' + std::to_string(count) + ']', max(p, v.protection), subv);
       }
     } else if (v.tag == fhicl::TABLE) {
       for (auto& [key, value] : table_t(v)) {
@@ -112,16 +112,16 @@ namespace {
           sname.append(".");
         }
         sname.append(key);
-        check_protection(max(p, v.protection), value, std::move(sname));
+        check_element_protections(sname, max(p, v.protection), value);
       }
     }
   }
 
   void
-  check_protection(extended_value& v, std::string name = "")
+  check_protection(std::string const& name, extended_value& v)
   {
-    if (v.is_a(fhicl::SEQUENCE) || v.is_a(fhicl::TABLE)) {
-      check_protection(v.protection, v, std::move(name));
+    if (v.is_a(SEQUENCE) || v.is_a(TABLE)) {
+      check_element_protections(name, v.protection, v);
     }
   }
 
@@ -135,11 +135,11 @@ namespace {
     }
 
     v.protection = static_cast<Protection>(m);
-    check_protection(v, name);
+    check_protection(name, v);
   }
 
   std::string
-  canon_nil(std::string const&)
+  canon_nil()
   {
     static std::string const canon_nil(9, '\0');
     return canon_nil;
@@ -175,94 +175,18 @@ namespace {
                   "character.";
   }
 
-  void
-  rebool(bool& b, bool const value)
-  {
-    b = value;
-  }
-
   extended_value
   xvalue_vp(bool const b, value_tag const t, std::any const v)
   {
     return extended_value{b, t, v};
   }
 
-  template <typename FwdIter>
-  extended_value
-  xvalue_dp(bool const b,
-            value_tag const t,
-            std::any const v,
-            FwdIter const pos,
-            cet::includer const& s)
-  {
-    return extended_value{b, t, v, s.src_whereis(pos)};
-  }
+  using iter_t = cet::includer::const_iterator;
 
   complex_t
   cplx(atom_t const& c1, atom_t const& c2)
   {
     return std::make_pair(c1, c2);
-  }
-
-  template <typename FwdIter>
-  extended_value
-  local_lookup(std::string const& name,
-               intermediate_table const& tbl,
-               bool const in_prolog,
-               FwdIter const pos,
-               cet::includer const& s) try {
-    extended_value result = tbl.find(name);
-    result.set_prolog(in_prolog);
-    result.set_src_info(s.src_whereis(pos));
-    return result;
-  }
-  catch (fhicl::exception const& e) {
-    throw fhicl::exception(fhicl::error::parse_error, "Local lookup error", e)
-      << "at " << s.highlighted_whereis(pos) << "\n";
-  }
-
-  template <typename FwdIter>
-  extended_value
-  database_lookup(std::string const&,
-                  intermediate_table const&,
-                  bool,
-                  FwdIter const pos,
-                  cet::includer const& s)
-  {
-    throw fhicl::exception(fhicl::error::unimplemented, "Database lookup error")
-      << "at " << s.highlighted_whereis(pos)
-      << "\nFHiCL-cpp database lookup not yet available.\n";
-  }
-
-  template <typename FwdIter>
-  void
-  tbl_insert(std::string const& name,
-             binding_modifier const m,
-             extended_value& value,
-             intermediate_table& t,
-             FwdIter const pos,
-             cet::includer const& s) try {
-    set_protection(name, m, value);
-    t.insert(name, value);
-  }
-  catch (fhicl::exception& e) {
-    throw fhicl::exception(fhicl::error::parse_error, "Error in assignment:", e)
-      << " at " << s.highlighted_whereis(pos) << '\n';
-  }
-
-  template <typename FwdIter>
-  void
-  tbl_erase(std::string const& name,
-            intermediate_table& t,
-            bool const in_prolog,
-            FwdIter const pos,
-            cet::includer const& s) try {
-    t.erase(name, in_prolog);
-  }
-  catch (fhicl::exception& e) {
-    throw fhicl::exception(
-      fhicl::error::parse_error, "Error in erase attempt:", e)
-      << " at " << s.highlighted_whereis(pos) << '\n';
   }
 
   void
@@ -297,115 +221,18 @@ namespace {
     t[name] = value;
   }
 
-  template <typename FwdIter>
   void
   map_insert_loc(std::string const& name,
                  binding_modifier const m,
                  extended_value& value,
                  table_t& t,
-                 FwdIter const pos,
+                 iter_t const pos,
                  cet::includer const& s) try {
     map_insert(name, m, value, t);
   }
   catch (fhicl::exception& e) {
     throw fhicl::exception(fhicl::error::parse_error, "Error in assignment:", e)
       << " at " << s.highlighted_whereis(pos) << '\n';
-  }
-
-  template <typename FwdIter>
-  void
-  insert_table_in_table(std::string const& name,
-                        intermediate_table& tbl,
-                        bool in_prolog,
-                        table_t& t,
-                        FwdIter pos,
-                        cet::includer const& s)
-  {
-    extended_value const xval = local_lookup(name, tbl, false, pos, s);
-    if (!xval.is_a(fhicl::TABLE)) {
-      throw fhicl::exception(fhicl::error::type_mismatch, "@table::")
-        << "key \"" << name << "\" does not refer to a table at "
-        << s.highlighted_whereis(pos) << "\n";
-    }
-    auto const& incoming = std::any_cast<table_t const&>(xval.value);
-    for (auto const& [name, value] : incoming) {
-      auto& element = t[name];
-      if (!element.is_a(fhicl::UNKNOWN)) {
-        // Already exists.
-        auto const incoming_protection = value.protection;
-        if (incoming_protection > element.protection) {
-          throw fhicl::exception(fhicl::error::protection_violation)
-            << "@table::" << name << ": inserting name " << name
-            << " would increase protection from "
-            << to_string(element.protection) << " to "
-            << to_string(incoming_protection) << "\n(previous definition on "
-            << element.pretty_src_info() << ")\n";
-        }
-        switch (element.protection) {
-        case Protection::NONE:
-          break;
-        case Protection::PROTECT_IGNORE:
-          continue;
-        case Protection::PROTECT_ERROR:
-          throw fhicl::exception(fhicl::error::protection_violation)
-            << "@table::" << name << ": inserting name " << name
-            << "would violate protection on existing item"
-            << "\n(previous definition on " << element.pretty_src_info()
-            << ")\n";
-        }
-      }
-      element = value;
-      element.set_prolog(in_prolog);
-      element.set_src_info(s.src_whereis(pos));
-    }
-  }
-
-  template <typename FwdIter>
-  void
-  insert_table(std::string const& name,
-               intermediate_table& tbl,
-               bool const in_prolog,
-               FwdIter pos,
-               cet::includer const& s)
-  {
-    extended_value const& xval = local_lookup(name, tbl, false, pos, s);
-    if (!xval.is_a(fhicl::TABLE)) {
-      throw fhicl::exception(fhicl::error::type_mismatch, "@table::")
-        << "key \"" << name << "\" does not refer to a table at "
-        << s.highlighted_whereis(pos) << "\n";
-    }
-    auto const& incoming = std::any_cast<table_t const&>(xval.value);
-    for (auto const& [name, value] : incoming) {
-      auto element = value;
-      element.set_prolog(in_prolog);
-      element.set_src_info(s.src_whereis(pos));
-      tbl.insert(name, std::move(element));
-    }
-  }
-
-  template <typename FwdIter>
-  void
-  seq_insert_sequence(std::string const& name,
-                      intermediate_table& tbl,
-                      bool in_prolog,
-                      sequence_t& v,
-                      FwdIter pos,
-                      cet::includer const& s)
-  {
-    extended_value const xval = local_lookup(name, tbl, false, pos, s);
-    if (!xval.is_a(fhicl::SEQUENCE)) {
-      throw fhicl::exception(fhicl::error::type_mismatch, "@sequence::")
-        << "key \"" << name << "\" does not refer to a sequence at "
-        << s.highlighted_whereis(pos) << "\n";
-    }
-    auto const& incoming = std::any_cast<sequence_t const&>(xval.value);
-    auto it = v.insert(v.end(), incoming.cbegin(), incoming.cend());
-    for (auto const e = v.end(); it != e; ++it) {
-      using std::to_string;
-      it->protection = Protection::NONE;
-      it->set_prolog(in_prolog);
-      it->set_src_info(s.src_whereis(pos));
-    }
   }
 
   void
@@ -426,18 +253,17 @@ namespace {
     case Protection::NONE:
       t.erase(name);
     case Protection::PROTECT_IGNORE:
-      break;
+      return;
     case Protection::PROTECT_ERROR:
       throw fhicl::exception(fhicl::error::protection_violation)
         << "Unable to erase " << name << " due to protection.\n";
     }
   }
 
-  template <typename FwdIter>
   void
   map_erase_loc(std::string const& name,
                 table_t& t,
-                FwdIter pos,
+                iter_t const pos,
                 cet::includer const& s) try {
     map_erase(name, t);
   }
@@ -449,15 +275,9 @@ namespace {
 
   // ----------------------------------------------------------------------
 
-  template <class FwdIter, class Skip>
-  struct value_parser;
+  using FwdIter = std::string::const_iterator;
 
-  template <class FwdIter, class Skip>
-  struct document_parser;
-
-  // ----------------------------------------------------------------------
-
-  template <class FwdIter, class Skip>
+  template <typename Skip>
   struct value_parser : qi::grammar<FwdIter, extended_value(), Skip> {
     using atom_token = qi::rule<FwdIter, atom_t(), Skip>;
     using complex_token = qi::rule<FwdIter, complex_t(), Skip>;
@@ -486,14 +306,13 @@ namespace {
 
   // ----------------------------------------------------------------------
 
-  template <class FwdIter, class Skip>
+  using Skip = qi::rule<iter_t>;
   struct document_parser : qi::grammar<FwdIter, void(), Skip> {
-    using val_parser = value_parser<FwdIter, Skip>;
-
-    using atom_token = typename val_parser::atom_token;
-    using sequence_token = typename val_parser::sequence_token;
-    using table_token = typename val_parser::table_token;
-    using value_token = typename val_parser::value_token;
+    using val_parser = value_parser<Skip>;
+    using atom_token = val_parser::atom_token;
+    using sequence_token = val_parser::sequence_token;
+    using table_token = val_parser::table_token;
+    using value_token = val_parser::value_token;
     using nothing_token = qi::rule<FwdIter, void(), Skip>;
 
     explicit document_parser(cet::includer const& s);
@@ -502,6 +321,7 @@ namespace {
     bool in_prolog{false};
     intermediate_table tbl{};
     val_parser vp{};
+    cet::includer const& sref;
 
     // parser rules:
     atom_token name, qualname, noskip_qualname, localref, dbref;
@@ -510,16 +330,161 @@ namespace {
     value_token value;
     nothing_token prolog, document;
 
+  private:
+    extended_value
+    local_lookup(std::string const& name, iter_t const pos) try {
+      extended_value result = tbl.find(name);
+      result.set_prolog(in_prolog);
+      result.set_src_info(sref.src_whereis(pos));
+      result.reset_protection();
+      return result;
+    }
+    catch (fhicl::exception const& e) {
+      throw fhicl::exception(fhicl::error::parse_error, "Local lookup error", e)
+        << "at " << sref.highlighted_whereis(pos) << "\n";
+    }
+
+    extended_value
+    database_lookup(iter_t const pos)
+    {
+      throw fhicl::exception(fhicl::error::unimplemented,
+                             "Database lookup error")
+        << "at " << sref.highlighted_whereis(pos)
+        << "\nFHiCL-cpp database lookup not yet available.\n";
+    }
+
+    void
+    insert_table_in_table(std::string const& name, table_t& t, iter_t const pos)
+    {
+      extended_value const xval = local_lookup(name, pos);
+      if (!xval.is_a(fhicl::TABLE)) {
+        throw fhicl::exception(fhicl::error::type_mismatch, "@table::")
+          << "key \"" << name << "\" does not refer to a table at "
+          << sref.highlighted_whereis(pos) << "\n";
+      }
+      auto const& incoming = std::any_cast<table_t const&>(xval.value);
+      for (auto const& [name, value] : incoming) {
+        auto& element = t[name];
+        if (!element.is_a(fhicl::UNKNOWN)) {
+          // Already exists.
+          auto const incoming_protection = value.protection;
+          if (incoming_protection > element.protection) {
+            throw fhicl::exception(fhicl::error::protection_violation)
+              << "@table::" << name << ": inserting name " << name
+              << " would increase protection from "
+              << to_string(element.protection) << " to "
+              << to_string(incoming_protection) << "\n(previous definition on "
+              << element.pretty_src_info() << ")\n";
+          }
+          switch (element.protection) {
+          case Protection::NONE:
+            break;
+          case Protection::PROTECT_IGNORE:
+            continue;
+          case Protection::PROTECT_ERROR:
+            throw fhicl::exception(fhicl::error::protection_violation)
+              << "@table::" << name << ": inserting name " << name
+              << "would violate protection on existing item"
+              << "\n(previous definition on " << element.pretty_src_info()
+              << ")\n";
+          }
+        }
+        element = value;
+        element.set_prolog(in_prolog);
+        element.set_src_info(sref.src_whereis(pos));
+      }
+    }
+
+    void
+    insert_table(std::string const& name, iter_t const pos)
+    {
+      extended_value const xval = local_lookup(name, pos);
+      if (!xval.is_a(fhicl::TABLE)) {
+        throw fhicl::exception(fhicl::error::type_mismatch, "@table::")
+          << "key \"" << name << "\" does not refer to a table at "
+          << sref.highlighted_whereis(pos) << "\n";
+      }
+      auto const& incoming = std::any_cast<table_t const&>(xval.value);
+      for (auto const& [name, value] : incoming) {
+        auto element = value;
+        element.set_prolog(in_prolog);
+        element.set_src_info(sref.src_whereis(pos));
+        tbl.insert(name, std::move(element));
+      }
+    }
+
+    void
+    seq_insert_sequence(std::string const& name,
+                        sequence_t& v,
+                        iter_t const pos)
+    {
+      extended_value const xval = local_lookup(name, pos);
+      if (!xval.is_a(fhicl::SEQUENCE)) {
+        throw fhicl::exception(fhicl::error::type_mismatch, "@sequence::")
+          << "key \"" << name << "\" does not refer to a sequence at "
+          << sref.highlighted_whereis(pos) << "\n";
+      }
+      auto const& incoming = std::any_cast<sequence_t const&>(xval.value);
+      auto it = v.insert(v.end(), incoming.cbegin(), incoming.cend());
+      for (auto const e = v.end(); it != e; ++it) {
+        using std::to_string;
+        it->protection = Protection::NONE;
+        it->set_prolog(in_prolog);
+        it->set_src_info(sref.src_whereis(pos));
+      }
+    }
+
+    extended_value
+    xvalue_(value_tag const t, std::any const v, iter_t const pos)
+    {
+      return extended_value{in_prolog, t, v, sref.src_whereis(pos)};
+    }
+
+    auto
+    xvalue_for(value_tag const t)
+    {
+      return phx::bind(&document_parser::xvalue_, this, t, qi::_2, qi::_1);
+    }
+
+    void
+    tbl_erase(std::string const& name, iter_t const pos) try {
+      tbl.erase(name, in_prolog);
+    }
+    catch (fhicl::exception& e) {
+      throw fhicl::exception(
+        fhicl::error::parse_error, "Error in erase attempt:", e)
+        << " at " << sref.highlighted_whereis(pos) << '\n';
+    }
+
+    void
+    tbl_insert(std::string const& name,
+               binding_modifier const m,
+               extended_value& value,
+               iter_t const pos) try {
+      set_protection(name, m, value);
+      tbl.insert(name, value);
+    }
+    catch (fhicl::exception& e) {
+      throw fhicl::exception(
+        fhicl::error::parse_error, "Error in assignment:", e)
+        << " at " << sref.highlighted_whereis(pos) << '\n';
+    }
+
+    void
+    set_in_prolog(bool const value)
+    {
+      in_prolog = value;
+    }
+
   }; // document_parser
 
   // ----------------------------------------------------------------------
 
-  template <class FwdIter, class Skip>
-  value_parser<FwdIter, Skip>::value_parser() : value_parser::base_type{value}
+  template <class Skip>
+  value_parser<Skip>::value_parser() : value_parser::base_type{value}
   {
-    nil =
-      lexeme[(qi::string("@nil") >>
-              !(graph - char_(",]}")))[_val = phx::bind(canon_nil, qi::_1)]];
+    nil = lexeme[(qi::string("@nil") >>
+                  !(graph - char_(",]}")))[_val = phx::bind(canon_nil)]];
     boolean = lexeme[(qi::string("true") | qi::string("false")) >>
                      !(graph - char_(",]}"))];
     inf = lexeme[-(qi::string("+") | qi::string("-")) >>
@@ -575,11 +540,9 @@ namespace {
 
   // ----------------------------------------------------------------------
 
-  template <class FwdIter, class Skip>
-  document_parser<FwdIter, Skip>::document_parser(cet::includer const& s)
-    : document_parser::base_type{document}
+  document_parser::document_parser(cet::includer const& s)
+    : document_parser::base_type{document}, sref{s}
   {
-    using iter_t = cet::includer::const_iterator;
     name = fhicl::ass;
     qualname =
       fhicl::ass[_val = qi::_1] >>
@@ -602,43 +565,39 @@ namespace {
     // Can't use simple, "list context" due to the possibility of one of
     // the list elements actually returning multiple elements.
     sequence =
-      lit('[') > -(((value[phx::bind(seq_insert_value, ref(qi::_1), _val)]) |
-                    ((iter_pos >> lit("@sequence::")) >
-                     noskip_qualname)[phx::bind(&seq_insert_sequence<iter_t>,
-                                                ref(qi::_2),
-                                                ref(tbl),
-                                                ref(in_prolog),
-                                                _val,
-                                                qi::_1,
-                                                ref(s))])) >
-      *(lit(',') > ((value[phx::bind(seq_insert_value, ref(qi::_1), _val)]) |
-                    ((iter_pos >> lit("@sequence::")) >
-                     noskip_qualname)[phx::bind(&seq_insert_sequence<iter_t>,
-                                                ref(qi::_2),
-                                                ref(tbl),
-                                                ref(in_prolog),
-                                                _val,
-                                                qi::_1,
-                                                ref(s))])) > lit(']');
-    table = lit('{') >
-            *((iter_pos >> name >> fhicl::binding >>
-               value)[phx::bind(&map_insert_loc<iter_t>,
-                                ref(qi::_2),
-                                qi::_3,
-                                ref(qi::_4),
-                                _val,
-                                qi::_1,
-                                ref(s))] |
-              (iter_pos >> name >> (lit(':') > lit("@erase")))[phx::bind(
-                &map_erase_loc<iter_t>, ref(qi::_2), _val, qi::_1, ref(s))] |
-              ((iter_pos >> lit("@table::")) >
-               noskip_qualname)[phx::bind(&insert_table_in_table<iter_t>,
-                                          ref(qi::_2),
-                                          ref(tbl),
-                                          ref(in_prolog),
-                                          _val,
-                                          qi::_1,
-                                          ref(s))]) > lit('}');
+      lit('[') >
+      -(((value[phx::bind(seq_insert_value, ref(qi::_1), _val)]) |
+         ((iter_pos >> lit("@sequence::")) >
+          noskip_qualname)[phx::bind(&document_parser::seq_insert_sequence,
+                                     this,
+                                     ref(qi::_2),
+                                     _val,
+                                     qi::_1)])) >
+      *(lit(',') >
+        ((value[phx::bind(seq_insert_value, ref(qi::_1), _val)]) |
+         ((iter_pos >> lit("@sequence::")) >
+          noskip_qualname)[phx::bind(&document_parser::seq_insert_sequence,
+                                     this,
+                                     ref(qi::_2),
+                                     _val,
+                                     qi::_1)])) > lit(']');
+    table =
+      lit('{') >
+      *((iter_pos >> name >> fhicl::binding >> value)[phx::bind(&map_insert_loc,
+                                                                ref(qi::_2),
+                                                                qi::_3,
+                                                                ref(qi::_4),
+                                                                _val,
+                                                                qi::_1,
+                                                                sref)] |
+        (iter_pos >> name >> (lit(':') > lit("@erase")))[phx::bind(
+          &map_erase_loc, ref(qi::_2), _val, qi::_1, sref)] |
+        ((iter_pos >> lit("@table::")) >
+         noskip_qualname)[phx::bind(&document_parser::insert_table_in_table,
+                                    this,
+                                    ref(qi::_2),
+                                    _val,
+                                    qi::_1)]) > lit('}');
     // Clang does not like this (multiple unsequenced modifications to '_val'
     // [-Werror,-Wunsequenced]) TEMPORARILY wrap until validity checked
 #ifdef __clang__
@@ -646,116 +605,51 @@ namespace {
 #pragma clang diagnostic ignored "-Wunsequenced"
 #endif
     value =
-      ((iter_pos >> vp.nil)
-         [_val = phx::bind(
-            &xvalue_dp<iter_t>, ref(in_prolog), NIL, qi::_2, qi::_1, ref(s))] |
-       (iter_pos >> vp.boolean)
-         [_val = phx::bind(
-            &xvalue_dp<iter_t>, ref(in_prolog), BOOL, qi::_2, qi::_1, ref(s))] |
-       (iter_pos >> vp.number)[_val = phx::bind(&xvalue_dp<iter_t>,
-                                                ref(in_prolog),
-                                                NUMBER,
-                                                qi::_2,
-                                                qi::_1,
-                                                ref(s))] |
-       (iter_pos >> vp.complex)[_val = phx::bind(&xvalue_dp<iter_t>,
-                                                 ref(in_prolog),
-                                                 COMPLEX,
-                                                 qi::_2,
-                                                 qi::_1,
-                                                 ref(s))] |
-       (iter_pos >> vp.string)[_val = phx::bind(&xvalue_dp<iter_t>,
-                                                ref(in_prolog),
-                                                STRING,
-                                                qi::_2,
-                                                qi::_1,
-                                                ref(s))] |
-       (iter_pos >> localref)[_val = phx::bind(&local_lookup<iter_t>,
-                                               qi::_2,
-                                               ref(tbl),
-                                               ref(in_prolog),
-                                               qi::_1,
-                                               ref(s))] |
-       (iter_pos >> dbref)[_val = phx::bind(&database_lookup<iter_t>,
-                                            qi::_2,
-                                            ref(tbl),
-                                            ref(in_prolog),
-                                            qi::_1,
-                                            ref(s))] |
-       (iter_pos >> vp.id)[_val = phx::bind(&xvalue_dp<iter_t>,
-                                            ref(in_prolog),
-                                            TABLEID,
-                                            qi::_2,
-                                            qi::_1,
-                                            ref(s))] |
-       (iter_pos >> sequence)[_val = phx::bind(&xvalue_dp<iter_t>,
-                                               ref(in_prolog),
-                                               SEQUENCE,
-                                               qi::_2,
-                                               qi::_1,
-                                               ref(s))] |
-       (iter_pos >> table)[_val = phx::bind(&xvalue_dp<iter_t>,
-                                            ref(in_prolog),
-                                            TABLE,
-                                            qi::_2,
-                                            qi::_1,
-                                            ref(s))] |
-       (iter_pos >> vp.catchall)[_val = phx::bind(&xvalue_dp<iter_t>,
-                                                  ref(in_prolog),
-                                                  STRING,
-                                                  qi::_2,
-                                                  qi::_1,
-                                                  ref(s))]);
+      ((iter_pos >> vp.nil)[_val = xvalue_for(NIL)] |
+       (iter_pos >> vp.boolean)[_val = xvalue_for(BOOL)] |
+       (iter_pos >> vp.number)[_val = xvalue_for(NUMBER)] |
+       (iter_pos >> vp.complex)[_val = xvalue_for(COMPLEX)] |
+       (iter_pos >> vp.string)[_val = xvalue_for(STRING)] |
+       (iter_pos >>
+        localref)[_val = phx::bind(
+                    &document_parser::local_lookup, this, qi::_2, qi::_1)] |
+       (iter_pos >> dbref)[_val = phx::bind(
+                             &document_parser::database_lookup, this, qi::_1)] |
+       (iter_pos >> vp.id)[_val = xvalue_for(TABLEID)] |
+       (iter_pos >> sequence)[_val = xvalue_for(SEQUENCE)] |
+       (iter_pos >> table)[_val = xvalue_for(TABLE)] |
+       (iter_pos >> vp.catchall)[_val = xvalue_for(STRING)]);
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-    prolog = lit("BEGIN_PROLOG")[phx::bind(rebool, ref(in_prolog), true)] >
-             *((iter_pos >> qualname >> fhicl::binding >>
-                value)[phx::bind(&tbl_insert<iter_t>,
-                                 ref(qi::_2),
-                                 qi::_3,
-                                 ref(qi::_4),
-                                 ref(tbl),
-                                 qi::_1,
-                                 ref(s))] |
-               (iter_pos >> qualname >>
-                (lit(':') > lit("@erase")))[phx::bind(&tbl_erase<iter_t>,
-                                                      qi::_2,
-                                                      ref(tbl),
-                                                      ref(in_prolog),
-                                                      qi::_1,
-                                                      ref(s))] |
-               ((iter_pos >> lit("@table::")) >
-                noskip_qualname)[phx::bind(&insert_table<iter_t>,
-                                           qi::_2,
-                                           ref(tbl),
-                                           ref(in_prolog),
-                                           qi::_1,
-                                           ref(s))]) >
-             lit("END_PROLOG")[phx::bind(rebool, ref(in_prolog), false)];
-    document =
-      (*prolog) >> *((iter_pos >> qualname >> fhicl::binding >>
-                      value)[phx::bind(&tbl_insert<iter_t>,
-                                       ref(qi::_2),
-                                       qi::_3,
-                                       ref(qi::_4),
-                                       ref(tbl),
-                                       qi::_1,
-                                       ref(s))] |
-                     (iter_pos >> qualname >>
-                      (lit(':') > lit("@erase")))[phx::bind(&tbl_erase<iter_t>,
-                                                            qi::_2,
-                                                            ref(tbl),
-                                                            ref(in_prolog),
-                                                            qi::_1,
-                                                            ref(s))] |
-                     ((iter_pos >> lit("@table::")) >
-                      noskip_qualname)[phx::bind(&insert_table<iter_t>,
-                                                 qi::_2,
-                                                 ref(tbl),
-                                                 ref(in_prolog),
-                                                 qi::_1,
-                                                 ref(s))]);
+    prolog =
+      lit("BEGIN_PROLOG")[phx::bind(
+        &document_parser::set_in_prolog, this, true)] >
+      *((iter_pos >> qualname >> fhicl::binding >>
+         value)[phx::bind(&document_parser::tbl_insert,
+                          this,
+                          ref(qi::_2),
+                          qi::_3,
+                          ref(qi::_4),
+                          qi::_1)] |
+        (iter_pos >> qualname >> (lit(':') > lit("@erase")))[phx::bind(
+          &document_parser::tbl_erase, this, qi::_2, qi::_1)] |
+        ((iter_pos >> lit("@table::")) > noskip_qualname)[phx::bind(
+          &document_parser::insert_table, this, qi::_2, qi::_1)]) >
+      lit(
+        "END_PROLOG")[phx::bind(&document_parser::set_in_prolog, this, false)];
+    document = (*prolog) >>
+               *((iter_pos >> qualname >> fhicl::binding >>
+                  value)[phx::bind(&document_parser::tbl_insert,
+                                   this,
+                                   ref(qi::_2),
+                                   qi::_3,
+                                   ref(qi::_4),
+                                   qi::_1)] |
+                 (iter_pos >> qualname >> (lit(':') > lit("@erase")))[phx::bind(
+                   &document_parser::tbl_erase, this, qi::_2, qi::_1)] |
+                 ((iter_pos >> lit("@table::")) > noskip_qualname)[phx::bind(
+                   &document_parser::insert_table, this, qi::_2, qi::_1)]);
     name.name("name atom");
     localref.name("localref atom");
     dbref.name("dbref atom");
@@ -776,13 +670,12 @@ fhicl::parse_value_string(std::string const& s,
                           extended_value& result,
                           std::string& unparsed)
 {
-  using iter_t = std::string::const_iterator;
-  using ws_t = qi::rule<iter_t>;
+  using ws_t = qi::rule<FwdIter>;
   ws_t whitespace = space | lit('#') >> *(char_ - eol) >> eol |
                     lit("//") >> *(char_ - eol) >> eol;
-  value_parser<iter_t, ws_t> p;
-  iter_t begin = s.begin();
-  iter_t const end = s.end();
+  value_parser<ws_t> p;
+  auto begin = s.begin();
+  auto const end = s.end();
   bool const b =
     qi::phrase_parse(begin, end, p >> *whitespace, whitespace, result) &&
     begin == end;
@@ -796,15 +689,11 @@ namespace {
   intermediate_table
   parse_document_(cet::includer s)
   {
-    intermediate_table result;
-    using namespace std::string_literals;
-    using iter_t = cet::includer::const_iterator;
-    using ws_t = qi::rule<iter_t>;
-    ws_t whitespace = space | lit('#') >> *(char_ - eol) >> eol |
-                      lit("//") >> *(char_ - eol) >> eol;
-    document_parser<iter_t, ws_t> p(s);
-    iter_t begin = s.begin();
-    iter_t const end = s.end();
+    qi::rule<iter_t> whitespace = space | lit('#') >> *(char_ - eol) >> eol |
+                                  lit("//") >> *(char_ - eol) >> eol;
+    document_parser p(s);
+    auto begin = s.begin();
+    auto const end = s.end();
     bool b = false;
     try {
       b = qi::phrase_parse(begin, end, p, whitespace);
@@ -819,6 +708,7 @@ namespace {
 
     auto e = fhicl::exception(fhicl::parse_error, "detected at or near")
              << s.highlighted_whereis(begin) << "\n";
+    using namespace std::string_literals;
     if (unparsed.find("BEGIN_PROLOG"s) == 0ull) {
       e << "PROLOG blocks must be both contiguous and not nested.\n";
     }

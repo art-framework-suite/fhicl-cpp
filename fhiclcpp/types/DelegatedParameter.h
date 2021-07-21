@@ -9,8 +9,6 @@
 #include "fhiclcpp/types/detail/TableMemberRegistry.h"
 #include "fhiclcpp/types/detail/strip_containing_names.h"
 
-#include <iostream>
-
 namespace fhicl {
 
   //========================================================

@@ -1,5 +1,4 @@
 #include "fhiclcpp/types/DelegatedParameter.h"
-#include "cetlib/container_algorithms.h"
 #include "fhiclcpp/types/ConfigPredicate.h"
 #include "fhiclcpp/types/detail/NameStackRegistry.h"
 

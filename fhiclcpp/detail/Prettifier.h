@@ -74,7 +74,6 @@
 */
 
 #include "fhiclcpp/ParameterSetWalker.h"
-#include "fhiclcpp/coding.h"
 #include "fhiclcpp/detail/Indentation.h"
 #include "fhiclcpp/fwd.h"
 

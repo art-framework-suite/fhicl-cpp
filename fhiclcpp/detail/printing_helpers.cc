@@ -2,7 +2,6 @@
 #include "fhiclcpp/exception.h"
 
 #include <cassert>
-#include <iterator>
 #include <limits>
 #include <regex>
 
@@ -12,7 +11,6 @@ using namespace fhicl::detail;
 //==================================================================
 
 namespace {
-
   std::string const UNKNOWN_SRC{"-:1"};
   std::regex const reSequenceElement{R"(.*\[(\d+)\])"};
 

@@ -12,11 +12,11 @@
 #include "fhiclcpp/detail/Prettifier.h"
 #include "fhiclcpp/detail/PrettifierAnnotated.h"
 #include "fhiclcpp/detail/PrettifierPrefixAnnotated.h"
+#include "fhiclcpp/extended_value.h"
 #include "fhiclcpp/intermediate_table.h"
+#include "fhiclcpp/parse.h"
 
-#include <cassert>
 #include <cstddef>
-#include <regex>
 #include <stack>
 
 using namespace fhicl;

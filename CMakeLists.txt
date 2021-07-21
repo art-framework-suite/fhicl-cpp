@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18.2 FATAL_ERROR)
 
 find_package(cetmodules 2.13.00 REQUIRED)
-project(fhiclcpp VERSION 4.15.00 LANGUAGES CXX C)
+project(fhiclcpp VERSION 4.15.03 LANGUAGES CXX C)
 
 # cetbuildtools contains our cmake modules ### MIGRATE-ACTION-REQUIRED: remove
 
@@ -34,10 +34,10 @@ endif()
 
 cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
-cet_find_package(Boost PRIVATE COMPONENTS program_options REQUIRED)
-cet_find_package(SQLite3 PRIVATE REQUIRED)
-cet_find_package(cetlib PRIVATE REQUIRED)
-cet_find_package(cetlib_except PRIVATE REQUIRED)
+find_package(Boost PRIVATE COMPONENTS program_options REQUIRED)
+find_package(SQLite3 PRIVATE REQUIRED)
+find_package(cetlib PRIVATE REQUIRED)
+find_package(cetlib_except PRIVATE REQUIRED)
 
 # source code
 add_subdirectory(fhiclcpp)

@@ -1,5 +1,6 @@
 #include "fhiclcpp/detail/ValuePrinter.h"
 #include "fhiclcpp/ParameterSet.h"
+#include "fhiclcpp/coding.h"
 #include "fhiclcpp/detail/Indentation.h"
 #include "fhiclcpp/detail/printing_helpers.h"
 

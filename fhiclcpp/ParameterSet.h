@@ -7,8 +7,6 @@
 //
 // ======================================================================
 
-#include "boost/lexical_cast.hpp"
-#include "boost/numeric/conversion/cast.hpp"
 #include "cetlib_except/demangle.h"
 #include "fhiclcpp/ParameterSetID.h"
 #include "fhiclcpp/coding.h"
@@ -17,11 +15,10 @@
 #include "fhiclcpp/detail/print_mode.h"
 #include "fhiclcpp/detail/try_blocks.h"
 #include "fhiclcpp/exception.h"
-#include "fhiclcpp/extended_value.h"
 #include "fhiclcpp/fwd.h"
 
 #include <any>
-#include <cctype>
+#include <functional>
 #include <map>
 #include <optional>
 #include <sstream>
@@ -31,6 +28,10 @@
 #include <vector>
 
 // ----------------------------------------------------------------------
+
+namespace cetlib {
+  class filepath_maker;
+}
 
 class fhicl::ParameterSet {
 public:

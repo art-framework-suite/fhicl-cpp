@@ -8,15 +8,19 @@
 
 #include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
-#include <functional>
+
 #include <numeric>
 #include <string>
+#include <vector>
 
 using namespace fhicl;
 using namespace std;
 
+using ints = std::vector<int>;
+using nested_ints = std::vector<ints>;
+
 namespace {
-  auto to_ind_str = [](auto pset) { return pset.to_indented_string(); };
+  auto to_ind_str = [](auto const& pset) { return pset.to_indented_string(); };
 }
 
 BOOST_AUTO_TEST_SUITE(values_test)
@@ -42,22 +46,17 @@ BOOST_AUTO_TEST_CASE(atoms)
 
 BOOST_AUTO_TEST_CASE(sequences)
 {
-  typedef std::vector<int> intv;
-  intv v;
   ParameterSet pset;
-  pset.put<intv>("a", v);
+  pset.put<ints>("a", {});
   BOOST_TEST(to_ind_str(pset) == "a: []\n");
 
-  v.push_back(11);
-  pset.put<intv>("b", v);
+  pset.put<ints>("b", {11});
   BOOST_TEST(to_ind_str(pset) == "a: []\n"
                                  "b: [\n"
                                  "   11\n"
                                  "]\n");
 
-  v.push_back(12);
-  v.push_back(13);
-  pset.put<intv>("c", v);
+  pset.put<ints>("c", {11, 12, 13});
   BOOST_TEST(to_ind_str(pset) == "a: []\n"
                                  "b: [\n"
                                  "   11\n"
@@ -114,14 +113,8 @@ BOOST_AUTO_TEST_CASE(tables)
 
 BOOST_AUTO_TEST_CASE(combo)
 {
-  using intv = std::vector<int>;
-  intv v;
-  v.push_back(11);
-  v.push_back(12);
-  v.push_back(13);
-
   ParameterSet p;
-  p.put<intv>("v", v);
+  p.put<ints>("v", {11, 12, 13});
 
   ParameterSet pset;
   pset.put<ParameterSet>("p", p);
@@ -136,12 +129,11 @@ BOOST_AUTO_TEST_CASE(combo)
 
 BOOST_AUTO_TEST_CASE(sequence_printout)
 {
-  using intv = std::vector<int>;
-  intv v(20, 0);
+  ints v(20, 0);
   std::iota(v.begin(), v.end(), 1);
 
   ParameterSet p;
-  p.put<intv>("v", v);
+  p.put<ints>("v", v);
 
   ParameterSet pset;
   pset.put<ParameterSet>("p", p);
@@ -173,11 +165,9 @@ BOOST_AUTO_TEST_CASE(sequence_printout)
 
 BOOST_AUTO_TEST_CASE(nested_sequence_printout_empty)
 {
-  using intv = std::vector<int>;
-  using intvs = std::vector<intv>;
-  intvs nested;
+  nested_ints nested;
   ParameterSet p;
-  p.put<intvs>("empty", nested);
+  p.put<nested_ints>("empty", nested);
 
   ParameterSet pset;
   pset.put<ParameterSet>("p", p);
@@ -188,16 +178,14 @@ BOOST_AUTO_TEST_CASE(nested_sequence_printout_empty)
 
 BOOST_AUTO_TEST_CASE(nested_sequence_printout)
 {
-  using intv = std::vector<int>;
-  using intvs = std::vector<intv>;
-  intv v(4, 0);
+  ints v(4, 0);
   std::iota(v.begin(), v.end(), 1);
-  intvs nested{v};
+  nested_ints nested{v};
 
   v.push_back(5);
   nested.push_back(v);
   ParameterSet p;
-  p.put<intvs>("nested", nested);
+  p.put<nested_ints>("nested", nested);
 
   ParameterSet pset;
   pset.put<ParameterSet>("p", p);

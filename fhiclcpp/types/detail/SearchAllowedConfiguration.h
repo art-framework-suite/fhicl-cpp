@@ -46,46 +46,44 @@
 
 #include <string>
 
-namespace fhicl {
-  namespace detail {
+namespace fhicl::detail {
 
-    class SearchAllowedConfiguration
-      : public ParameterWalker<tt::const_flavor::require_const> {
-    public:
-      static bool supports_key(ParameterBase const& pb,
+  class SearchAllowedConfiguration
+    : public ParameterWalker<tt::const_flavor::require_const> {
+  public:
+    static bool supports_key(ParameterBase const& pb,
+                             std::string const& searched_for_key);
+
+  private:
+    std::string key_;
+    bool supportsKey_{false};
+
+    SearchAllowedConfiguration(ParameterBase const& pb,
                                std::string const& searched_for_key);
 
-    private:
-      std::string key_;
-      bool supportsKey_{false};
-
-      SearchAllowedConfiguration(ParameterBase const& pb,
-                                 std::string const& searched_for_key);
-
-      bool
-      result() const
-      {
-        return supportsKey_;
-      };
-
-      bool before_action(ParameterBase const& pb) override;
-      void
-      enter_table(TableBase const&) override
-      {}
-      void
-      enter_sequence(SequenceBase const&) override
-      {}
-      void
-      atom(AtomBase const&) override
-      {}
-      void
-      delegated_parameter(DelegateBase const&) override
-      {}
-
-      static std::string form_absolute(ParameterBase const& pb,
-                                       std::string const& searched_for_key);
+    bool
+    result() const noexcept
+    {
+      return supportsKey_;
     };
-  }
+
+    bool before_action(ParameterBase const& pb) override;
+    void
+    enter_table(TableBase const&) override
+    {}
+    void
+    enter_sequence(SequenceBase const&) override
+    {}
+    void
+    atom(AtomBase const&) override
+    {}
+    void
+    delegated_parameter(DelegateBase const&) override
+    {}
+
+    static std::string form_absolute(ParameterBase const& pb,
+                                     std::string const& searched_for_key);
+  };
 }
 
 #endif /* fhiclcpp_types_detail_SearchAllowedConfiguration_h */

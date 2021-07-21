@@ -4,8 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "cetlib/filepath_maker.h"
-#include "fhiclcpp/ParameterSet.h"
+#include "fhiclcpp/fwd.h"
 
 #ifdef __cplusplus
 extern "C" {

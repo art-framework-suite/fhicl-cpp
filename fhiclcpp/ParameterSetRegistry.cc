@@ -1,13 +1,19 @@
 #include "fhiclcpp/ParameterSetRegistry.h"
 
+#include "cetlib/container_algorithms.h"
 #include "cetlib/sqlite/Transaction.h"
+#include "cetlib/sqlite/column.h"
 #include "cetlib/sqlite/create_table.h"
 #include "cetlib/sqlite/exec.h"
+#include "cetlib/sqlite/query_result.h"
 #include "cetlib/sqlite/select.h"
 #include "fhiclcpp/ParameterSetID.h"
 #include "fhiclcpp/exception.h"
 
 #include "sqlite3.h"
+
+#include <cassert>
+#include <iostream>
 
 using fhicl::detail::throwOnSQLiteFailure;
 

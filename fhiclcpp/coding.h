@@ -22,7 +22,6 @@
 
 #include "boost/lexical_cast.hpp"
 #include "boost/numeric/conversion/cast.hpp"
-#include "cetlib_except/demangle.h"
 #include "fhiclcpp/ParameterSetID.h"
 #include "fhiclcpp/exception.h"
 #include "fhiclcpp/extended_value.h"
@@ -37,6 +36,7 @@
 #include <sstream>
 #include <string>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
 

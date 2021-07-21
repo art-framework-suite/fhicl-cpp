@@ -3,7 +3,6 @@
 #include "boost/test/unit_test.hpp"
 
 #include "fhiclcpp/ParameterSet.h"
-#include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/Name.h"
 #include "fhiclcpp/types/Sequence.h"
 #include "fhiclcpp/types/Table.h"

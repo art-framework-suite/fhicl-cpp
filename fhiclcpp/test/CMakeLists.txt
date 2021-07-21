@@ -4,7 +4,7 @@ cet_enable_asserts()
 cet_test_env("FHICL_FILE_PATH=.")
 
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-cet_find_package(Threads REQUIRED PRIVATE)
+find_package(Threads REQUIRED PRIVATE)
 
 # Put everything in a different export set.
 cet_register_export_set(SET_NAME Testing NAMESPACE fhiclcpp_test SET_DEFAULT)
@@ -141,3 +141,8 @@ cet_test(fhicl-write-db-test HANDBUILT
 )
 
 cet_test(parse_shimmeddocument_test USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
+
+# Tests for facilities provided in the tools directory
+cet_test(fhicl-get-test USE_BOOST_UNIT
+  LIBRARIES PRIVATE fhiclcpp::tools
+  DATAFILES fhicl-get-t.fcl)

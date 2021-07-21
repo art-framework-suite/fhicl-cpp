@@ -59,7 +59,6 @@
 */
 
 #include "fhiclcpp/ParameterSetWalker.h"
-#include "fhiclcpp/coding.h"
 
 #include <any>
 #include <string>

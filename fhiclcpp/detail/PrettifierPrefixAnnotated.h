@@ -133,7 +133,6 @@
 */
 
 #include "fhiclcpp/ParameterSetWalker.h"
-#include "fhiclcpp/coding.h"
 #include "fhiclcpp/detail/Indentation.h"
 #include "fhiclcpp/fwd.h"
 
@@ -142,46 +141,42 @@
 #include <string>
 #include <vector>
 
-namespace fhicl {
-  namespace detail {
+namespace fhicl::detail {
 
-    class PrettifierPrefixAnnotated : public ParameterSetWalker {
-    public:
-      using name_t = std::string;
+  class PrettifierPrefixAnnotated : public ParameterSetWalker {
+  public:
+    using name_t = std::string;
 
-      PrettifierPrefixAnnotated();
+    std::string
+    result() const
+    {
+      return buffer_.str();
+    }
 
-      std::string
-      result() const
-      {
-        return buffer_.str();
-      }
+  private:
+    void before_action(key_t const&,
+                       any_t const&,
+                       ParameterSet const*) override;
 
-    private:
-      void before_action(key_t const&,
-                         any_t const&,
-                         ParameterSet const*) override;
+    void enter_table(key_t const&, any_t const&) override;
+    void enter_sequence(key_t const&, any_t const&) override;
 
-      void enter_table(key_t const&, any_t const&) override;
-      void enter_sequence(key_t const&, any_t const&) override;
+    void exit_table(key_t const&, any_t const&) override;
+    void exit_sequence(key_t const&, any_t const&) override;
 
-      void exit_table(key_t const&, any_t const&) override;
-      void exit_sequence(key_t const&, any_t const&) override;
+    void atom(key_t const&, any_t const&) override;
 
-      void atom(key_t const&, any_t const&) override;
+    void push_size_(any_t const&);
+    void pop_size_();
+    std::string print_full_key_(name_t const& k) const;
 
-      void push_size_(any_t const&);
-      void pop_size_();
-      std::string print_full_key_(name_t const& k) const;
-
-      std::stringstream buffer_;
-      Indentation indent_;
-      std::string info_;
-      std::stack<std::size_t> sequence_sizes_;
-      std::size_t curr_size_;
-      std::vector<name_t> name_stack_;
-    };
-  }
+    std::stringstream buffer_{};
+    Indentation indent_{};
+    std::string info_{};
+    std::stack<std::size_t> sequence_sizes_{{-1u}};
+    std::size_t curr_size_{};
+    std::vector<name_t> name_stack_{};
+  };
 }
 
 #endif /* fhiclcpp_detail_PrettifierPrefixAnnotated_h */

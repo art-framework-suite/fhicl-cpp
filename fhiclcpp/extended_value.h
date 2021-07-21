@@ -9,11 +9,11 @@
 
 #include "fhiclcpp/Protection.h"
 #include "fhiclcpp/fwd.h"
-#include "stdmap_shims.h"
+#include "fhiclcpp/stdmap_shims.h"
 
 #include <any>
-#include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 // ----------------------------------------------------------------------
@@ -78,6 +78,13 @@ public:
     src_info = src;
   }
 
+  void
+  reset_protection()
+  {
+    // See notes below.
+    protection = Protection::NONE;
+  }
+
   std::string pretty_src_info() const;
 
   operator atom_t() const { return std::any_cast<atom_t>(value); }
@@ -89,6 +96,18 @@ public:
   value_tag tag{UNKNOWN};
   std::any value{};
   std::string src_info{};
+
+  // Protection corresponds to the binding of a name to a value, and
+  // not the value per se.  The protection data member is thus
+  // separate from the other data of this class but retained here for
+  // navigational convenience.  Care must therefore be taken when
+  // implementing '@local::' (e.g.):
+  //
+  //   x @protect_ignore: 14  // -> protection for x is PROTECT_IGNORE
+  //   y: @local::x           // -> protection for y should be NONE
+  //
+  // The reset_protection() member function is called while parsing y
+  // to ensure that x's protection does not propagate to y.
   Protection protection{Protection::NONE};
 
 }; // extended_value

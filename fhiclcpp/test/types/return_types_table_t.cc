@@ -47,7 +47,6 @@
 #include "fhiclcpp/types/Table.h"
 #include "fhiclcpp/types/Tuple.h"
 
-#include <iostream>
 #include <string>
 #include <vector>
 
