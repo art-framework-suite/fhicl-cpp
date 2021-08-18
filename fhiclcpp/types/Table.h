@@ -187,8 +187,8 @@ namespace fhicl {
     , RegisterIfTableMember{this}
   {
     maybe_implicitly_default();
-    validate_ParameterSet(pset, keysToIgnore);
     NameStackRegistry::end_of_ctor();
+    validate_ParameterSet(pset, keysToIgnore);
   }
 
   template <typename T, typename KeysToIgnore>
