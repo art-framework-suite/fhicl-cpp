@@ -70,9 +70,6 @@ namespace fhicl {
       return pset_;
     }
 
-    void validate_ParameterSet(ParameterSet const& pset,
-                               std::set<std::string> const& keysToIgnore = {});
-
     void print_allowed_configuration(
       std::ostream& os,
       std::string const& tab = std::string(3, ' ')) const;
@@ -84,6 +81,9 @@ namespace fhicl {
     OptionalTable();
 
   private:
+    void validate_(ParameterSet const& pset,
+                   std::set<std::string> const& keysToIgnore = {});
+
     using members_t = std::vector<cet::exempt_ptr<ParameterBase>>;
 
     std::shared_ptr<T> value_{std::make_shared<T>()};
@@ -96,8 +96,7 @@ namespace fhicl {
     {
       return members_;
     }
-    void do_set_value(fhicl::ParameterSet const& pset,
-                      bool const trimParents) override;
+    void do_set_value(fhicl::ParameterSet const& pset) override;
   };
 
   template <typename T>
@@ -157,15 +156,14 @@ namespace fhicl {
                 detail::AlwaysUse()}
     , RegisterIfTableMember{this}
   {
-    validate_ParameterSet(pset, keysToIgnore);
     NameStackRegistry::end_of_ctor();
+    validate_(pset, keysToIgnore);
   }
 
   template <typename T>
   void
-  OptionalTable<T>::validate_ParameterSet(
-    ParameterSet const& pset,
-    std::set<std::string> const& keysToIgnore)
+  OptionalTable<T>::validate_(ParameterSet const& pset,
+                              std::set<std::string> const& keysToIgnore)
   {
     pset_ = pset;
     detail::ValidateThenSet vs{pset_, keysToIgnore};
@@ -185,8 +183,7 @@ namespace fhicl {
 
   template <typename T>
   void
-  OptionalTable<T>::do_set_value(fhicl::ParameterSet const& pset,
-                                 bool const /*trimParent*/)
+  OptionalTable<T>::do_set_value(fhicl::ParameterSet const& pset)
   {
     // Kind of tricky: we do not have the name of the current
     // parameter set.  A placeholder is often used

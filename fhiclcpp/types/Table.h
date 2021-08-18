@@ -98,8 +98,7 @@ namespace fhicl {
     {
       return members_;
     }
-    void do_set_value(fhicl::ParameterSet const& pset,
-                      bool const trimParents) override;
+    void do_set_value(fhicl::ParameterSet const& pset) override;
   };
 
   template <typename T>
@@ -223,8 +222,7 @@ namespace fhicl {
 
   template <typename T, typename KeysToIgnore>
   void
-  Table<T, KeysToIgnore>::do_set_value(fhicl::ParameterSet const& pset,
-                                       bool const /*trimParent*/)
+  Table<T, KeysToIgnore>::do_set_value(fhicl::ParameterSet const& pset)
   {
     // Kind of tricky: we do not have the name of the current
     // parameter set.  A placeholder is often used (e.g. "<top_level>").

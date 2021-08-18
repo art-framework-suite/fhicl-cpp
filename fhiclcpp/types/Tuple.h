@@ -106,7 +106,7 @@ namespace fhicl {
     }
 
     void
-    do_set_value(ParameterSet const&, bool /*trimParents*/) override
+    do_set_value(ParameterSet const&) override
     {}
 
     //===================================================================

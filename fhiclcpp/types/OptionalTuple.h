@@ -132,8 +132,7 @@ namespace fhicl {
     }
 
     void
-    do_set_value(fhicl::ParameterSet const&,
-                 bool const /*trimParents*/) override
+    do_set_value(fhicl::ParameterSet const&) override
     {
       // We do not explicitly set the sequence values here as the
       // individual elements are set one at a time.  However, this

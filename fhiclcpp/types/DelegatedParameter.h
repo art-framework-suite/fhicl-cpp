@@ -27,15 +27,14 @@ namespace fhicl {
     auto
     get() const
     {
-      std::string const& trimmed_key =
+      auto const trimmed_key =
         detail::strip_first_containing_name(key());
       return pset_.get<T>(trimmed_key);
     }
 
   private:
     void
-    do_set_value(fhicl::ParameterSet const& pset,
-                 bool const /*trimParents*/) override
+    do_set_value(fhicl::ParameterSet const& pset) override
     {
       pset_ = pset;
     };
