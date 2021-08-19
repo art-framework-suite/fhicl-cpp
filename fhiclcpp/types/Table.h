@@ -70,8 +70,8 @@ namespace fhicl {
       return pset_;
     }
 
-    void validate_ParameterSet(ParameterSet const& pset,
-                               std::set<std::string> const& keysToIgnore = {});
+    void validate(ParameterSet const& pset,
+                  std::set<std::string> const& keysToIgnore = {});
 
     void print_allowed_configuration(
       std::ostream& os,
@@ -187,14 +187,13 @@ namespace fhicl {
   {
     maybe_implicitly_default();
     NameStackRegistry::end_of_ctor();
-    validate_ParameterSet(pset, keysToIgnore);
+    validate(pset, keysToIgnore);
   }
 
   template <typename T, typename KeysToIgnore>
   void
-  Table<T, KeysToIgnore>::validate_ParameterSet(
-    ParameterSet const& pset,
-    std::set<std::string> const& keysToIgnore)
+  Table<T, KeysToIgnore>::validate(ParameterSet const& pset,
+                                   std::set<std::string> const& keysToIgnore)
   {
     pset_ = pset;
     detail::ValidateThenSet vs{pset_, keysToIgnore};

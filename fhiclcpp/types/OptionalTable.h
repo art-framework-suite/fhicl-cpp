@@ -80,10 +80,10 @@ namespace fhicl {
 
     OptionalTable();
 
-  private:
-    void validate_(ParameterSet const& pset,
-                   std::set<std::string> const& keysToIgnore = {});
+    void validate(ParameterSet const& pset,
+                  std::set<std::string> const& keysToIgnore = {});
 
+  private:
     using members_t = std::vector<cet::exempt_ptr<ParameterBase>>;
 
     std::shared_ptr<T> value_{std::make_shared<T>()};
@@ -157,13 +157,13 @@ namespace fhicl {
     , RegisterIfTableMember{this}
   {
     NameStackRegistry::end_of_ctor();
-    validate_(pset, keysToIgnore);
+    validate(pset, keysToIgnore);
   }
 
   template <typename T>
   void
-  OptionalTable<T>::validate_(ParameterSet const& pset,
-                              std::set<std::string> const& keysToIgnore)
+  OptionalTable<T>::validate(ParameterSet const& pset,
+                             std::set<std::string> const& keysToIgnore)
   {
     pset_ = pset;
     detail::ValidateThenSet vs{pset_, keysToIgnore};

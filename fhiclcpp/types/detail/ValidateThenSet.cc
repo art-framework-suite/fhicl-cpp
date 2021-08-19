@@ -38,7 +38,7 @@ fhicl::detail::ValidateThenSet::before_action(ParameterBase& p)
     // of that sequence.
     auto erase_from =
       std::remove_if(userKeys_.begin(), userKeys_.end(), [&k](auto const& e) {
-        return e == k or e.find(k + '[') == 0ull;
+        return e.find(k + '[') == 0ull or e == k;
       });
     userKeys_.erase(erase_from, userKeys_.cend());
     return false;

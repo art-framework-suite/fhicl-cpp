@@ -73,7 +73,7 @@ main()
 
   try {
     Table<Configuration> table{Name("pset")};
-    table.validate_ParameterSet(pset.get<fhicl::ParameterSet>("pset"));
+    table.validate(pset.get<fhicl::ParameterSet>("pset"));
   }
   catch (std::exception const& e) {
     std::cout << e.what() << std::endl;
