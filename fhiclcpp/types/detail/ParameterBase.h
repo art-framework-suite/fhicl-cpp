@@ -14,8 +14,7 @@
   AtomBase   TableBase                  SequenceBase         DelegateBase
      |          |                      /      |     \             \
      |          |                     /       |      \             \
-  Atom<T>    Table<T>   Sequence<T,SZ>  Sequence<T>   Tuple<T...>
-  DelegatedParameter
+  Atom<T>    Table<T>   Sequence<T,SZ>  Sequence<T>   Tuple<T...>   DelegatedParameter
 
 
   All concrete Optional* fhiclcpp types also inherit from the
@@ -88,9 +87,14 @@ namespace fhicl::detail {
 
     // Modifiers
     void
-    set_value(fhicl::ParameterSet const& ps, bool trimParents)
+    set_value(fhicl::ParameterSet const& ps)
     {
-      do_set_value(ps, trimParents);
+      do_set_value(ps);
+    }
+    bool
+    preset_value(fhicl::ParameterSet const& ps)
+    {
+      return do_preset_value(ps);
     }
     void
     set_par_style(par_style const vt)
@@ -99,7 +103,8 @@ namespace fhicl::detail {
     }
 
   private:
-    virtual void do_set_value(fhicl::ParameterSet const&, bool trimParents) = 0;
+    virtual bool do_preset_value(fhicl::ParameterSet const&) { return false; }
+    virtual void do_set_value(fhicl::ParameterSet const&) = 0;
 
     ParameterMetadata mdata_;
     std::function<bool()> maybeUse_;

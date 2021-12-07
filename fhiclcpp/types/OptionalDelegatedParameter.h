@@ -57,8 +57,7 @@ namespace fhicl {
 
   private:
     void
-    do_set_value(fhicl::ParameterSet const& pset,
-                 bool const /*trimParents*/) override
+    do_set_value(fhicl::ParameterSet const& pset) override
     {
       pset_ = std::make_optional(pset);
     };

@@ -71,7 +71,7 @@ namespace fhicl {
     std::optional<T> value_{};
 
     std::string get_stringified_value() const override;
-    void do_set_value(fhicl::ParameterSet const&, bool const) override;
+    void do_set_value(fhicl::ParameterSet const&) override;
   };
 }
 
@@ -126,15 +126,11 @@ namespace fhicl {
 
   template <typename T>
   void
-  OptionalAtom<T>::do_set_value(fhicl::ParameterSet const& pset,
-                                bool const trimParent)
+  OptionalAtom<T>::do_set_value(fhicl::ParameterSet const& pset)
   {
-    std::string const& rkey = key();
-    std::string const& key =
-      trimParent ? detail::strip_first_containing_name(rkey) : rkey;
-    T tmp{};
-    if (pset.get_if_present<T>(key, tmp)) {
-      value_ = std::move(tmp);
+    auto const trimmed_key = detail::strip_first_containing_name(key());
+    if (auto value = pset.get_if_present<T>(trimmed_key)) {
+      value_ = *value;
     }
   }
 }

@@ -27,8 +27,7 @@ BOOST_AUTO_TEST_CASE(cond_01_t)
   std::string const file{"cond_01_t.fcl"};
   Table<CondConfig> table{Name("pset")};
   try {
-    table.validate_ParameterSet(
-      create_PSet(file).get<fhicl::ParameterSet>("pset"));
+    table.validate(create_PSet(file).get<fhicl::ParameterSet>("pset"));
   }
   catch (fhicl::detail::validationException const& e) {
     std::cout << e.what() << std::endl;
@@ -39,8 +38,7 @@ BOOST_AUTO_TEST_CASE(cond_02_t)
 {
   std::string const file{"cond_02_t.fcl"};
   Table<CondConfig> table{Name("pset")};
-  table.validate_ParameterSet(
-    create_PSet(file).get<fhicl::ParameterSet>("pset"));
+  table.validate(create_PSet(file).get<fhicl::ParameterSet>("pset"));
   BOOST_TEST(table().flag() == false);
   BOOST_TEST(table().num2() == 4);
   BOOST_TEST(table().shape() == "sphere");
@@ -51,8 +49,7 @@ BOOST_AUTO_TEST_CASE(cond_03_t)
 {
   std::string const file{"cond_03_t.fcl"};
   Table<CondConfig> table{Name("pset")};
-  table.validate_ParameterSet(
-    create_PSet(file).get<fhicl::ParameterSet>("pset"));
+  table.validate(create_PSet(file).get<fhicl::ParameterSet>("pset"));
   BOOST_TEST(table().flag() == true);
   int number{16};
   BOOST_TEST(table().num1(number) == false);

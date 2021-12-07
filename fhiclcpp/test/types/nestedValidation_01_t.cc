@@ -25,7 +25,7 @@ namespace {
   {
     auto const ps = ParameterSet::make(cfg);
     Table<Config> validatedConfig{Name("validatedConfig")};
-    validatedConfig.validate_ParameterSet(ps);
+    validatedConfig.validate(ps);
     return validatedConfig;
   }
 }

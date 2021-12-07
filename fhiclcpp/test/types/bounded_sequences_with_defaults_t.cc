@@ -26,12 +26,11 @@ namespace {
 
   template <typename T>
   Table<T>
-  validateConfig(std::string const& cfg)
+  validate(std::string const& cfg)
   {
-    auto const ps = ParameterSet::make(cfg);
-    Table<T> validatedConfig{Name("validatedConfig")};
-    validatedConfig.validate_ParameterSet(ps);
-    return validatedConfig;
+    Table<T> validated_config{Name("validatedConfig")};
+    validated_config.validate(ParameterSet::make(cfg));
+    return validated_config;
   }
 }
 
@@ -40,31 +39,33 @@ BOOST_AUTO_TEST_SUITE(bounded_sequence_with_defaults)
 BOOST_AUTO_TEST_CASE(GoodArray)
 {
   string const good{};
-  auto const& validatedTable = validateConfig<ArrayConfig>(good);
-  BOOST_TEST(validatedTable().composers(0) == "Mahler"s);
-  BOOST_TEST(validatedTable().composers(1) == "Elgar"s);
+  auto const& validated = validate<ArrayConfig>(good);
+  BOOST_TEST(validated().composers(0) == "Mahler"s);
+  BOOST_TEST(validated().composers(1) == "Elgar"s);
 }
 
 BOOST_AUTO_TEST_CASE(GoodTuple)
 {
   string const good{};
-  auto const& validatedTable = validateConfig<TupleConfig>(good);
-  BOOST_TEST(validatedTable().ages.get<0>() == "David"s);
-  BOOST_TEST(validatedTable().ages.get<1>() == 9u);
+  auto const& validated = validate<TupleConfig>(good);
+  BOOST_TEST(validated().ages.get<0>() == "David"s);
+  BOOST_TEST(validated().ages.get<1>() == 9u);
 }
 
 BOOST_AUTO_TEST_CASE(BadSequence)
 {
   string const bad{"composers: [Beethoven]"};
-  BOOST_REQUIRE_THROW(validateConfig<ArrayConfig>(bad),
-                      detail::validationException);
+  // Because the 'composers' parameter is a bounded sequence of atomic
+  // types, the preset_value function indirectly throws a
+  // fhicl::exception instead of a fhicl::detail::validationException.
+  // This should probably be fixed at some point.
+  BOOST_REQUIRE_THROW(validate<ArrayConfig>(bad), fhicl::exception);
 }
 
 BOOST_AUTO_TEST_CASE(BadTuple)
 {
   string const bad{"ages: [Jenny]"};
-  BOOST_REQUIRE_THROW(validateConfig<TupleConfig>(bad),
-                      detail::validationException);
+  BOOST_REQUIRE_THROW(validate<TupleConfig>(bad), detail::validationException);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

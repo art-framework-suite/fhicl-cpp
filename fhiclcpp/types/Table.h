@@ -70,8 +70,8 @@ namespace fhicl {
       return pset_;
     }
 
-    void validate_ParameterSet(ParameterSet const& pset,
-                               std::set<std::string> const& keysToIgnore = {});
+    void validate(ParameterSet const& pset,
+                  std::set<std::string> const& keysToIgnore = {});
 
     void print_allowed_configuration(
       std::ostream& os,
@@ -98,8 +98,7 @@ namespace fhicl {
     {
       return members_;
     }
-    void do_set_value(fhicl::ParameterSet const& pset,
-                      bool const trimParents) override;
+    void do_set_value(fhicl::ParameterSet const& pset) override;
   };
 
   template <typename T>
@@ -187,15 +186,14 @@ namespace fhicl {
     , RegisterIfTableMember{this}
   {
     maybe_implicitly_default();
-    validate_ParameterSet(pset, keysToIgnore);
     NameStackRegistry::end_of_ctor();
+    validate(pset, keysToIgnore);
   }
 
   template <typename T, typename KeysToIgnore>
   void
-  Table<T, KeysToIgnore>::validate_ParameterSet(
-    ParameterSet const& pset,
-    std::set<std::string> const& keysToIgnore)
+  Table<T, KeysToIgnore>::validate(ParameterSet const& pset,
+                                   std::set<std::string> const& keysToIgnore)
   {
     pset_ = pset;
     detail::ValidateThenSet vs{pset_, keysToIgnore};
@@ -223,8 +221,7 @@ namespace fhicl {
 
   template <typename T, typename KeysToIgnore>
   void
-  Table<T, KeysToIgnore>::do_set_value(fhicl::ParameterSet const& pset,
-                                       bool const /*trimParent*/)
+  Table<T, KeysToIgnore>::do_set_value(fhicl::ParameterSet const& pset)
   {
     // Kind of tricky: we do not have the name of the current
     // parameter set.  A placeholder is often used (e.g. "<top_level>").

@@ -79,12 +79,11 @@ namespace fhicl::detail {
       return true;
     }
 
-    auto const seq = std::any_cast<ps_sequence_t>(a);
-
+    auto seq = std::any_cast<ps_sequence_t>(a);
     if (*it >= seq.size())
       return false;
 
-    a = seq[*it];
+    a = std::move(seq[*it]);
 
     return find_an_any(++it, cend, a);
   }
