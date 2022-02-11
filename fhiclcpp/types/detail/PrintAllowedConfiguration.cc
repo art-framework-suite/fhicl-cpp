@@ -104,6 +104,8 @@ PrintAllowedConfiguration::PrintAllowedConfiguration(std::ostream& os,
   , showParentsForFirstParam_{showParents}
 {}
 
+PrintAllowedConfiguration::~PrintAllowedConfiguration() = default;
+
 bool
 PrintAllowedConfiguration::before_action(ParameterBase const& p)
 {

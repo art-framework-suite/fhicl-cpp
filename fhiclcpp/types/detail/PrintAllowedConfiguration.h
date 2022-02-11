@@ -19,6 +19,7 @@ namespace fhicl::detail {
                               bool const showParents = false,
                               std::string const& prefix = std::string(3, ' '),
                               bool const stlf = false);
+    ~PrintAllowedConfiguration();
 
   private:
     std::ostream& buffer_;

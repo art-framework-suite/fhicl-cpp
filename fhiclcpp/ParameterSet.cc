@@ -511,3 +511,23 @@ ParameterSet::to_indented_string(unsigned const initial_indent_level,
   }
   return result;
 }
+
+// ======================================================================
+// Explicit instantiations for commonly used types
+
+#define _INSTANTIATE_GET(T)                                                    \
+  template _GET_ONE_(T);                                                       \
+  template _GET(T);                                                            \
+  template _GET_WITH_DEFAULT(T);                                               \
+  /* Also instantiate std::vectors of same type */                             \
+  template _GET_ONE_(std::vector<T>);                                          \
+  template _GET(std::vector<T>);                                               \
+  template _GET_WITH_DEFAULT(std::vector<T>)
+
+_INSTANTIATE_GET(bool);
+_INSTANTIATE_GET(int);
+_INSTANTIATE_GET(unsigned);
+_INSTANTIATE_GET(float);
+_INSTANTIATE_GET(double);
+_INSTANTIATE_GET(std::string);
+_INSTANTIATE_GET(fhicl::ParameterSet);

@@ -67,26 +67,9 @@ namespace fhicl::detail {
   //===============================================================
   // find_an_any
 
-  using cit_size_t = std::vector<std::size_t>::const_iterator;
-
-  inline bool
-  find_an_any(cit_size_t it, cit_size_t const cend, std::any& a)
-  {
-    if (it == cend) {
-      // If we got this far, that means the element must exist,
-      // otherwise the previous recursive 'find_parameter' call would
-      // have returned false.
-      return true;
-    }
-
-    auto seq = std::any_cast<ps_sequence_t>(a);
-    if (*it >= seq.size())
-      return false;
-
-    a = std::move(seq[*it]);
-
-    return find_an_any(++it, cend, a);
-  }
+  bool find_an_any(std::vector<std::size_t>::const_iterator it,
+                   std::vector<std::size_t>::const_iterator const cend,
+                   std::any& a);
 }
 
 #endif /* fhiclcpp_detail_ParameterSetImplHelpers_h */

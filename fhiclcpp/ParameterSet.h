@@ -148,6 +148,34 @@ private:
 }; // ParameterSet
 
 // ======================================================================
+// Explicit instantiations for commonly used types
+
+#define _GET_ONE_(T)                                                           \
+  std::optional<T> fhicl::ParameterSet::get_one_<T>(std::string const&) const
+
+#define _GET(T) T fhicl::ParameterSet::get<T>(std::string const&) const
+
+#define _GET_WITH_DEFAULT(T)                                                   \
+  T fhicl::ParameterSet::get<T>(std::string const&, T const&) const
+
+#define _EXTERN_INSTANTIATE_GET(T)                                             \
+  extern template _GET_ONE_(T);                                                \
+  extern template _GET(T);                                                     \
+  extern template _GET_WITH_DEFAULT(T);                                        \
+  /* Also instantiate std::vectors of same type */                             \
+  extern template _GET_ONE_(std::vector<T>);                                   \
+  extern template _GET(std::vector<T>);                                        \
+  extern template _GET_WITH_DEFAULT(std::vector<T>)
+
+_EXTERN_INSTANTIATE_GET(bool);
+_EXTERN_INSTANTIATE_GET(int);
+_EXTERN_INSTANTIATE_GET(unsigned);
+_EXTERN_INSTANTIATE_GET(float);
+_EXTERN_INSTANTIATE_GET(double);
+_EXTERN_INSTANTIATE_GET(std::string);
+_EXTERN_INSTANTIATE_GET(fhicl::ParameterSet);
+
+// ======================================================================
 
 inline std::string
 fhicl::ParameterSet::to_string() const
