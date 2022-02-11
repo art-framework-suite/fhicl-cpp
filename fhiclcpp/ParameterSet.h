@@ -150,6 +150,8 @@ private:
 // ======================================================================
 // Explicit instantiations for commonly used types
 
+#define _DECODE_(T) void fhicl::detail::decode<T>(std::any const&, T&)
+
 #define _GET_ONE_(T)                                                           \
   std::optional<T> fhicl::ParameterSet::get_one_<T>(std::string const&) const
 
@@ -159,13 +161,10 @@ private:
   T fhicl::ParameterSet::get<T>(std::string const&, T const&) const
 
 #define _EXTERN_INSTANTIATE_GET(T)                                             \
+  extern template _DECODE_(T);                                                 \
   extern template _GET_ONE_(T);                                                \
   extern template _GET(T);                                                     \
-  extern template _GET_WITH_DEFAULT(T);                                        \
-  /* Also instantiate std::vectors of same type */                             \
-  extern template _GET_ONE_(std::vector<T>);                                   \
-  extern template _GET(std::vector<T>);                                        \
-  extern template _GET_WITH_DEFAULT(std::vector<T>)
+  extern template _GET_WITH_DEFAULT(T)
 
 _EXTERN_INSTANTIATE_GET(bool);
 _EXTERN_INSTANTIATE_GET(int);
@@ -174,6 +173,14 @@ _EXTERN_INSTANTIATE_GET(float);
 _EXTERN_INSTANTIATE_GET(double);
 _EXTERN_INSTANTIATE_GET(std::string);
 _EXTERN_INSTANTIATE_GET(fhicl::ParameterSet);
+
+// Instantiate std::vector of same types except 'bool'.
+_EXTERN_INSTANTIATE_GET(std::vector<int>);
+_EXTERN_INSTANTIATE_GET(std::vector<unsigned>);
+_EXTERN_INSTANTIATE_GET(std::vector<float>);
+_EXTERN_INSTANTIATE_GET(std::vector<double>);
+_EXTERN_INSTANTIATE_GET(std::vector<std::string>);
+_EXTERN_INSTANTIATE_GET(std::vector<fhicl::ParameterSet>);
 
 // ======================================================================
 
