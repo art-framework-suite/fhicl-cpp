@@ -26,7 +26,6 @@
 //
 // Assuming these criteria are met, a 'MyType' object will be returned
 // upon calling the operator() function of the fhicl::TableAs object.
-// the 'MyType' object will be returned.
 // ====================================================================
 
 #include "fhiclcpp/type_traits.h"
@@ -167,54 +166,34 @@ namespace fhicl {
   // metaprogramming necessary for determining if provided type 'T'
   // has an 'std::ostream& operator<<(std::ostream&, T const&)' defined
 
-  namespace has_insertion_operator_impl {
-    typedef char no;
-    typedef char yes[2];
-
-    struct any_t {
-      template <typename T>
-      any_t(T const&);
+  namespace detail {
+    template <typename T, typename = void>
+    struct maybe_insert {
+      static std::string
+      emit(T const&)
+      {
+        return "     A default value is present, but it cannot be\n"
+               "     printed out since no 'operator<<' overload has\n"
+               "     been provided for the above type.";
+      }
     };
 
-    no operator<<(std::ostream const&, any_t const&);
-
-    yes& test(std::ostream&);
-    no test(no);
+    template <typename T>
+    using insertion_expression_t =
+      decltype(std::declval<std::ostream>() << std::declval<T>());
 
     template <typename T>
-    struct has_insertion_operator {
-      static std::ostream& s;
-      static T const& t;
-      static bool const value = sizeof(test(s << t)) == sizeof(yes);
+    struct maybe_insert<T, std::void_t<insertion_expression_t<T>>> {
+      static std::string
+      emit(T const& t)
+      {
+        std::ostringstream os;
+        os << "     with a default value of:\n"
+           << "        " << t;
+        return os.str();
+      }
     };
   }
-
-  template <typename T>
-  struct has_insertion_operator
-    : has_insertion_operator_impl::has_insertion_operator<T> {};
-
-  struct NoInsert {
-    template <typename T>
-    std::string
-    operator()(T const&)
-    {
-      return "     A default value is present, but it cannot be\n"
-             "     printed out since no 'operator<<' overload has\n"
-             "     been provided for the above type.";
-    }
-  };
-
-  struct YesInsert {
-    template <typename T>
-    std::string
-    operator()(T const& t)
-    {
-      std::ostringstream os;
-      os << "     with a default value of:\n"
-         << "        " << t;
-      return os.str();
-    }
-  };
 
   //===============================================================================
 
@@ -226,16 +205,13 @@ namespace fhicl {
     std::string const name{"        '" +
                            cet::demangle_symbol(typeid(T).name()) + "'"};
 
-    std::conditional_t<has_insertion_operator<T>::value, YesInsert, NoInsert>
-      stringified_default;
-
     std::string const user_comment{
       comment.value.empty() ? "" : "\n\n" + comment.value};
 
     std::ostringstream oss;
     oss << preface << '\n'
         << name << '\n'
-        << stringified_default(t) << user_comment;
+        << detail::maybe_insert<T>::emit(t) << user_comment;
     return Comment{oss.str().c_str()};
   }
 }

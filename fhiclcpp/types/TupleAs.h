@@ -147,8 +147,8 @@ namespace fhicl {
   // has an 'std::ostream& operator<<(std::ostream&, T const&)' defined
 
   namespace has_insertion_operator_impl {
-    typedef char no;
-    typedef char yes[2];
+    using no = char;
+    using yes = char[2];
 
     struct any_t {
       template <typename T>

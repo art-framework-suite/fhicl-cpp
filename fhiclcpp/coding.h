@@ -245,8 +245,8 @@ fhicl::detail::decode(std::any const& a, std::complex<T>& result)
 {
   std::complex<ldbl> via;
   decode(a, via);
-  result = std::complex<T>{boost::numeric_cast<T>(via.real()),
-                           boost::numeric_cast<T>(via.imag())};
+  result = {boost::numeric_cast<T>(via.real()),
+            boost::numeric_cast<T>(via.imag())};
 }
 
 //====================================================================
@@ -256,9 +256,6 @@ void
 fhicl::detail::decode(std::any const& a, std::vector<T>& result)
 {
   if (a.type() == typeid(std::string)) {
-    typedef fhicl::extended_value extended_value;
-    typedef extended_value::sequence_t sequence_t;
-
     std::string str;
     decode(a, str);
 
@@ -269,7 +266,7 @@ fhicl::detail::decode(std::any const& a, std::vector<T>& result)
         << str << "\nat or before:\n"
         << unparsed;
 
-    sequence_t const& seq = sequence_t(xval);
+    auto const& seq = fhicl::extended_value::sequence_t(xval);
     result.clear();
     T via;
     for (auto const& e : seq) {
