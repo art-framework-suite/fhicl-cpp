@@ -32,6 +32,7 @@
 #include "fhiclcpp/types/ConfigPredicate.h"
 #include "fhiclcpp/types/OptionalTable.h"
 #include "fhiclcpp/types/detail/ParameterBase.h"
+#include "fhiclcpp/types/detail/maybe_insert.h"
 #include "fhiclcpp/types/detail/type_traits_error_msgs.h"
 
 #include <memory>
@@ -146,6 +147,8 @@ namespace fhicl {
     tableObj_.set_par_style(par_style::DEFAULT_CONDITIONAL);
   }
 
+  //===============================================================================
+
   template <typename T, typename Config>
   Comment
   TableAs<T, Config>::conversion_comment(Comment&& comment) const
@@ -161,41 +164,6 @@ namespace fhicl {
     oss << preface << '\n' << name << user_comment;
     return Comment{oss.str().c_str()};
   }
-
-  //=================================================================
-  // metaprogramming necessary for determining if provided type 'T'
-  // has an 'std::ostream& operator<<(std::ostream&, T const&)' defined
-
-  namespace detail {
-    template <typename T, typename = void>
-    struct maybe_insert {
-      static std::string
-      emit(T const&)
-      {
-        return "     A default value is present, but it cannot be\n"
-               "     printed out since no 'operator<<' overload has\n"
-               "     been provided for the above type.";
-      }
-    };
-
-    template <typename T>
-    using insertion_expression_t =
-      decltype(std::declval<std::ostream>() << std::declval<T>());
-
-    template <typename T>
-    struct maybe_insert<T, std::void_t<insertion_expression_t<T>>> {
-      static std::string
-      emit(T const& t)
-      {
-        std::ostringstream os;
-        os << "     with a default value of:\n"
-           << "        " << t;
-        return os.str();
-      }
-    };
-  }
-
-  //===============================================================================
 
   template <typename T, typename Config>
   Comment
