@@ -179,7 +179,7 @@ namespace fhicl {
     std::ostringstream oss;
     oss << preface << '\n'
         << name << '\n'
-        << detail::maybe_insert<T>::emit(t) << user_comment;
+        << detail::maybe_insert(t) << user_comment;
     return Comment{oss.str().c_str()};
   }
 }
