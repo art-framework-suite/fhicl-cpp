@@ -30,90 +30,46 @@
 // =============================================================================
 
 #include "cetlib/exempt_ptr.h"
-#include "fhiclcpp/detail/printing_helpers.h"
+#include "fhiclcpp/fwd.h"
 #include "fhiclcpp/types/detail/ParameterBase.h"
-#include "fhiclcpp/types/detail/per_thread_holder.h"
 
 #include <stack>
 #include <vector>
 
-namespace fhicl {
+namespace fhicl::detail {
 
-  class ParameterSet;
+  class RegisterIfTableMember;
+  class TableBase;
 
-  namespace detail {
+  // All-private class that only fhicl::detail::RegisterIfTableMember
+  // and fhicl::detail::TableBase can access via friendship.
 
-    // All-private class that only
-    // fhicl::detail::RegisterIfTableMember, fhicl::Table, and
-    // fhicl::OptionalTable can access via friendship.
+  class TableMemberRegistry {
 
-    class TableMemberRegistry {
+    using base_ptr = cet::exempt_ptr<ParameterBase>;
+    using table_members_t = std::vector<base_ptr>;
+    std::stack<table_members_t> tables_;
 
-      using base_ptr = cet::exempt_ptr<ParameterBase>;
-      using table_members_t = std::vector<base_ptr>;
-      std::stack<table_members_t> tables_;
+    static TableMemberRegistry& instance_();
 
-      static TableMemberRegistry&
-      instance_()
-      {
-        // The use of the registry is restricted to the construction
-        // of fhiclcpp types.  As construction happens on only one
-        // thread, it is sufficient for each thread to have its own
-        // copy.  Although a thread-local static would be appropriate
-        // here, not all implementations adequately support
-        // thread-local variables for the use case here.  We thus use
-        // a custom-built per-thread cache.
-        static per_thread_holder<TableMemberRegistry> registry;
-        return registry.slot_for_current_thread();
-      }
+    // Retrieval facilities for fhicl::(Optional)Table
+    friend class TableBase;
 
-      // Retrieval facilities for fhicl::(Optional)Table
+    static std::vector<base_ptr> release_members();
 
-      template <typename T, typename KeysToIgnore>
-      friend class fhicl::Table;
-      template <typename T>
-      friend class fhicl::OptionalTable;
+    // Registration facilities
+    friend class RegisterIfTableMember;
 
-      static std::vector<base_ptr>
-      release_members()
-      {
-        auto& tables = instance_().tables_;
-        auto result = std::exchange(tables.top(), {});
-        tables.pop();
-        return result;
-      }
+    static void emplace_table_member(ParameterBase* pb);
+    static void new_table();
+  };
 
-      // Registration facilities
-
-      friend class RegisterIfTableMember;
-      static void
-      emplace_table_member(ParameterBase* pb)
-      {
-        instance_().tables_.top().emplace_back(pb);
-      }
-
-      static void
-      new_table()
-      {
-        instance_().tables_.emplace();
-      }
-    };
-
-    //========================================================
-    class RegisterIfTableMember {
-    public:
-      RegisterIfTableMember(ParameterBase* pb)
-      {
-        if (is_table_member(pb->key())) {
-          TableMemberRegistry::emplace_table_member(pb);
-        }
-        if (is_table(pb->parameter_type())) {
-          TableMemberRegistry::new_table();
-        }
-      }
-    };
-  }
-}
+  //========================================================
+  class RegisterIfTableMember {
+  public:
+    explicit RegisterIfTableMember(ParameterBase* pb);
+  };
+} // namespace fhicl::detail
 
 #endif /* fhiclcpp_types_detail_TableMemberRegistry_h */
 

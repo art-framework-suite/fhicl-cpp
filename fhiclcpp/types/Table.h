@@ -83,21 +83,12 @@ namespace fhicl {
     using value_type = T;
 
   private:
-    using members_t = std::vector<cet::exempt_ptr<ParameterBase>>;
-
     std::shared_ptr<T> value_{std::make_shared<T>()};
     ParameterSet pset_{};
-    members_t members_{detail::TableMemberRegistry::release_members()};
 
     struct Impl {};
     Table(ParameterSet const&, std::set<std::string> const&, Impl);
-    void maybe_implicitly_default();
 
-    members_t const&
-    get_members() const override
-    {
-      return members_;
-    }
     void do_set_value(fhicl::ParameterSet const& pset) override;
   };
 
@@ -141,6 +132,7 @@ namespace fhicl {
     , RegisterIfTableMember{this}
     , value_{std::make_shared<T>(std::forward<TCARGS>(tcargs)...)}
   {
+    finalize_members();
     maybe_implicitly_default();
     NameStackRegistry::end_of_ctor();
   }
@@ -158,6 +150,7 @@ namespace fhicl {
     , RegisterIfTableMember{this}
     , value_{std::make_shared<T>(std::forward<TCARGS>(tcargs)...)}
   {
+    finalize_members();
     maybe_implicitly_default();
     NameStackRegistry::end_of_ctor();
   }
@@ -185,6 +178,7 @@ namespace fhicl {
                 detail::AlwaysUse()}
     , RegisterIfTableMember{this}
   {
+    finalize_members();
     maybe_implicitly_default();
     NameStackRegistry::end_of_ctor();
     validate(pset, keysToIgnore);
@@ -233,18 +227,6 @@ namespace fhicl {
     std::string const& rkey = key();
     std::string const& nkey = detail::strip_first_containing_name(rkey);
     pset_ = (nkey == rkey) ? pset : pset.get<fhicl::ParameterSet>(nkey);
-  }
-
-  template <typename T, typename KeysToIgnore>
-  void
-  Table<T, KeysToIgnore>::maybe_implicitly_default()
-  {
-    bool const implicitly_default =
-      std::all_of(members_.begin(), members_.end(), [](auto p) {
-        return p->has_default() || p->is_optional();
-      });
-    if (implicitly_default)
-      set_par_style(par_style::DEFAULT);
   }
 }
 

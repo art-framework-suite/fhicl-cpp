@@ -84,18 +84,10 @@ namespace fhicl {
                   std::set<std::string> const& keysToIgnore = {});
 
   private:
-    using members_t = std::vector<cet::exempt_ptr<ParameterBase>>;
-
     std::shared_ptr<T> value_{std::make_shared<T>()};
     bool has_value_{false};
     ParameterSet pset_{};
-    members_t members_{detail::TableMemberRegistry::release_members()};
 
-    members_t const&
-    get_members() const override
-    {
-      return members_;
-    }
     void do_set_value(fhicl::ParameterSet const& pset) override;
   };
 
@@ -131,6 +123,7 @@ namespace fhicl {
                 detail::AlwaysUse()}
     , RegisterIfTableMember{this}
   {
+    finalize_members();
     NameStackRegistry::end_of_ctor();
   }
 
@@ -144,6 +137,7 @@ namespace fhicl {
                 maybeUse}
     , RegisterIfTableMember{this}
   {
+    finalize_members();
     NameStackRegistry::end_of_ctor();
   }
 
@@ -156,6 +150,7 @@ namespace fhicl {
                 detail::AlwaysUse()}
     , RegisterIfTableMember{this}
   {
+    finalize_members();
     NameStackRegistry::end_of_ctor();
     validate(pset, keysToIgnore);
   }

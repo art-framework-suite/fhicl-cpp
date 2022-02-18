@@ -2,6 +2,7 @@
 #include "boost/algorithm/string.hpp"
 #include "cetlib/container_algorithms.h"
 #include "cetlib/split_by_regex.h"
+#include "fhiclcpp/coding.h"
 #include "fhiclcpp/exception.h"
 
 #include <algorithm>
@@ -12,6 +13,26 @@ namespace {
 }
 
 namespace fhicl::detail {
+
+  //===============================================================
+  // get_names
+
+  Keys::Keys(std::vector<std::string> const& keys, std::string const& last)
+    : tables_{keys}, last_{last}
+  {}
+  Keys::~Keys() = default;
+
+  std::vector<std::string> const&
+  Keys::tables() const noexcept
+  {
+    return tables_;
+  }
+
+  std::string const&
+  Keys::last() const noexcept
+  {
+    return last_;
+  }
 
   Keys
   get_names(std::string const& key)
@@ -29,6 +50,28 @@ namespace fhicl::detail {
     keys.pop_back();
 
     return Keys{keys, last};
+  }
+
+  //===============================================================
+  // get_sequence_indices
+
+  SequenceKey::SequenceKey(std::string const& name,
+                           std::vector<std::size_t> const& indices)
+    : name_{name}, indices_{indices}
+  {}
+
+  SequenceKey::~SequenceKey() = default;
+
+  std::string const&
+  SequenceKey::name() const noexcept
+  {
+    return name_;
+  }
+
+  std::vector<std::size_t> const&
+  SequenceKey::indices() const noexcept
+  {
+    return indices_;
   }
 
   SequenceKey

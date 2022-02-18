@@ -1,16 +1,19 @@
 cet_make_library(LIBRARY_NAME fhiclcpp_types
   SOURCE
     DelegatedParameter.cc
-    detail/check_nargs_for_bounded_sequences.cc
-    detail/MaybeDisplayParent.cc
-    detail/NameStackRegistry.cc
-    detail/ostream_helpers.cc
-    detail/PrintAllowedConfiguration.cc
-    detail/SearchAllowedConfiguration.cc
-    detail/strip_containing_names.cc
-    detail/ValidateThenSet.cc
     Name.cc
     OptionalDelegatedParameter.cc
+    detail/MaybeDisplayParent.cc
+    detail/NameStackRegistry.cc
+    detail/ParameterBase.cc
+    detail/PrintAllowedConfiguration.cc
+    detail/SearchAllowedConfiguration.cc
+    detail/TableBase.cc
+    detail/TableMemberRegistry.cc
+    detail/ValidateThenSet.cc
+    detail/check_nargs_for_bounded_sequences.cc
+    detail/ostream_helpers.cc
+    detail/strip_containing_names.cc
   LIBRARIES
     PUBLIC
       fhiclcpp::fhiclcpp

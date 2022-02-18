@@ -10,20 +10,17 @@ namespace fhicl::detail {
   public:
     TableBase(Name const& name,
               Comment const& comment,
-              par_style const vt,
-              std::function<bool()> maybeUse)
-      : ParameterBase{name, comment, vt, par_type::TABLE, maybeUse}
-    {}
+              par_style vt,
+              std::function<bool()> maybeUse);
 
-    std::vector<cet::exempt_ptr<ParameterBase>> const&
-    members() const
-    {
-      return get_members();
-    }
+    std::vector<cet::exempt_ptr<ParameterBase>> const& members() const;
+
+  protected:
+    void finalize_members();
+    void maybe_implicitly_default();
 
   private:
-    virtual std::vector<cet::exempt_ptr<ParameterBase>> const& get_members()
-      const = 0;
+    std::vector<cet::exempt_ptr<ParameterBase>> members_;
   };
 }
 

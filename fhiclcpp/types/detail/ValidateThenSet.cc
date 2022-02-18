@@ -13,6 +13,27 @@
 
 //====================================================================
 
+fhicl::detail::ValidateThenSet::ValidateThenSet(
+  ParameterSet const& pset,
+  std::set<std::string> const& keysToIgnore)
+  : pset_{pset}
+  , ignorableKeys_{keysToIgnore}
+  , userKeys_{pset.get_all_keys()}
+  , missingParameters_{}
+{
+  cet::sort_all(userKeys_);
+}
+
+fhicl::detail::ValidateThenSet::~ValidateThenSet() = default;
+
+void
+fhicl::detail::ValidateThenSet::enter_table(TableBase&)
+{}
+
+void
+fhicl::detail::ValidateThenSet::atom(AtomBase&)
+{}
+
 bool
 fhicl::detail::ValidateThenSet::before_action(ParameterBase& p)
 {
