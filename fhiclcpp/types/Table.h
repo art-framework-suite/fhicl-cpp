@@ -12,7 +12,9 @@
 #include "fhiclcpp/types/detail/ParameterMetadata.h"
 #include "fhiclcpp/types/detail/TableBase.h"
 #include "fhiclcpp/types/detail/TableMemberRegistry.h"
+#include "fhiclcpp/types/detail/ValidateThenSet.h"
 #include "fhiclcpp/types/detail/type_traits_error_msgs.h"
+#include "fhiclcpp/types/detail/validationException.h"
 
 #include <memory>
 #include <ostream>
@@ -58,7 +60,7 @@ namespace fhicl {
           std::set<std::string> const& keysToIgnore = {});
 
     // ... Accessors
-    auto const&
+    T const&
     operator()() const
     {
       return *value_;
@@ -67,15 +69,8 @@ namespace fhicl {
     ParameterSet const&
     get_PSet() const
     {
-      return pset_;
+      return TableBase::get_pset();
     }
-
-    void validate(ParameterSet const& pset,
-                  std::set<std::string> const& keysToIgnore = {});
-
-    void print_allowed_configuration(
-      std::ostream& os,
-      std::string const& tab = std::string(3, ' ')) const;
 
     //=====================================================
     // Expert-only
@@ -84,35 +79,13 @@ namespace fhicl {
 
   private:
     std::shared_ptr<T> value_{std::make_shared<T>()};
-    ParameterSet pset_{};
 
     struct Impl {};
     Table(ParameterSet const&, std::set<std::string> const&, Impl);
-
-    void do_set_value(fhicl::ParameterSet const& pset) override;
   };
 
-  template <typename T>
-  inline std::ostream&
-  operator<<(std::ostream& os, Table<T> const& t)
-  {
-    std::ostringstream config;
-    t.print_allowed_configuration(config);
-    return os << config.str();
-  }
-}
-
-// Implementation
-
-#include "cetlib/container_algorithms.h"
-#include "fhiclcpp/detail/printing_helpers.h"
-#include "fhiclcpp/types/detail/PrintAllowedConfiguration.h"
-#include "fhiclcpp/types/detail/ValidateThenSet.h"
-#include "fhiclcpp/types/detail/optional_parameter_message.h"
-#include "fhiclcpp/types/detail/strip_containing_names.h"
-#include "fhiclcpp/types/detail/validationException.h"
-
-namespace fhicl {
+  //=====================================================
+  // Implementation
 
   template <typename T, typename KeysToIgnore>
   template <typename... TCARGS>
@@ -184,50 +157,6 @@ namespace fhicl {
     validate(pset, keysToIgnore);
   }
 
-  template <typename T, typename KeysToIgnore>
-  void
-  Table<T, KeysToIgnore>::validate(ParameterSet const& pset,
-                                   std::set<std::string> const& keysToIgnore)
-  {
-    pset_ = pset;
-    detail::ValidateThenSet vs{pset_, keysToIgnore};
-    cet::for_all(members(), [&vs](auto m) { vs.walk_over(*m); });
-
-    try {
-      vs.check_keys();
-    }
-    catch (fhicl::detail::validationException const&) {
-      NameStackRegistry::clear();
-      throw;
-    }
-  }
-
-  template <typename T, typename KeysToIgnore>
-  void
-  Table<T, KeysToIgnore>::print_allowed_configuration(
-    std::ostream& os,
-    std::string const& tab) const
-  {
-    os << '\n' << tab << detail::optional_parameter_message() << '\n';
-    detail::PrintAllowedConfiguration pc{os, false, tab};
-    pc.walk_over(*this);
-  }
-
-  template <typename T, typename KeysToIgnore>
-  void
-  Table<T, KeysToIgnore>::do_set_value(fhicl::ParameterSet const& pset)
-  {
-    // Kind of tricky: we do not have the name of the current
-    // parameter set.  A placeholder is often used (e.g. "<top_level>").
-    // Fortunately, since the pset is passed in, we can just assign to
-    // it for a top-level ParameterSet.  However, for nested parameter
-    // sets, we need to trim off the placeholder, and then the key we
-    // send pset.get<fhicl::ParameterSet>(key) is the key relative to
-    // the top-level pset.
-    std::string const& rkey = key();
-    std::string const& nkey = detail::strip_first_containing_name(rkey);
-    pset_ = (nkey == rkey) ? pset : pset.get<fhicl::ParameterSet>(nkey);
-  }
 }
 
 #endif /* fhiclcpp_types_Table_h */

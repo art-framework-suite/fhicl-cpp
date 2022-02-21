@@ -44,35 +44,31 @@ namespace fhicl {
     std::optional<T>
     operator()() const
     {
-      return value_ ? std::make_optional(*value_) : std::nullopt;
+      return hasValue() ? std::make_optional(*value_) : std::nullopt;
     }
 
     // Obsolete
     bool
     operator()(T& value) const
     {
-      if (has_value_) {
+      auto opt = operator()();
+      if (opt) {
         value = *value_;
-        return true;
       }
-      return false;
+      return opt.has_value();
     }
 
     bool
     hasValue() const
     {
-      return has_value_;
+      return TableBase::has_value();
     }
 
     ParameterSet const&
     get_PSet() const
     {
-      return pset_;
+      return TableBase::guarantee_pset();
     }
-
-    void print_allowed_configuration(
-      std::ostream& os,
-      std::string const& tab = std::string(3, ' ')) const;
 
     //=====================================================
     // Expert-only
@@ -80,35 +76,12 @@ namespace fhicl {
 
     OptionalTable();
 
-    void validate(ParameterSet const& pset,
-                  std::set<std::string> const& keysToIgnore = {});
-
   private:
     std::shared_ptr<T> value_{std::make_shared<T>()};
-    bool has_value_{false};
-    ParameterSet pset_{};
-
-    void do_set_value(fhicl::ParameterSet const& pset) override;
   };
 
-  template <typename T>
-  inline std::ostream&
-  operator<<(std::ostream& os, OptionalTable<T> const& t)
-  {
-    std::ostringstream config;
-    t.print_allowed_configuration(config);
-    return os << config.str();
-  }
-}
-
-#include "cetlib/container_algorithms.h"
-#include "fhiclcpp/detail/printing_helpers.h"
-#include "fhiclcpp/types/detail/PrintAllowedConfiguration.h"
-#include "fhiclcpp/types/detail/ValidateThenSet.h"
-#include "fhiclcpp/types/detail/optional_parameter_message.h"
-#include "fhiclcpp/types/detail/strip_containing_names.h"
-
-namespace fhicl {
+  //=====================================================
+  // Implementation
 
   template <typename T>
   OptionalTable<T>::OptionalTable(Name&& name)
@@ -155,48 +128,6 @@ namespace fhicl {
     validate(pset, keysToIgnore);
   }
 
-  template <typename T>
-  void
-  OptionalTable<T>::validate(ParameterSet const& pset,
-                             std::set<std::string> const& keysToIgnore)
-  {
-    pset_ = pset;
-    detail::ValidateThenSet vs{pset_, keysToIgnore};
-    cet::for_all(members(), [&vs](auto m) { vs(m.get()); });
-    vs.check_keys();
-  }
-
-  template <typename T>
-  void
-  OptionalTable<T>::print_allowed_configuration(std::ostream& os,
-                                                std::string const& tab) const
-  {
-    os << '\n' << tab << detail::optional_parameter_message() << '\n';
-    detail::PrintAllowedConfiguration pc{os};
-    pc.walk_over(*this);
-  }
-
-  template <typename T>
-  void
-  OptionalTable<T>::do_set_value(fhicl::ParameterSet const& pset)
-  {
-    // Kind of tricky: we do not have the name of the current
-    // parameter set.  A placeholder is often used
-    // (e.g. "<top_level>").  Fortunately, since the pset is passed
-    // in, we can just assign to it for a top-level ParameterSet.
-    // However, for nested parameter sets, we need to trim off the
-    // placeholder, and then the key we send
-    // pset.get<fhicl::ParameterSet>(key) is the key relative to the
-    // top-level pset.
-    std::string const& rkey = key();
-    std::string const& nkey = detail::strip_first_containing_name(rkey);
-    if (nkey == rkey) {
-      pset_ = pset;
-      has_value_ = true;
-    } else {
-      has_value_ = pset.get_if_present<fhicl::ParameterSet>(nkey, pset_);
-    }
-  }
 }
 
 #endif /* fhiclcpp_types_OptionalTable_h */

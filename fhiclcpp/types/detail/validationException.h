@@ -1,8 +1,6 @@
 #ifndef fhiclcpp_types_detail_validationException_h
 #define fhiclcpp_types_detail_validationException_h
 
-#include "cetlib_except/exception.h"
-
 #include <exception>
 #include <string>
 

@@ -4,6 +4,7 @@
 #include "boost/test/unit_test.hpp"
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/types/Table.h"
+#include "fhiclcpp/types/detail/validationException.h"
 
 #include <iostream>
 #include <string>
