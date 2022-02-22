@@ -160,11 +160,16 @@ private:
 #define _GET_WITH_DEFAULT(T)                                                   \
   T fhicl::ParameterSet::get<T>(std::string const&, T const&) const
 
+#define _GET_IF_PRESENT(T)                                                     \
+  std::optional<T> fhicl::ParameterSet::get_if_present<T>(std::string const&)  \
+    const
+
 #define _EXTERN_INSTANTIATE_GET(T)                                             \
   extern template _DECODE_(T);                                                 \
   extern template _GET_ONE_(T);                                                \
   extern template _GET(T);                                                     \
-  extern template _GET_WITH_DEFAULT(T)
+  extern template _GET_WITH_DEFAULT(T);                                        \
+  extern template _GET_IF_PRESENT(T)
 
 _EXTERN_INSTANTIATE_GET(bool);
 _EXTERN_INSTANTIATE_GET(int);

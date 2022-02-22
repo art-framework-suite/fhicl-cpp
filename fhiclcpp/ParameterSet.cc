@@ -519,7 +519,8 @@ ParameterSet::to_indented_string(unsigned const initial_indent_level,
   template _DECODE_(T);                                                        \
   template _GET_ONE_(T);                                                       \
   template _GET(T);                                                            \
-  template _GET_WITH_DEFAULT(T)
+  template _GET_WITH_DEFAULT(T);                                               \
+  template _GET_IF_PRESENT(T)
 
 _INSTANTIATE_GET(bool);
 _INSTANTIATE_GET(int);
