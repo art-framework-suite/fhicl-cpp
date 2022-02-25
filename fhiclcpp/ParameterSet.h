@@ -150,7 +150,10 @@ private:
 // ======================================================================
 // Explicit instantiations for commonly used types
 
-#define _DECODE_(T) void fhicl::detail::decode<T>(std::any const&, T&)
+#define _DECODE_ATOM_(T) void fhicl::detail::decode<T>(std::any const&, T&)
+
+#define _DECODE_SEQUENCE_(T)                                                   \
+  void fhicl::detail::decode<T::value_type>(std::any const&, T&)
 
 #define _GET_ONE_(T)                                                           \
   std::optional<T> fhicl::ParameterSet::get_one_<T>(std::string const&) const
@@ -164,28 +167,28 @@ private:
   std::optional<T> fhicl::ParameterSet::get_if_present<T>(std::string const&)  \
     const
 
-#define _EXTERN_INSTANTIATE_GET(T)                                             \
-  extern template _DECODE_(T);                                                 \
+#define _EXTERN_INSTANTIATE_GET(FHICL_TYPE, T)                                 \
+  extern template _DECODE_##FHICL_TYPE##_(T);                                  \
   extern template _GET_ONE_(T);                                                \
   extern template _GET(T);                                                     \
   extern template _GET_WITH_DEFAULT(T);                                        \
   extern template _GET_IF_PRESENT(T)
 
-_EXTERN_INSTANTIATE_GET(bool);
-_EXTERN_INSTANTIATE_GET(int);
-_EXTERN_INSTANTIATE_GET(unsigned);
-_EXTERN_INSTANTIATE_GET(float);
-_EXTERN_INSTANTIATE_GET(double);
-_EXTERN_INSTANTIATE_GET(std::string);
-_EXTERN_INSTANTIATE_GET(fhicl::ParameterSet);
+_EXTERN_INSTANTIATE_GET(ATOM, bool);
+_EXTERN_INSTANTIATE_GET(ATOM, int);
+_EXTERN_INSTANTIATE_GET(ATOM, unsigned);
+_EXTERN_INSTANTIATE_GET(ATOM, float);
+_EXTERN_INSTANTIATE_GET(ATOM, double);
+_EXTERN_INSTANTIATE_GET(ATOM, std::string);
+_EXTERN_INSTANTIATE_GET(ATOM, fhicl::ParameterSet);
 
 // Instantiate std::vector of same types except 'bool'.
-_EXTERN_INSTANTIATE_GET(std::vector<int>);
-_EXTERN_INSTANTIATE_GET(std::vector<unsigned>);
-_EXTERN_INSTANTIATE_GET(std::vector<float>);
-_EXTERN_INSTANTIATE_GET(std::vector<double>);
-_EXTERN_INSTANTIATE_GET(std::vector<std::string>);
-_EXTERN_INSTANTIATE_GET(std::vector<fhicl::ParameterSet>);
+_EXTERN_INSTANTIATE_GET(SEQUENCE, std::vector<int>);
+_EXTERN_INSTANTIATE_GET(SEQUENCE, std::vector<unsigned>);
+_EXTERN_INSTANTIATE_GET(SEQUENCE, std::vector<float>);
+_EXTERN_INSTANTIATE_GET(SEQUENCE, std::vector<double>);
+_EXTERN_INSTANTIATE_GET(SEQUENCE, std::vector<std::string>);
+_EXTERN_INSTANTIATE_GET(SEQUENCE, std::vector<fhicl::ParameterSet>);
 
 // ======================================================================
 

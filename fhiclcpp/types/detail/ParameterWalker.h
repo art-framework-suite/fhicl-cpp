@@ -193,6 +193,10 @@ namespace fhicl::detail {
 
     do_after_action(p);
   }
+
+  // Explicit instantiations to avoid code bloat
+  extern template class ParameterWalker<tt::const_flavor::require_const>;
+  extern template class ParameterWalker<tt::const_flavor::require_non_const>;
 }
 
 #endif /* fhiclcpp_types_detail_ParameterWalker_h */

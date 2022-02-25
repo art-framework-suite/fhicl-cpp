@@ -290,29 +290,26 @@ fhicl::detail::decode(std::any const& a, std::vector<T>& result)
 }
 
 //====================================================================
-// per-entry decode base
-template <typename TUPLE>
-void
-fhicl::detail::per_entry<0, TUPLE>::decode_tuple_entry(
-  fhicl::detail::ps_sequence_t const& vec,
-  TUPLE& result)
-{
-  std::tuple_element_t<0, TUPLE> result_elem;
-  decode(vec.at(0), result_elem);
-  std::get<0>(result) = result_elem;
-}
-
 // per-entry decode
-template <unsigned IENTRY, typename TUPLE>
-void
-fhicl::detail::per_entry<IENTRY, TUPLE>::decode_tuple_entry(
-  fhicl::detail::ps_sequence_t const& vec,
-  TUPLE& result)
-{
-  std::tuple_element_t<IENTRY, TUPLE> result_elem;
-  decode(vec.at(IENTRY), result_elem);
-  std::get<IENTRY>(result) = result_elem;
-  per_entry<IENTRY - 1, TUPLE>::decode_tuple_entry(vec, result);
+
+namespace fhicl::detail {
+  template <typename TUPLE, size_t I>
+  auto
+  decode_entry(ps_sequence_t const& vec)
+  {
+    std::tuple_element_t<I, TUPLE> result_elem;
+    decode(vec.at(I), result_elem);
+    return result_elem;
+  }
+
+  template <typename TUPLE, size_t... I>
+  void
+  decode_tuple_entries(ps_sequence_t const& vec,
+                       TUPLE& result,
+                       std::index_sequence<I...>)
+  {
+    ((std::get<I>(result) = decode_entry<TUPLE, I>(vec)),...);
+  }
 }
 
 // tuple-type support
@@ -341,7 +338,8 @@ fhicl::detail::decode_tuple(std::any const& a, U& result)
     throw std::length_error(errmsg.str());
   }
 
-  per_entry<TUPLE_SIZE - 1, U>::decode_tuple_entry(seq, result);
+  decode_tuple_entries(seq, result, std::make_index_sequence<TUPLE_SIZE>());
+  //  per_entry<TUPLE_SIZE - 1, U>::decode_tuple_entry(seq, result);
 }
 
 //====================================================================

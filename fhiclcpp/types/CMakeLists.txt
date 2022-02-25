@@ -6,6 +6,7 @@ cet_make_library(LIBRARY_NAME fhiclcpp_types
     detail/MaybeDisplayParent.cc
     detail/NameStackRegistry.cc
     detail/ParameterBase.cc
+    detail/ParameterWalker.cc
     detail/PrintAllowedConfiguration.cc
     detail/SearchAllowedConfiguration.cc
     detail/TableBase.cc

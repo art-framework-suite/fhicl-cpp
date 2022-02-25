@@ -515,25 +515,25 @@ ParameterSet::to_indented_string(unsigned const initial_indent_level,
 // ======================================================================
 // Explicit instantiations for commonly used types
 
-#define _INSTANTIATE_GET(T)                                                    \
-  template _DECODE_(T);                                                        \
+#define _INSTANTIATE_GET(FHICL_TYPE, T)                                        \
+  template _DECODE_##FHICL_TYPE##_(T);                                         \
   template _GET_ONE_(T);                                                       \
   template _GET(T);                                                            \
   template _GET_WITH_DEFAULT(T);                                               \
   template _GET_IF_PRESENT(T)
 
-_INSTANTIATE_GET(bool);
-_INSTANTIATE_GET(int);
-_INSTANTIATE_GET(unsigned);
-_INSTANTIATE_GET(float);
-_INSTANTIATE_GET(double);
-_INSTANTIATE_GET(std::string);
-_INSTANTIATE_GET(fhicl::ParameterSet);
+_INSTANTIATE_GET(ATOM, bool);
+_INSTANTIATE_GET(ATOM, int);
+_INSTANTIATE_GET(ATOM, unsigned);
+_INSTANTIATE_GET(ATOM, float);
+_INSTANTIATE_GET(ATOM, double);
+_INSTANTIATE_GET(ATOM, std::string);
+_INSTANTIATE_GET(ATOM, fhicl::ParameterSet);
 
 // Instantiate std::vector of same types except 'bool'.
-_INSTANTIATE_GET(std::vector<int>);
-_INSTANTIATE_GET(std::vector<unsigned>);
-_INSTANTIATE_GET(std::vector<float>);
-_INSTANTIATE_GET(std::vector<double>);
-_INSTANTIATE_GET(std::vector<std::string>);
-_INSTANTIATE_GET(std::vector<fhicl::ParameterSet>);
+_INSTANTIATE_GET(SEQUENCE, std::vector<int>);
+_INSTANTIATE_GET(SEQUENCE, std::vector<unsigned>);
+_INSTANTIATE_GET(SEQUENCE, std::vector<float>);
+_INSTANTIATE_GET(SEQUENCE, std::vector<double>);
+_INSTANTIATE_GET(SEQUENCE, std::vector<std::string>);
+_INSTANTIATE_GET(SEQUENCE, std::vector<fhicl::ParameterSet>);
