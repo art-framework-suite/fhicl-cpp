@@ -8,6 +8,7 @@
 #include "fhiclcpp/types/Sequence.h"
 #include "fhiclcpp/types/Table.h"
 #include "fhiclcpp/types/Tuple.h"
+#include "fhiclcpp/types/detail/validationException.h"
 
 #include <string>
 
@@ -20,8 +21,8 @@ namespace {
 
   struct NestedConfig {
 
-    using Default_t = typename Val_t::default_type;
-    using DefaultElement_t = typename Val_t::default_type::value_type;
+    using Default_t = Val_t::default_type;
+    using DefaultElement_t = Val_t::default_type::value_type;
 
     explicit NestedConfig(Default_t defaultPars = {})
       : pars(Name("pars"), std::move(defaultPars))

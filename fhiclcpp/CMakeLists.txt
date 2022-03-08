@@ -27,7 +27,7 @@ cet_make_library(HEADERS_TARGET WITH_STATIC_LIBRARY
     ParameterSetID.cc
     ParameterSetRegistry.cc
     parse.cc
-    parse_shims.cc
+    parse_shims_opts.cc
     Protection.cc
   LIBRARIES
     PUBLIC

@@ -15,15 +15,9 @@ namespace fhicl::detail {
   class ValidateThenSet
     : public ParameterWalker<tt::const_flavor::require_non_const> {
   public:
-    ValidateThenSet(fhicl::ParameterSet const& pset,
-                    std::set<std::string> const& keysToIgnore)
-      : pset_{pset}
-      , ignorableKeys_{keysToIgnore}
-      , userKeys_{pset.get_all_keys()}
-      , missingParameters_{}
-    {
-      cet::sort_all(userKeys_);
-    }
+    ValidateThenSet(ParameterSet const& pset,
+                    std::set<std::string> const& keysToIgnore);
+    ~ValidateThenSet();
 
     void check_keys();
 
@@ -33,12 +27,8 @@ namespace fhicl::detail {
     void enter_sequence(SequenceBase& p) override;
     void delegated_parameter(DelegateBase&) override;
 
-    void
-    enter_table(TableBase&) override
-    {}
-    void
-    atom(AtomBase&) override
-    {}
+    void enter_table(TableBase&) override;
+    void atom(AtomBase&) override;
 
     ParameterSet const& pset_;
     std::set<std::string> ignorableKeys_;

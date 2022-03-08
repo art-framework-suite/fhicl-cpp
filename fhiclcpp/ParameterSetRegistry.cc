@@ -25,7 +25,7 @@ namespace {
   {
     sqlite3* result = nullptr;
     sqlite3_open(":memory:", &result);
-    fhicl::detail::throwOnSQLiteFailure(result);
+    throwOnSQLiteFailure(result);
     using namespace cet::sqlite;
     Transaction txn{result};
     create_table(result,

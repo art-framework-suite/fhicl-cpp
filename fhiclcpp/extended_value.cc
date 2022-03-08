@@ -15,6 +15,9 @@ using std::string;
 
 // ----------------------------------------------------------------------
 
+fhicl::extended_value::extended_value() = default;
+fhicl::extended_value::~extended_value() = default;
+
 std::string
 fhicl::extended_value::to_string() const
 {

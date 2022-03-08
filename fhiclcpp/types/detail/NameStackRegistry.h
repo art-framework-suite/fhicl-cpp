@@ -35,8 +35,6 @@
 // compile-time, or run-time), this registry should be removed.
 // ======================================================================
 
-#include "fhiclcpp/types/detail/per_thread_holder.h"
-
 #include <string>
 #include <vector>
 
@@ -46,46 +44,15 @@ namespace fhicl {
   public:
     static std::string full_key(std::string const& key);
 
-    static void
-    end_of_ctor()
-    {
-      instance_().names_.pop_back();
-    }
-
-    static void
-    clear()
-    {
-      instance_().names_.clear();
-    }
-
-    static bool
-    empty()
-    {
-      return instance_().names_.empty();
-    }
-
-    static std::string
-    current()
-    {
-      return instance_().names_.back();
-    }
+    static void end_of_ctor();
+    static void clear();
+    static bool empty();
+    static std::string current();
 
   private:
     std::vector<std::string> names_{};
 
-    static NameStackRegistry&
-    instance_()
-    {
-      // The use of the registry is restricted to the construction of
-      // fhiclcpp types.  As construction happens on only one thread,
-      // it is sufficient for each thread to have its own copy.
-      // Although a thread-local static would be appropriate here, not
-      // all implementations adequately support thread-local variables
-      // for the use case here.  We thus use a custom-built per-thread
-      // cache.
-      static detail::per_thread_holder<NameStackRegistry> registry;
-      return registry.slot_for_current_thread();
-    }
+    static NameStackRegistry& instance_();
   };
 }
 

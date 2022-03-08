@@ -1,10 +1,10 @@
 #ifndef fhiclcpp_types_detail_ParameterBase_h
 #define fhiclcpp_types_detail_ParameterBase_h
 
+// clang-format off
 /*
   ParameterBase is the most fundamental base class for all fhiclcpp
   types.  The taxonomy is:
-
 
           ParameterBase
          /      |    \ \____________________________________
@@ -23,6 +23,7 @@
   follow the classification of FHiCL values, as described in the FHiCL
   language quick start guide.
 */
+// clang-format on
 
 #include "fhiclcpp/fwd.h"
 #include "fhiclcpp/types/ConfigPredicate.h"
@@ -34,76 +35,29 @@ namespace fhicl::detail {
   //========================================================
   class ParameterBase {
   public:
-    std::string const&
-    key() const
-    {
-      return mdata_.key();
-    }
-    std::string const&
-    name() const
-    {
-      return mdata_.name();
-    }
-    std::string const&
-    comment() const
-    {
-      return mdata_.comment();
-    }
-    bool
-    has_default() const
-    {
-      return mdata_.has_default();
-    }
-    bool
-    is_optional() const
-    {
-      return mdata_.is_optional();
-    }
-    bool
-    is_conditional() const
-    {
-      return mdata_.is_conditional();
-    }
-    par_type
-    parameter_type() const
-    {
-      return mdata_.type();
-    }
-    bool
-    should_use() const
-    {
-      return maybeUse_();
-    }
-
     ParameterBase(Name const& name,
                   Comment const& comment,
                   par_style const vt,
                   par_type const type,
-                  std::function<bool()> maybeUse = AlwaysUse())
-      : mdata_{name, comment, vt, type}, maybeUse_{maybeUse}
-    {}
+                  std::function<bool()> maybeUse = AlwaysUse());
+    virtual ~ParameterBase();
 
-    virtual ~ParameterBase() = default;
+    std::string const& key() const;
+    std::string const& name() const;
+    std::string const& comment() const;
+    bool has_default() const;
+    bool is_optional() const;
+    bool is_conditional() const;
+    par_type parameter_type() const;
+    bool should_use() const;
 
     // Modifiers
-    void
-    set_value(fhicl::ParameterSet const& ps)
-    {
-      do_set_value(ps);
-    }
-    bool
-    preset_value(fhicl::ParameterSet const& ps)
-    {
-      return do_preset_value(ps);
-    }
-    void
-    set_par_style(par_style const vt)
-    {
-      mdata_.set_par_style(vt);
-    }
+    void set_value(fhicl::ParameterSet const& ps);
+    bool preset_value(fhicl::ParameterSet const& ps);
+    void set_par_style(par_style const vt);
 
   private:
-    virtual bool do_preset_value(fhicl::ParameterSet const&) { return false; }
+    virtual bool do_preset_value(fhicl::ParameterSet const&);
     virtual void do_set_value(fhicl::ParameterSet const&) = 0;
 
     ParameterMetadata mdata_;

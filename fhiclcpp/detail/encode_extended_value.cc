@@ -31,26 +31,23 @@ fhicl::detail::encode(extended_value const& xval)
     return atom_t(xval);
 
   case COMPLEX: {
-    complex_t const& cmplx = complex_t(xval);
-    return '(' + cmplx.first + ',' + cmplx.second + ')';
+    auto const [real, imag] = complex_t(xval);
+    return '(' + real + ',' + imag + ')';
   }
 
   case SEQUENCE: {
     ps_sequence_t result;
-    sequence_t const& seq = sequence_t(xval);
-    for (sequence_t::const_iterator it = seq.begin(), e = seq.end(); it != e;
-         ++it)
-      result.push_back(std::any(encode(*it)));
+    for (auto const& e : sequence_t(xval)) {
+      result.push_back(encode(e));
+    }
     return result;
   }
 
   case TABLE: {
-    typedef table_t::const_iterator const_iterator;
-    table_t const& tbl = table_t(xval);
     ParameterSet result;
-    for (const_iterator it = tbl.begin(), e = tbl.end(); it != e; ++it) {
-      if (!it->second.in_prolog)
-        result.put(it->first, it->second);
+    for (auto const& [key, value] : table_t(xval)) {
+      if (!value.in_prolog)
+        result.put(key, value);
     }
     return ParameterSetRegistry::put(result);
   }

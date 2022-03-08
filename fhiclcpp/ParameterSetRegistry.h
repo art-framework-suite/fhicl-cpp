@@ -12,17 +12,11 @@
 #include "fhiclcpp/exception.h"
 #include "fhiclcpp/fwd.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-typedef struct sqlite3 sqlite3;
-typedef struct sqlite3_stmt sqlite3_stmt;
-#ifdef __cplusplus
-}
-#endif
-
 #include <mutex>
 #include <unordered_map>
+
+struct sqlite3;
+struct sqlite3_stmt;
 
 namespace fhicl {
 
@@ -51,14 +45,14 @@ public:
   ParameterSetRegistry& operator=(ParameterSet&&) = delete;
   ~ParameterSetRegistry();
 
-  // Typedefs.
+  // Type aliases.
   using collection_type = std::
     unordered_map<ParameterSetID, ParameterSet, detail::HashParameterSetID>;
-  using key_type = typename collection_type::key_type;
-  using mapped_type = typename collection_type::mapped_type;
-  using value_type = typename collection_type::value_type;
-  using size_type = typename collection_type::size_type;
-  using const_iterator = typename collection_type::const_iterator;
+  using key_type = collection_type::key_type;
+  using mapped_type = collection_type::mapped_type;
+  using value_type = collection_type::value_type;
+  using size_type = collection_type::size_type;
+  using const_iterator = collection_type::const_iterator;
 
   // DB interaction.
   static void importFrom(sqlite3* db);

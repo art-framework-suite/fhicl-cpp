@@ -63,10 +63,6 @@ atom_rep(any const& a, std::string& result)
     throw fhicl::exception(type_mismatch, "can't obtain atom from sequence");
 
   result = any_cast<std::string>(a);
-#if 0
-  if( result.size() >= 2 && result[0] == '\"' && result.end()[-1] == '\"' )
-    result = cet::unescape( result.substr(1, result.size()-2) );
-#endif // 0
 }
 
 // ----------------------------------------------------------------------
@@ -201,15 +197,14 @@ fhicl::detail::decode(any const& a, bool& result)
       << str << "\nat or before:\n"
       << unparsed;
 
-  typedef extended_value::atom_t atom_t;
-  atom_t const& atom = atom_t(xval);
+  auto const& atom = extended_value::atom_t(xval);
   result = atom == literal_true();
 }
 
 void // table
 fhicl::detail::decode(any const& a, ParameterSet& result)
 {
-  ParameterSetID id = any_cast<ParameterSetID>(a);
+  auto const id = any_cast<ParameterSetID>(a);
   result = ParameterSetRegistry::get(id);
 }
 
@@ -226,8 +221,7 @@ fhicl::detail::decode(any const& a, std::uintmax_t& result)
       << str << "\nat or before:\n"
       << unparsed;
 
-  typedef extended_value::atom_t atom_t;
-  atom_t const& atom = atom_t(xval);
+  auto const& atom = extended_value::atom_t(xval);
   ldbl via = lexical_cast<ldbl>(atom);
   result = numeric_cast<std::uintmax_t>(via);
   if (via != ldbl(result))
@@ -247,8 +241,7 @@ fhicl::detail::decode(any const& a, std::intmax_t& result)
       << str << "\nat or before:\n"
       << unparsed;
 
-  typedef extended_value::atom_t atom_t;
-  atom_t const& atom = atom_t(xval);
+  auto const& atom = extended_value::atom_t(xval);
   ldbl via = lexical_cast<ldbl>(atom);
   result = numeric_cast<std::intmax_t>(via);
   if (via != ldbl(result))
@@ -268,8 +261,7 @@ fhicl::detail::decode(any const& a, ldbl& result)
       << str << "\nat or before:\n"
       << unparsed;
 
-  typedef extended_value::atom_t atom_t;
-  atom_t const& atom = atom_t(xval);
+  auto const& atom = extended_value::atom_t(xval);
   if (atom.substr(1) == literal_infinity()) {
     switch (atom[0]) {
     case '+':
@@ -296,12 +288,11 @@ fhicl::detail::decode(any const& a, std::complex<ldbl>& result)
       << str << "\nat or before:\n"
       << unparsed;
 
-  typedef extended_value::complex_t complex_t;
-  complex_t const& cmplx = complex_t(xval);
+  auto const& cmplx = extended_value::complex_t(xval);
   ldbl real, imag;
   decode(cmplx.first, real);
   decode(cmplx.second, imag);
-  result = std::complex<ldbl>(real, imag);
+  result = {real, imag};
 }
 
 // ======================================================================
