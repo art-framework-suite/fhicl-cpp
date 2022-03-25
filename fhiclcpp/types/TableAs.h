@@ -76,15 +76,24 @@ namespace fhicl {
                                 cant_find); // fix this exception category!
     }
 
+    // Allow implicit conversion from TableAs to ParameterBase to
+    // access metadata of underlying fhicl-cpp type.
+    operator detail::ParameterBase const&() const noexcept
+    {
+      return tableObj_;
+    }
+
     //=================================================================
     // expert only
 
-    operator detail::ParameterBase&()
+    // The non-const conversion operator from is necessary for the
+    // ParameterWalker to iterate through a sequence of TableAs
+    // objects.
+    operator detail::ParameterBase&() noexcept
     {
       return tableObj_;
-    } // Allows implicit conversion from
-      // TableAs to ParameterBase (necessary
-      // for ParameterWalker)
+    }
+
   private:
     OptionalTable<Config> tableObj_;
     std::shared_ptr<T>
