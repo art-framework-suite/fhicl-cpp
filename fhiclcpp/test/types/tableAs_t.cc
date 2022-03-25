@@ -116,6 +116,14 @@ BOOST_AUTO_TEST_CASE(tableAs_simple)
   BOOST_TEST(mother == ref);
 }
 
+BOOST_AUTO_TEST_CASE(tableAs_conversion)
+{
+  detail::ParameterBase const& mother_pb = config().mother;
+  BOOST_TEST(mother_pb.name() == "mother");
+  detail::ParameterBase const& contact_info_pb = config().contact_info;
+  BOOST_TEST(contact_info_pb.name() == "contact_info");
+}
+
 BOOST_AUTO_TEST_CASE(tableAs_default_simple)
 {
   auto const father = config().father();
