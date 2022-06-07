@@ -34,10 +34,10 @@ endif()
 
 cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
-find_package(Boost PRIVATE COMPONENTS program_options REQUIRED)
-find_package(SQLite3 PRIVATE REQUIRED)
-find_package(cetlib PRIVATE REQUIRED)
-find_package(cetlib_except PRIVATE REQUIRED)
+find_package(Boost COMPONENTS program_options REQUIRED)
+find_package(SQLite3 REQUIRED)
+find_package(cetlib REQUIRED)
+find_package(cetlib_except REQUIRED)
 
 # source code
 add_subdirectory(fhiclcpp)
