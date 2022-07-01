@@ -248,7 +248,7 @@ fcldir	-
 ####################################
 product		version		qual	flags		<table_format=2>
 cetlib		v3_15_00	-
-cetmodules	v3_15_00	-	only_for_build
+cetmodules	v3_18_00	-	only_for_build
 end_product_list
 ####################################
 
@@ -306,12 +306,10 @@ end_product_list
 qualifier	cetlib		notes
 c7:debug	c7:debug
 c7:prof		c7:prof
+c14:debug	c14:debug
+c14:prof	c14:prof
 e20:debug	e20:debug
 e20:prof	e20:prof
-e24:debug	e24:debug
-e24:prof	e24:prof
-e25:debug	e25:debug
-e25:prof	e25:prof
 e26:debug	e26:debug
 e26:prof	e26:prof
 end_qualifier_list
