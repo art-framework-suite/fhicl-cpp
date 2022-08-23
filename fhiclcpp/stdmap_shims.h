@@ -49,8 +49,13 @@ namespace shims {
               class Distance = std::ptrdiff_t,
               class Pointer = TT*,
               class Reference = TT&>
-    struct iter : std::iterator<Category, TT, Distance, Pointer, Reference> {
+    struct iter {
       using type = TT;
+      using iterator_category = Category;
+      using value_type = TT;
+      using difference_type = Distance;
+      using pointer = Pointer;
+      using reference = Reference;
 
       iter(typename mapmap_t::iterator it) noexcept { _iters.mapmap_iter = it; }
       iter(typename listmap_t::iterator it) noexcept
