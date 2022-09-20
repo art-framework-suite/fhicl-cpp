@@ -103,12 +103,16 @@ cet_test(save-restore-ba HANDBUILT
 cet_test(intermediate_table_t USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 
 cet_test(table_t_iterator_t USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
+if ($TEST_BUILDING)
 target_compile_definitions(table_t_iterator_t PRIVATE SNIPPET_MODE=false)
+endif()
 cet_test(table_t_snippet_iterator_t USE_BOOST_UNIT
   SOURCE table_t_iterator_t.cc
   USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp
 )
+if ($TEST_BUILDING)
 target_compile_definitions(table_t_snippet_iterator_t PRIVATE SNIPPET_MODE=true)
+endif()
 
 cet_test(seq_of_seq_t LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 
@@ -131,6 +135,7 @@ cet_test(WriteSQLiteDB_t USE_BOOST_UNIT
   DATAFILES testFiles/db_2.fcl
 )
 
+if ($TEST_BUILDING)
 get_property(WriteSQLiteDB_t_WORKDIR TEST WriteSQLiteDB_t PROPERTY WORKING_DIRECTORY)
 cet_test(fhicl-write-db-test HANDBUILT
   TEST_EXEC sqlite3
@@ -139,6 +144,7 @@ cet_test(fhicl-write-db-test HANDBUILT
   DEPENDS WriteSQLiteDB_t
   PASS_REGULAR_EXPRESSION "^3\n$"
 )
+endif()
 
 cet_test(parse_shimmeddocument_test USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 
