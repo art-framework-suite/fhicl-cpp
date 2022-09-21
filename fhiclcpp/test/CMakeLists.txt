@@ -103,14 +103,11 @@ cet_test(save-restore-ba HANDBUILT
 cet_test(intermediate_table_t USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 
 cet_test(table_t_iterator_t USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
-
 target_compile_definitions(table_t_iterator_t PRIVATE SNIPPET_MODE=false)
-
 cet_test(table_t_snippet_iterator_t USE_BOOST_UNIT
   SOURCE table_t_iterator_t.cc
   USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp
 )
-
 target_compile_definitions(table_t_snippet_iterator_t PRIVATE SNIPPET_MODE=true)
 
 cet_test(seq_of_seq_t LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
