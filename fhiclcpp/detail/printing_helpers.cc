@@ -49,6 +49,7 @@ detail::print_prefix_annotated_info(std::string const& info)
 std::string
 detail::printed_suffix(std::string const& key, std::size_t const sz)
 {
+  using namespace std::string_literals;
   std::string result;
 
   if (sz == size_t_max)
@@ -57,7 +58,7 @@ detail::printed_suffix(std::string const& key, std::size_t const sz)
   std::smatch m;
   if (std::regex_match(key, m, reSequenceElement) &&
       std::stoul(m[1]) != sz - 1) {
-    result = ",";
+    result = ","s;
   }
   return result;
 }
