@@ -6,28 +6,12 @@
 
 #include "fhiclcpp/parse.h"
 
-#ifdef __ICC
-#pragma warning(push, disable : 780)
-#endif
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wshadow"
-#pragma GCC diagnostic ignored "-Wstrict-aliasing"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#include "boost/spirit/include/phoenix_bind.hpp"
-#include "boost/spirit/include/phoenix_operator.hpp"
+#include "boost/phoenix/bind.hpp"
+#include "boost/phoenix/operator.hpp"
 #include "boost/spirit/include/qi.hpp"
 #include "boost/spirit/include/qi_no_skip.hpp"
 #include "boost/spirit/include/support_istream_iterator.hpp"
-#ifdef __clang__
-#pragma clang diagnostic ignored "-Wpedantic"
-#else
-#pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include "boost/spirit/repository/home/qi/primitive/iter_pos.hpp"
-#pragma GCC diagnostic pop
-#ifdef __ICC
-#pragma warning(pop)
-#endif
 
 #include "cetlib/canonical_number.h"
 #include "cetlib/canonical_string.h"
