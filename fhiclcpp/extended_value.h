@@ -52,7 +52,7 @@ public:
     : in_prolog{in_prolog}
     , tag{tag}
     , value{value}
-    , src_info{move(src)}
+    , src_info{std::move(src)}
     , protection{protection}
   {}
 
@@ -60,7 +60,7 @@ public:
                  value_tag const tag,
                  std::any const value,
                  std::string src = {})
-    : in_prolog{in_prolog}, tag{tag}, value{value}, src_info{move(src)}
+    : in_prolog{in_prolog}, tag{tag}, value{value}, src_info{std::move(src)}
   {}
 
   bool
