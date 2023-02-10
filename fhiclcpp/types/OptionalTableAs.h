@@ -53,10 +53,7 @@ namespace fhicl {
 
     // Allow implicit conversion from TableAs to ParameterBase to
     // access metadata of underlying fhicl-cpp type.
-    operator detail::ParameterBase const&() const noexcept
-    {
-      return tableObj_;
-    }
+    operator detail::ParameterBase const&() const noexcept { return tableObj_; }
 
   private:
     OptionalTable<Config> tableObj_;

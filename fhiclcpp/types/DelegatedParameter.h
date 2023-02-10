@@ -27,8 +27,7 @@ namespace fhicl {
     auto
     get() const
     {
-      auto const trimmed_key =
-        detail::strip_first_containing_name(key());
+      auto const trimmed_key = detail::strip_first_containing_name(key());
       return pset_.get<T>(trimmed_key);
     }
 

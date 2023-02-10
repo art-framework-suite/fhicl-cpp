@@ -150,8 +150,7 @@ namespace fhicl {
     if (has_default()) {
       // Override default value if the key is present
       pset.get_if_present<T>(trimmed_key, value_);
-    }
-    else
+    } else
       value_ = pset.get<T>(trimmed_key);
   }
 }

@@ -70,7 +70,7 @@ namespace fhicl {
     {
       via_type via;
       return tableObj_(via) ? convert(via) :
-                              tableObj_.has_default() ?
+             tableObj_.has_default() ?
                               *t_ :
                               throw fhicl::exception(
                                 cant_find); // fix this exception category!
@@ -78,10 +78,7 @@ namespace fhicl {
 
     // Allow implicit conversion from TableAs to ParameterBase to
     // access metadata of underlying fhicl-cpp type.
-    operator detail::ParameterBase const&() const noexcept
-    {
-      return tableObj_;
-    }
+    operator detail::ParameterBase const&() const noexcept { return tableObj_; }
 
     //=================================================================
     // expert only
@@ -89,10 +86,7 @@ namespace fhicl {
     // The non-const conversion operator from is necessary for the
     // ParameterWalker to iterate through a sequence of TableAs
     // objects.
-    operator detail::ParameterBase&() noexcept
-    {
-      return tableObj_;
-    }
+    operator detail::ParameterBase&() noexcept { return tableObj_; }
 
   private:
     OptionalTable<Config> tableObj_;

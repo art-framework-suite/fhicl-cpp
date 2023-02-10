@@ -121,19 +121,22 @@ namespace fhicl::detail {
   void decode_tuple(std::any const&, U& tuple); // tuple-type decoding
 
   template <typename T, std::size_t SIZE>
-  void decode(std::any const& a, std::array<T, SIZE>& result) // std::array
+  void
+  decode(std::any const& a, std::array<T, SIZE>& result) // std::array
   {
     decode_tuple(a, result);
   }
 
   template <typename KEY, typename VALUE>
-  void decode(std::any const& a, std::pair<KEY, VALUE>& result) // std::pair
+  void
+  decode(std::any const& a, std::pair<KEY, VALUE>& result) // std::pair
   {
     decode_tuple(a, result);
   }
 
   template <typename... ARGS>
-  void decode(std::any const& a, std::tuple<ARGS...>& result) // std::tuple
+  void
+  decode(std::any const& a, std::tuple<ARGS...>& result) // std::tuple
   {
     decode_tuple(a, result);
   }
@@ -308,7 +311,7 @@ namespace fhicl::detail {
                        TUPLE& result,
                        std::index_sequence<I...>)
   {
-    ((std::get<I>(result) = decode_entry<TUPLE, I>(vec)),...);
+    ((std::get<I>(result) = decode_entry<TUPLE, I>(vec)), ...);
   }
 }
 

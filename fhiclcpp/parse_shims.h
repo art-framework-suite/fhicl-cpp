@@ -93,7 +93,8 @@ namespace boost::spirit::qi {
   template <typename Modifiers>
   struct make_primitive<shims::tag::catchall, Modifiers> {
     using result_type = shims::catchall_parser;
-    result_type operator()(unused_type, unused_type) const
+    result_type
+    operator()(unused_type, unused_type) const
     {
       return result_type();
     }

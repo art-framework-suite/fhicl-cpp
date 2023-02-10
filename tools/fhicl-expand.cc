@@ -142,7 +142,8 @@ namespace {
   do_including(std::string const& starting_filename,
                cet::filepath_maker& lookup_policy,
                std::ostream& to,
-               std::ostream& err) try {
+               std::ostream& err)
+  try {
     cet::includer inc{starting_filename, lookup_policy};
     cet::copy_all(inc, std::ostream_iterator<char>{to});
     return 0;

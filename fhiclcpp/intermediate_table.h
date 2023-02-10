@@ -341,22 +341,23 @@ fhicl::intermediate_table::put(std::string const& key,
   return insert(key, in_prolog, NUMBER, detail::encode(value));
 }
 
-inline bool fhicl::intermediate_table::putEmptySequence(
-  std::string const& key,
-  bool const in_prolog) // Sequence.
+inline bool
+fhicl::intermediate_table::putEmptySequence(std::string const& key,
+                                            bool const in_prolog) // Sequence.
 {
   return insert(key, in_prolog, SEQUENCE, sequence_t{});
 }
 
-inline bool fhicl::intermediate_table::putEmptyTable(
-  std::string const& key,
-  bool const in_prolog) // Table.
+inline bool
+fhicl::intermediate_table::putEmptyTable(std::string const& key,
+                                         bool const in_prolog) // Table.
 {
   return insert(key, in_prolog, TABLE, table_t{});
 }
 
-inline bool fhicl::intermediate_table::putNil(std::string const& key,
-                                              bool const in_prolog) // Nil.
+inline bool
+fhicl::intermediate_table::putNil(std::string const& key,
+                                  bool const in_prolog) // Nil.
 {
   return insert(key, in_prolog, NIL, detail::encode(nullptr));
 }
