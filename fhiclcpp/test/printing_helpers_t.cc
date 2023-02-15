@@ -8,7 +8,8 @@ using namespace fhicl::detail;
 
 namespace {
   bool
-  not_sequence_element(std::string const& name) try {
+  not_sequence_element(std::string const& name)
+  try {
     index_for_sequence_element(name);
     return false;
   }

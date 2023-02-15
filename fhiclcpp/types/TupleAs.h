@@ -50,7 +50,7 @@ namespace fhicl {
     {
       via_type via;
       return tupleObj_(via) ? std::make_from_tuple<T>(via) :
-                              tupleObj_.has_default() ?
+             tupleObj_.has_default() ?
                               *t_ :
                               throw fhicl::exception(
                                 cant_find); // fix this exception category!

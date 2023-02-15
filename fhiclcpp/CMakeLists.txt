@@ -50,4 +50,7 @@ install_headers(SUBDIRS detail)
 install_source(SUBDIRS detail)
 
 add_subdirectory(types)
-add_subdirectory(test)
+
+if (BUILD_TESTING)
+  add_subdirectory(test)
+endif()

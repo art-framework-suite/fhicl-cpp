@@ -8,7 +8,8 @@
 namespace fhicl::detail {
   template <typename L>
   void
-  try_insert(L l, std::string const& key) try {
+  try_insert(L l, std::string const& key)
+  try {
     l(key);
   }
   catch (boost::bad_lexical_cast const& e) {

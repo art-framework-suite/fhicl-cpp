@@ -48,7 +48,7 @@ namespace fhicl::detail {
                                par_style const vt,
                                par_type const type,
                                std::function<bool()> maybeUse)
-    : mdata_{name, comment, vt, type}, maybeUse_{move(maybeUse)}
+    : mdata_{name, comment, vt, type}, maybeUse_{std::move(maybeUse)}
   {}
 
   ParameterBase::~ParameterBase() = default;

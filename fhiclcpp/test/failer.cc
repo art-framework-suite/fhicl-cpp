@@ -5,7 +5,8 @@
 #include <iostream>
 
 int
-main() try {
+main()
+try {
   std::string in("test_config_fail.fcl");
   cet::filepath_lookup policy("FHICL_FILE_PATH");
   fhicl::ParameterSet::make(in, policy);

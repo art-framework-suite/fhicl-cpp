@@ -37,7 +37,8 @@ assert_cmp(bool exp, std::string const op)
 }
 
 int
-main() try {
+main()
+try {
   // Walter's old templates did not specialize for char, therefore
   // is_int<char> and is_uint<char> were both false.
   char x = -1;

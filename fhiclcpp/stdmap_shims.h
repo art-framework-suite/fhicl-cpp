@@ -63,17 +63,20 @@ namespace shims {
         _iters.listmap_iter = it;
       }
 
-      TT& operator*() noexcept
+      TT&
+      operator*() noexcept
       {
         return isSnippetMode() ? *_iters.listmap_iter : *_iters.mapmap_iter;
       }
 
-      TT* operator->() noexcept
+      TT*
+      operator->() noexcept
       {
         return isSnippetMode() ? &*_iters.listmap_iter : &*_iters.mapmap_iter;
       }
 
-      TT const* operator->() const noexcept
+      TT const*
+      operator->() const noexcept
       {
         return isSnippetMode() ? &*_iters.listmap_iter : &*_iters.mapmap_iter;
       }
@@ -100,15 +103,15 @@ namespace shims {
       }
 
       template <typename II>
-      std::enable_if_t<std::is_same_v<typename mapmap_t::iterator, II>, II> get(
-        II)
+      std::enable_if_t<std::is_same_v<typename mapmap_t::iterator, II>, II>
+      get(II)
       {
         return _iters.mapmap_iter;
       }
 
       template <typename II>
       std::enable_if_t<std::is_same_v<typename listmap_t::iterator, II>, II>
-        get(II)
+      get(II)
       {
         return _iters.listmap_iter;
       }
@@ -141,7 +144,8 @@ namespace shims {
       listmap_t listmap;
     };
 
-    T& operator[](Key const& key)
+    T&
+    operator[](Key const& key)
     {
       if (isSnippetMode()) {
         for (auto& [stored_key, value] : _maps.listmap) {

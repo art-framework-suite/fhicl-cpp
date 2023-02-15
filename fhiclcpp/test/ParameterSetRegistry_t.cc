@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(AddFromIterAndGet)
   string const f{"filler"};
   for (auto p : v1) {
     p.put("f", f);
-    v2.emplace_back(p.id(), move(p));
+    v2.emplace_back(p.id(), std::move(p));
   }
   expected_size += 3;
   ParameterSetRegistry::put(v1.cbegin(), v1.cend());
