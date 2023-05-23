@@ -247,8 +247,8 @@ fcldir	-
 #
 ####################################
 product		version		qual	flags		<table_format=2>
-cetlib		v3_17_00	-
-cetmodules	v3_21_00	-	only_for_build
+cetlib		v3_17_01	-
+cetmodules	v3_21_02	-	only_for_build
 end_product_list
 ####################################
 
@@ -314,6 +314,8 @@ e26:debug	e26:debug
 e26:prof	e26:prof
 e27:debug	e27:debug
 e27:prof	e27:prof
+e28:debug	e28:debug
+e28:prof	e28:prof
 end_qualifier_list
 ####################################
 
