@@ -35,7 +35,8 @@
   * No use of templates.
 * [x] `detail/printing_helpers.h`
   * No use of templates.
-* [ ] `detail/try_blocks.h`
+* [x] `detail/try_blocks.h`
+  * Concepts not necessary.
 * [x] `exception.h`
   * No use of templates.
 * [x] `extended_value.h`
