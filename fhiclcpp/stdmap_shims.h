@@ -2,6 +2,7 @@
 #define fhiclcpp_stdmap_shims_h
 
 #include <algorithm>
+#include <concepts>
 #include <iostream>
 #include <iterator>
 #include <list>
@@ -117,20 +118,16 @@ namespace shims {
       }
 
       template <typename IIL, typename IIR>
-      friend std::enable_if_t<
-        !std::is_same_v<IIL, IIR> &&
-          std::is_same_v<std::remove_const_t<typename IIL::type>,
-                         std::remove_const_t<typename IIR::type>>,
-        bool>
-      operator==(IIL, IIR) noexcept;
+        requires(!std::same_as<IIL, IIR>) &&
+                std::same_as<std::remove_const_t<typename IIL::type>,
+                             std::remove_const_t<typename IIR::type>>
+      friend bool operator==(IIL, IIR) noexcept;
 
       template <typename IIL, typename IIR>
-      friend std::enable_if_t<
-        !std::is_same_v<IIL, IIR> &&
-          std::is_same_v<std::remove_const_t<typename IIL::type>,
-                         std::remove_const_t<typename IIR::type>>,
-        bool>
-      operator!=(IIL, IIR) noexcept;
+        requires(!std::same_as<IIL, IIR>) &&
+                std::same_as<std::remove_const_t<typename IIL::type>,
+                             std::remove_const_t<typename IIR::type>>
+      friend bool operator!=(IIL, IIR) noexcept;
 
     private:
       iterator_tuple _iters;
@@ -330,10 +327,9 @@ namespace shims {
     maps_tuple _maps;
   };
   template <typename IIL, typename IIR>
-  std::enable_if_t<!std::is_same_v<IIL, IIR> &&
-                     std::is_same_v<std::remove_const_t<typename IIL::type>,
-                                    std::remove_const_t<typename IIR::type>>,
-                   bool>
+    requires(!std::same_as<IIL, IIR>) &&
+            std::same_as<std::remove_const_t<typename IIL::type>,
+                         std::remove_const_t<typename IIR::type>> bool
   operator==(IIL left, IIR right) noexcept
   {
     return isSnippetMode() ?
@@ -342,10 +338,9 @@ namespace shims {
   }
 
   template <typename IIL, typename IIR>
-  std::enable_if_t<!std::is_same_v<IIL, IIR> &&
-                     std::is_same_v<std::remove_const_t<typename IIL::type>,
-                                    std::remove_const_t<typename IIR::type>>,
-                   bool>
+    requires(!std::same_as<IIL, IIR>) &&
+            std::same_as<std::remove_const_t<typename IIL::type>,
+                         std::remove_const_t<typename IIR::type>> bool
   operator!=(IIL left, IIR right) noexcept
   {
     return !operator==(left, right);

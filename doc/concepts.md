@@ -53,7 +53,8 @@
   * No use of templates.
 * [ ] `stdmap_shims.h`
 * [ ] `tokens.h`
-* [ ] `type_traits.h`
+* [x] `type_traits.h`
+  * Concepts not necessary.
 * [ ] `types/AllowedConfigurationMacro.h`
 * [ ] `types/Atom.h`
 * [x] `types/Comment.h`
