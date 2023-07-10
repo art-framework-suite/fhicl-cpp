@@ -51,7 +51,7 @@
 * [ ] `parse_shims.h`
 * [x] `parse_shims_opts.h`
   * No use of templates.
-* [ ] `stdmap_shims.h`
+* [x] `stdmap_shims.h`
 * [ ] `tokens.h`
 * [x] `type_traits.h`
   * Concepts not necessary.
