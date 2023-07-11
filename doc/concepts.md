@@ -48,7 +48,8 @@
   * No use of templates.
 * [x] `parse.h`
   * No use of templates.
-* [ ] `parse_shims.h`
+* [x] `parse_shims.h`
+  * Concepts not necessary.
 * [x] `parse_shims_opts.h`
   * No use of templates.
 * [x] `stdmap_shims.h`
