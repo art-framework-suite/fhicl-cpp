@@ -147,6 +147,7 @@ cet_test(fhicl-get-test USE_BOOST_UNIT
   LIBRARIES PRIVATE fhiclcpp::tools
   DATAFILES fhicl-get-t.fcl)
 
-cet_test(bad_map_shim COMPILE_ONLY LIBRARIES PRIVATE fhiclcpp::fhiclcpp TEST_PROPERTIES WILL_FAIL true PASS_REGULAR_EXPRESSION
-  "same_as<IIL, IIR>")
-  # "the expression ‘!\\(same_as<IIL, IIR>\\).* evaluated to ‘false’")
+cet_test(bad_map_shim COMPILE_ONLY LIBRARIES PRIVATE fhiclcpp::fhiclcpp
+  TEST_PROPERTIES
+  PASS_REGULAR_EXPRESSION
+  "the expression ‘!\\(same_as<IIL, IIR>\\).*’ evaluated to ‘false’")
