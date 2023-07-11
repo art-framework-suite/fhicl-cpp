@@ -52,13 +52,18 @@
 #include "fhiclcpp/exception.h"
 #include "fhiclcpp/extended_value.h"
 #include "fhiclcpp/fwd.h"
-#include "fhiclcpp/type_traits.h"
+// #include "fhiclcpp/type_traits.h"
 
 #include <any>
 #include <complex>
 #include <string>
 #include <type_traits>
 #include <vector>
+
+namespace fhicl::detail {
+  template <typename T>
+  concept numeric = std::is_arithmetic_v<T>;
+}
 
 // ----------------------------------------------------------------------
 
@@ -92,8 +97,8 @@ public:
   bool put(std::string const& name,
            std::vector<T> const& value, // Sequence.
            bool in_prolog = false);
-  template <typename T>
-  std::enable_if_t<tt::is_numeric<T>::value, bool> put(std::string const& name,
+  template <detail::numeric T>
+  bool put(std::string const& name,
                                                        T value, // Number
                                                        bool in_prolog = false);
 
@@ -153,14 +158,13 @@ private:
 namespace fhicl::detail {
 
   // Template declaration (no general definition).
-  template <typename T, typename Enable = void>
+  template <typename T>/* , typename Enable = void> */
   class it_value_get;
 
   // Partial specialization for value types.
   template <typename T>
-  class it_value_get<T,
-                     typename tt::disable_if<std::is_reference_v<T> ||
-                                             std::is_pointer_v<T>>::type> {
+  requires (!(std::is_reference_v<T> || std::is_pointer_v<T>))
+  class it_value_get<T> {
   public:
     T
     operator()(intermediate_table& table, std::string const& key)
@@ -173,10 +177,7 @@ namespace fhicl::detail {
 
   // Partial specialization for std::complex<U>.
   template <typename U>
-  class it_value_get<
-    std::complex<U>,
-    typename tt::disable_if<std::is_reference_v<std::complex<U>> ||
-                            std::is_pointer_v<std::complex<U>>>::type> {
+  class it_value_get<std::complex<U>> {
   public:
     std::complex<U>
     operator()(intermediate_table& table, std::string const& key)
@@ -332,8 +333,8 @@ fhicl::intermediate_table::put(std::string const& key,
   return result;
 }
 
-template <typename T>
-inline typename std::enable_if<tt::is_numeric<T>::value, bool>::type
+template <fhicl::detail::numeric T>
+inline bool
 fhicl::intermediate_table::put(std::string const& key,
                                T const value, // Number
                                bool const in_prolog)
