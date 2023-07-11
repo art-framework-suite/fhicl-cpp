@@ -27,7 +27,6 @@
 #include "fhiclcpp/extended_value.h"
 #include "fhiclcpp/fwd.h"
 #include "fhiclcpp/parse.h"
-#include "fhiclcpp/type_traits.h"
 
 #include <any>
 #include <array>
@@ -39,6 +38,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <concepts>
 
 namespace fhicl::detail {
   using ps_atom_t = std::string;
@@ -67,22 +67,23 @@ namespace fhicl::detail {
   ps_atom_t encode(bool);                     // bool
   ParameterSetID encode(ParameterSet const&); // table
   ps_atom_t encode(std::uintmax_t);           // unsigned
-  template <class T>
-  std::enable_if_t<tt::is_uint<T>::value, ps_atom_t> encode(
+  template <std::unsigned_integral T>
+  ps_atom_t encode(
     T const&);                     // unsigned
   ps_atom_t encode(std::intmax_t); // signed
-  template <class T>
-  std::enable_if_t<tt::is_int<T>::value, ps_atom_t> encode(T const&); // signed
+  template <std::signed_integral T>
+  ps_atom_t encode(T const&); // signed
   ps_atom_t encode(ldbl); // floating-point
-  template <class T>
-  std::enable_if_t<std::is_floating_point_v<T>, ps_atom_t> encode(
+  template <std::floating_point T>
+  ps_atom_t encode(
     T const&); // floating-point
   template <class T>
   ps_atom_t encode(std::complex<T> const&); // complex
   template <class T>
   ps_sequence_t encode(std::vector<T> const&); // sequence
   template <class T>
-  tt::disable_if_t<tt::is_numeric<T>::value, std::string> encode(
+  requires (!std::is_arithmetic_v<T>)
+  std::string encode(
     T const&); // none of the above
 
   // ----------------------------------------------------------------------
@@ -93,21 +94,18 @@ namespace fhicl::detail {
   void decode(std::any const&, ParameterSet&);   // table
   void decode(std::any const&, std::uintmax_t&); // unsigned
 
-  template <class T>
-  std::enable_if_t<tt::is_uint<T>::value> decode(std::any const&,
-                                                 T&); // unsigned
+  template <std::unsigned_integral T>
+  void decode(std::any const&, T&); // unsigned
 
   void decode(std::any const&, std::intmax_t&); // signed
 
-  template <class T>
-  std::enable_if_t<tt::is_int<T>::value> decode(std::any const&,
-                                                T&); // signed
+  template <std::signed_integral T>
+  void decode(std::any const&, T&); // signed
 
   void decode(std::any const&, ldbl&); // floating-point
 
-  template <class T>
-  std::enable_if_t<std::is_floating_point_v<T>> decode(std::any const&,
-                                                       T&); // floating-point
+  template <std::floating_point T>
+  void decode(std::any const&, T&); // floating-point
 
   void decode(std::any const&, std::complex<ldbl>&); // complex
 
@@ -152,29 +150,32 @@ namespace fhicl::detail {
   };
 
   template <class T>
-  tt::disable_if_t<tt::is_numeric<T>::value> decode(std::any const&,
-                                                    T&); // none of the above
+  requires (!std::is_arithmetic_v<T>)
+  void decode(std::any const&, T&); // none of the above
 
 } // fhicl::detail
 
 // ======================================================================
 
-template <class T> // unsigned
-std::enable_if_t<tt::is_uint<T>::value, fhicl::detail::ps_atom_t>
+template <std::unsigned_integral T> // unsigned
+// requires std::unsigned_integral<T>
+fhicl::detail::ps_atom_t
 fhicl::detail::encode(T const& value)
 {
   return encode(uintmax_t(value));
 }
 
-template <class T> // signed
-std::enable_if_t<tt::is_int<T>::value, fhicl::detail::ps_atom_t>
+template <std::signed_integral T> // signed
+// requires std::signed_integral<T>
+fhicl::detail::ps_atom_t
 fhicl::detail::encode(T const& value)
 {
   return encode(intmax_t(value));
 }
 
-template <class T> // floating-point
-std::enable_if_t<std::is_floating_point_v<T>, fhicl::detail::ps_atom_t>
+template <std::floating_point T> // floating-point
+// requires std::floating_point<T>
+fhicl::detail::ps_atom_t
 fhicl::detail::encode(T const& value)
 {
   return encode(ldbl(value));
@@ -199,7 +200,7 @@ fhicl::detail::encode(std::vector<T> const& value)
 }
 
 template <class T> // none of the above
-tt::disable_if_t<tt::is_numeric<T>::value, std::string>
+requires (!std::is_arithmetic_v<T>) std::string
 fhicl::detail::encode(T const& value)
 {
   return boost::lexical_cast<std::string>(value);
@@ -209,9 +210,8 @@ fhicl::detail::encode(T const& value)
 
 //===================================================================
 // unsigned
-template <class T>
-std::enable_if_t<tt::is_uint<T>::value>
-fhicl::detail::decode(std::any const& a, T& result)
+template <std::unsigned_integral T>
+void fhicl::detail::decode(std::any const& a, T& result)
 {
   std::uintmax_t via;
   decode(a, via);
@@ -220,9 +220,8 @@ fhicl::detail::decode(std::any const& a, T& result)
 
 //====================================================================
 // signed
-template <class T>
-std::enable_if_t<tt::is_int<T>::value>
-fhicl::detail::decode(std::any const& a, T& result)
+template <std::signed_integral T>
+void fhicl::detail::decode(std::any const& a, T& result)
 {
   std::intmax_t via;
   decode(a, via);
@@ -231,9 +230,8 @@ fhicl::detail::decode(std::any const& a, T& result)
 
 //====================================================================
 // floating-point
-template <class T>
-std::enable_if_t<std::is_floating_point_v<T>>
-fhicl::detail::decode(std::any const& a, T& result)
+template <std::floating_point T>
+void fhicl::detail::decode(std::any const& a, T& result)
 {
   ldbl via;
   decode(a, via);
@@ -347,8 +345,8 @@ fhicl::detail::decode_tuple(std::any const& a, U& result)
 
 //====================================================================
 template <class T> // none of the above
-tt::disable_if_t<tt::is_numeric<T>::value>
-fhicl::detail::decode(std::any const& a, T& result)
+requires (!std::is_arithmetic_v<T>)
+void fhicl::detail::decode(std::any const& a, T& result)
 {
   result = std::any_cast<T>(a);
 }

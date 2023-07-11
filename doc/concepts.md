@@ -12,7 +12,7 @@
   * No use of templates.
 * [x] `Protection.h`
   * No use of templates.
-* [ ] `coding.h`
+* [x] `coding.h`
 * [x] `detail/Indentation.h`
   * No use of templates.
 * [x] `detail/KeyAssembler.h`
