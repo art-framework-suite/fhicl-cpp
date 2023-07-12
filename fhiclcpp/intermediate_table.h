@@ -99,8 +99,8 @@ public:
            bool in_prolog = false);
   template <detail::numeric T>
   bool put(std::string const& name,
-                                                       T value, // Number
-                                                       bool in_prolog = false);
+           T value, // Number
+           bool in_prolog = false);
 
   bool putEmptySequence(std::string const& name,
                         bool in_prolog = false); // Empty Sequence.
@@ -158,12 +158,12 @@ private:
 namespace fhicl::detail {
 
   // Template declaration (no general definition).
-  template <typename T>/* , typename Enable = void> */
+  template <typename T> /* , typename Enable = void> */
   class it_value_get;
 
   // Partial specialization for value types.
   template <typename T>
-  requires (!(std::is_reference_v<T> || std::is_pointer_v<T>))
+    requires(!(std::is_reference_v<T> || std::is_pointer_v<T>))
   class it_value_get<T> {
   public:
     T
