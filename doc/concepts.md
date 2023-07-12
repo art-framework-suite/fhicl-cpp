@@ -4,10 +4,11 @@
 
 * [x] `DatabaseSupport.h`
   * No use of templates.
-* [ ] `ParameterSet.h`
+* [x] `ParameterSet.h`
+  * Concepts not necessary.
 * [x] `ParameterSetID.h`
   * No use of templates.
-* [ ] `ParameterSetRegistry.h`
+* [x] `ParameterSetRegistry.h`
 * [x] `ParameterSetWalker.h`
   * No use of templates.
 * [x] `Protection.h`
@@ -43,7 +44,7 @@
   * No use of templates.
 * [x] `fwd.h`
   * No use of templates.
-* [ ] `intermediate_table.h`
+* [x] `intermediate_table.h`
 * [x] `make_ParameterSet.h`
   * No use of templates.
 * [x] `parse.h`
@@ -53,7 +54,8 @@
 * [x] `parse_shims_opts.h`
   * No use of templates.
 * [x] `stdmap_shims.h`
-* [ ] `tokens.h`
+* [x] `tokens.h`
+  * Concepts not necessary.
 * [x] `type_traits.h`
   * Concepts not necessary.
 * [ ] `types/AllowedConfigurationMacro.h`

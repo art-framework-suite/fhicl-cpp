@@ -68,17 +68,15 @@ public:
   static ParameterSetID const& put(ParameterSet const& ps);
   // 2. A range of iterator to ParameterSet.
   template <class FwdIt>
-  static std::enable_if_t<
-    std::is_same_v<typename std::iterator_traits<FwdIt>::value_type,
-                   mapped_type>>
-  put(FwdIt begin, FwdIt end);
+    requires std::same_as<typename std::iterator_traits<FwdIt>::value_type,
+                          mapped_type>
+  static void put(FwdIt begin, FwdIt end);
   // 3. A range of iterator to pair<ParameterSetID, ParameterSet>. For
   // each pair, first == second.id() is a prerequisite.
   template <class FwdIt>
-  static std::enable_if_t<
-    std::is_same_v<typename std::iterator_traits<FwdIt>::value_type,
-                   value_type>>
-  put(FwdIt begin, FwdIt end);
+    requires std::same_as<typename std::iterator_traits<FwdIt>::value_type,
+                          value_type>
+  static void put(FwdIt begin, FwdIt end);
   // 4. A collection_type. For each value_type, first == second.id() is
   // a prerequisite.
   static void put(collection_type const& c);
@@ -125,9 +123,10 @@ fhicl::ParameterSetRegistry::put(ParameterSet const& ps)
 
 // 2.
 template <class FwdIt>
+  requires std::same_as<typename std::iterator_traits<FwdIt>::value_type,
+                        fhicl::ParameterSetRegistry::mapped_type>
 inline auto
-fhicl::ParameterSetRegistry::put(FwdIt b, FwdIt const e) -> std::enable_if_t<
-  std::is_same_v<typename std::iterator_traits<FwdIt>::value_type, mapped_type>>
+fhicl::ParameterSetRegistry::put(FwdIt b, FwdIt const e) -> void
 {
   // No lock here -- it will be acquired by 3.
   for (; b != e; ++b) {
@@ -137,11 +136,10 @@ fhicl::ParameterSetRegistry::put(FwdIt b, FwdIt const e) -> std::enable_if_t<
 
 // 3.
 template <class FwdIt>
+  requires std::same_as<typename std::iterator_traits<FwdIt>::value_type,
+                        fhicl::ParameterSetRegistry::value_type>
 inline auto
-fhicl::ParameterSetRegistry::put(FwdIt const b, FwdIt const e)
-  -> std::enable_if_t<
-    std::is_same_v<typename std::iterator_traits<FwdIt>::value_type,
-                   value_type>>
+fhicl::ParameterSetRegistry::put(FwdIt const b, FwdIt const e) -> void
 {
   std::lock_guard sentry{mutex_};
   instance_().registry_.insert(b, e);
