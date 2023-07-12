@@ -70,7 +70,7 @@
   * Concepts not necessary.
 * [x] `types/DelegatedParameter.h`
   * Concepts not necessary.
-* [ ] `types/KeysToIgnore.h`
+* [x] `types/KeysToIgnore.h`
 * [x] `types/MaybeUseFunction.h`
   * No use of templates.
 * [x] `types/Name.h`

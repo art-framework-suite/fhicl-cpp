@@ -26,6 +26,8 @@ namespace fhicl {
     template <typename T>
     concept non_numeric = !
     numeric<T>;
+    template <typename... T>
+    concept invocable_pack = (std::invocable<T> && ...);
   }
 
   template <typename T>
