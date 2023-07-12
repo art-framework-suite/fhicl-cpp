@@ -58,13 +58,18 @@
   * Concepts not necessary.
 * [x] `type_traits.h`
   * Concepts not necessary.
-* [ ] `types/AllowedConfigurationMacro.h`
-* [ ] `types/Atom.h`
+* [x] `types/AllowedConfigurationMacro.h`
+  * Concepts not necessary.
+* [x] `types/Atom.h`
+  * Concepts not necessary.
 * [x] `types/Comment.h`
   * No use of templates.
-* [ ] `types/ConfigPredicate.h`
-* [ ] `types/ConfigurationTable.h`
-* [ ] `types/DelegatedParameter.h`
+* [x] `types/ConfigPredicate.h`
+  * Concepts not necessary.
+* [x] `types/ConfigurationTable.h`
+  * Concepts not necessary.
+* [x] `types/DelegatedParameter.h`
+  * Concepts not necessary.
 * [ ] `types/KeysToIgnore.h`
 * [x] `types/MaybeUseFunction.h`
   * No use of templates.
