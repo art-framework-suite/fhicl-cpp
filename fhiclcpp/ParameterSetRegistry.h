@@ -12,6 +12,7 @@
 #include "fhiclcpp/exception.h"
 #include "fhiclcpp/fwd.h"
 
+#include <concepts>
 #include <mutex>
 #include <unordered_map>
 
@@ -26,6 +27,10 @@ namespace fhicl {
     class HashParameterSetID;
     void throwOnSQLiteFailure(int rc, char* msg = nullptr);
     void throwOnSQLiteFailure(sqlite3* db, char* msg = nullptr);
+
+    template <typename FwdIt, typename ValueType>
+    concept referent_matches =
+      std::same_as<typename std::iterator_traits<FwdIt>::value_type, ValueType>;
   }
 }
 
@@ -67,15 +72,11 @@ public:
   // 1. A single ParameterSet.
   static ParameterSetID const& put(ParameterSet const& ps);
   // 2. A range of iterator to ParameterSet.
-  template <class FwdIt>
-    requires std::same_as<typename std::iterator_traits<FwdIt>::value_type,
-                          mapped_type>
+  template <detail::referent_matches<mapped_type> FwdIt>
   static void put(FwdIt begin, FwdIt end);
   // 3. A range of iterator to pair<ParameterSetID, ParameterSet>. For
   // each pair, first == second.id() is a prerequisite.
-  template <class FwdIt>
-    requires std::same_as<typename std::iterator_traits<FwdIt>::value_type,
-                          value_type>
+  template <detail::referent_matches<value_type> FwdIt>
   static void put(FwdIt begin, FwdIt end);
   // 4. A collection_type. For each value_type, first == second.id() is
   // a prerequisite.
@@ -122,9 +123,8 @@ fhicl::ParameterSetRegistry::put(ParameterSet const& ps)
 }
 
 // 2.
-template <class FwdIt>
-  requires std::same_as<typename std::iterator_traits<FwdIt>::value_type,
-                        fhicl::ParameterSetRegistry::mapped_type>
+template <fhicl::detail::referent_matches<
+  fhicl::ParameterSetRegistry::mapped_type> FwdIt>
 inline auto
 fhicl::ParameterSetRegistry::put(FwdIt b, FwdIt const e) -> void
 {
@@ -135,9 +135,8 @@ fhicl::ParameterSetRegistry::put(FwdIt b, FwdIt const e) -> void
 }
 
 // 3.
-template <class FwdIt>
-  requires std::same_as<typename std::iterator_traits<FwdIt>::value_type,
-                        fhicl::ParameterSetRegistry::value_type>
+template <fhicl::detail::referent_matches<
+  fhicl::ParameterSetRegistry::value_type> FwdIt>
 inline auto
 fhicl::ParameterSetRegistry::put(FwdIt const b, FwdIt const e) -> void
 {
