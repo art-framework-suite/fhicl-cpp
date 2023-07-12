@@ -52,18 +52,13 @@
 #include "fhiclcpp/exception.h"
 #include "fhiclcpp/extended_value.h"
 #include "fhiclcpp/fwd.h"
-// #include "fhiclcpp/type_traits.h"
+#include "fhiclcpp/type_traits.h"
 
 #include <any>
 #include <complex>
 #include <string>
 #include <type_traits>
 #include <vector>
-
-namespace fhicl::detail {
-  template <typename T>
-  concept numeric = std::is_arithmetic_v<T>;
-}
 
 // ----------------------------------------------------------------------
 

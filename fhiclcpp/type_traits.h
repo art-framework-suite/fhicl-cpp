@@ -20,6 +20,10 @@
 // ======================================================================
 
 namespace fhicl {
+  namespace detail {
+    template <typename T>
+    concept numeric = std::is_arithmetic_v<T>;
+  }
 
   template <typename T>
   class Atom;
