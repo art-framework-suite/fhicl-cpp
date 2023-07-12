@@ -27,6 +27,7 @@
 #include "fhiclcpp/extended_value.h"
 #include "fhiclcpp/fwd.h"
 #include "fhiclcpp/parse.h"
+#include "fhiclcpp/type_traits.h"
 
 #include <any>
 #include <array>
@@ -196,9 +197,9 @@ fhicl::detail::encode(std::vector<T> const& value)
   return result;
 }
 
-template <class T> // none of the above
-  requires(!std::is_arithmetic_v<T>)
-std::string fhicl::detail::encode(T const& value)
+template <fhicl::detail::non_numeric T> // none of the above
+std::string
+fhicl::detail::encode(T const& value)
 {
   return boost::lexical_cast<std::string>(value);
 }

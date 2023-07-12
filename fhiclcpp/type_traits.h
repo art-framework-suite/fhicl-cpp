@@ -23,6 +23,9 @@ namespace fhicl {
   namespace detail {
     template <typename T>
     concept numeric = std::is_arithmetic_v<T>;
+    template <typename T>
+    concept non_numeric = !
+    numeric<T>;
   }
 
   template <typename T>
