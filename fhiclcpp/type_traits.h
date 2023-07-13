@@ -28,24 +28,22 @@ namespace fhicl {
     template <typename T>
     concept non_numeric = !
     numeric<T>;
-
-    template <typename T>
-    concept string_set = std::same_as<T, std::set<std::string>>;
-
-    template <typename T>
-    concept string_set_invocable = requires(T t) {
-                                     {
-                                       std::invoke(std::forward<T>(t))
-                                       } -> string_set;
-                                   };
   }
+
+  template <typename T>
+  concept keys_to_ignore_provider =
+    requires(T t) {
+      {
+        std::invoke(std::forward<T>(t))
+        } -> std::same_as<std::set<std::string>>;
+    };
 
   template <typename T>
   class Atom;
   template <typename T>
   class OptionalAtom;
 
-  template <typename T, typename... KeysToIgnore>
+  template <typename T, keys_to_ignore_provider... KeysToIgnore>
   class Table;
   template <typename T>
   class OptionalTable;
@@ -152,7 +150,7 @@ namespace tt {
   template <typename T>
   struct is_table : std::false_type {};
 
-  template <typename T, typename... KeysToIgnore>
+  template <typename T, fhicl::keys_to_ignore_provider... KeysToIgnore>
   struct is_table<fhicl::Table<T, KeysToIgnore...>> : std::true_type {};
 
   template <typename T>
@@ -222,7 +220,7 @@ namespace tt {
   struct is_fhicl_type : std::false_type {};
 
   // ... Table
-  template <typename T, typename... KeysToIgnore>
+  template <typename T, fhicl::keys_to_ignore_provider... KeysToIgnore>
   struct is_fhicl_type<fhicl::Table<T, KeysToIgnore...>> : std::true_type {};
 
   template <typename T>
@@ -279,7 +277,7 @@ namespace tt {
     using type = fhicl::Sequence<T, SZ>;
   };
 
-  template <typename T, typename... KeysToIgnore>
+  template <typename T, fhicl::keys_to_ignore_provider... KeysToIgnore>
   struct fhicl_type_impl<fhicl::Table<T, KeysToIgnore...>> {
     using type = fhicl::Table<T, KeysToIgnore...>;
   };
@@ -351,7 +349,7 @@ namespace tt {
     using value_type = typename fhicl::Sequence<T, SZ>::value_type;
   };
 
-  template <typename S, typename... KeysToIgnore>
+  template <typename S, fhicl::keys_to_ignore_provider... KeysToIgnore>
   struct return_type_impl<fhicl::Table<S, KeysToIgnore...>> {
     using value_type = typename fhicl::Table<S, KeysToIgnore...>::value_type;
   };

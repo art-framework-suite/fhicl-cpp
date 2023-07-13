@@ -26,7 +26,7 @@ namespace fhicl {
     get_parameter_base() const = 0;
   };
 
-  template <typename T, typename KeysToIgnore = void>
+  template <typename T, keys_to_ignore_provider... KeysToIgnore>
   class WrappedTable : public ConfigurationTable {
   public:
     WrappedTable(fhicl::Name&& name) : table_{std::move(name)} {}
@@ -43,7 +43,7 @@ namespace fhicl {
     }
 
   private:
-    fhicl::Table<T, KeysToIgnore> table_;
+    fhicl::Table<T, KeysToIgnore...> table_;
     cet::exempt_ptr<fhicl::detail::ParameterBase const>
     get_parameter_base() const override
     {

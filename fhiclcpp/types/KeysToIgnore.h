@@ -26,7 +26,7 @@ namespace fhicl {
 
   } // detail
 
-  template <detail::string_set_invocable... T>
+  template <keys_to_ignore_provider... T>
   struct KeysToIgnore {
     std::set<std::string>
     operator()()
