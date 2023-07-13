@@ -77,7 +77,8 @@
   * No use of templates.
 * [x] `types/OptionalAtom.h`
   * No use of templates.
-* [ ] `types/OptionalDelegatedParameter.h`
+* [x] `types/OptionalDelegatedParameter.h`
+  * No use of templates.
 * [ ] `types/OptionalSequence.h`
 * [ ] `types/OptionalTable.h`
 * [ ] `types/OptionalTableAs.h`
