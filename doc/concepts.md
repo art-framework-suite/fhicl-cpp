@@ -75,7 +75,8 @@
   * No use of templates.
 * [x] `types/Name.h`
   * No use of templates.
-* [ ] `types/OptionalAtom.h`
+* [x] `types/OptionalAtom.h`
+  * No use of templates.
 * [ ] `types/OptionalDelegatedParameter.h`
 * [ ] `types/OptionalSequence.h`
 * [ ] `types/OptionalTable.h`
@@ -83,7 +84,7 @@
 * [ ] `types/OptionalTuple.h`
 * [ ] `types/OptionalTupleAs.h`
 * [ ] `types/Sequence.h`
-* [x] `types/Table.h`
+* [ ] `types/Table.h`
 * [ ] `types/TableAs.h`
 * [ ] `types/TableFragment.h`
 * [ ] `types/Tuple.h`
