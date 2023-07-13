@@ -5,6 +5,7 @@
 #include "fhiclcpp/type_traits.h"
 #include "fhiclcpp/types/Comment.h"
 #include "fhiclcpp/types/ConfigPredicate.h"
+#include "fhiclcpp/types/KeysToIgnore.h"
 #include "fhiclcpp/types/MaybeUseFunction.h"
 #include "fhiclcpp/types/Name.h"
 #include "fhiclcpp/types/detail/NameStackRegistry.h"
@@ -24,7 +25,7 @@
 namespace fhicl {
 
   //========================================================
-  template <typename T, typename KeysToIgnore = void>
+  template <typename T, typename K = void>
   class Table final : public detail::TableBase,
                       private detail::RegisterIfTableMember {
   public:
@@ -46,16 +47,6 @@ namespace fhicl {
                    MaybeUseFunction maybeUse,
                    TCARGS&&... tcargs);
 
-    // Choose this c'tor if user specifies the second 'KeysToIgnore' template
-    // argument.
-    template <typename K = KeysToIgnore,
-              typename = std::enable_if_t<tt::is_callable<K>::value>>
-    Table(ParameterSet const& pset);
-
-    // If user does not specify the second 'KeysToIgnore' template argument,
-    // then choose this c'tor.
-    template <typename K = KeysToIgnore,
-              typename = std::enable_if_t<!tt::is_callable<K>::value>>
     Table(ParameterSet const& pset,
           std::set<std::string> const& keysToIgnore = {});
 
@@ -79,25 +70,20 @@ namespace fhicl {
 
   private:
     std::shared_ptr<T> value_{std::make_shared<T>()};
-
-    struct Impl {};
-    Table(ParameterSet const&, std::set<std::string> const&, Impl);
   };
 
   //=====================================================
   // Implementation
 
-  template <typename T, typename KeysToIgnore>
+  template <typename T, typename K>
   template <typename... TCARGS>
-  Table<T, KeysToIgnore>::Table(Name&& name, TCARGS&&... tcargs)
+  Table<T, K>::Table(Name&& name, TCARGS&&... tcargs)
     : Table{std::move(name), Comment(""), std::forward<TCARGS>(tcargs)...}
   {}
 
-  template <typename T, typename KeysToIgnore>
+  template <typename T, typename K>
   template <typename... TCARGS>
-  Table<T, KeysToIgnore>::Table(Name&& name,
-                                Comment&& comment,
-                                TCARGS&&... tcargs)
+  Table<T, K>::Table(Name&& name, Comment&& comment, TCARGS&&... tcargs)
     : TableBase{std::move(name),
                 std::move(comment),
                 par_style::REQUIRED,
@@ -110,12 +96,12 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T, typename KeysToIgnore>
+  template <typename T, typename K>
   template <typename... TCARGS>
-  Table<T, KeysToIgnore>::Table(Name&& name,
-                                Comment&& comment,
-                                MaybeUseFunction maybeUse,
-                                TCARGS&&... tcargs)
+  Table<T, K>::Table(Name&& name,
+                     Comment&& comment,
+                     MaybeUseFunction maybeUse,
+                     TCARGS&&... tcargs)
     : TableBase{std::move(name),
                 std::move(comment),
                 par_style::REQUIRED_CONDITIONAL,
@@ -128,23 +114,9 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T, typename KeysToIgnore>
-  template <typename, typename>
-  Table<T, KeysToIgnore>::Table(ParameterSet const& pset)
-    : Table{pset, KeysToIgnore{}(), Impl{}}
-  {}
-
-  template <typename T, typename KeysToIgnore>
-  template <typename, typename>
-  Table<T, KeysToIgnore>::Table(ParameterSet const& pset,
-                                std::set<std::string> const& keysToIgnore)
-    : Table{pset, keysToIgnore, Impl{}}
-  {}
-
-  template <typename T, typename KeysToIgnore>
-  Table<T, KeysToIgnore>::Table(ParameterSet const& pset,
-                                std::set<std::string> const& keysToIgnore,
-                                Impl)
+  template <typename T, typename K>
+  Table<T, K>::Table(ParameterSet const& pset,
+                     std::set<std::string> const& keysToIgnore)
     : TableBase{Name("<top_level>"),
                 Comment(""),
                 par_style::REQUIRED,
@@ -152,9 +124,13 @@ namespace fhicl {
     , RegisterIfTableMember{this}
   {
     finalize_members();
+    std::set<std::string> result{keysToIgnore};
+    if constexpr (!std::is_void_v<K>) {
+      detail::concatenate_keys(result, K{}());
+    }
     maybe_implicitly_default();
     NameStackRegistry::end_of_ctor();
-    validate(pset, keysToIgnore);
+    validate(pset, result);
   }
 
 }
