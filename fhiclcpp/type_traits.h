@@ -33,8 +33,11 @@ namespace fhicl {
     concept string_set = std::same_as<T, std::set<std::string>>;
 
     template <typename T>
-    concept string_set_invocable =
-      requires (T t) { { std::invoke(std::forward<T>(t)) } -> string_set; };
+    concept string_set_invocable = requires(T t) {
+                                     {
+                                       std::invoke(std::forward<T>(t))
+                                       } -> string_set;
+                                   };
   }
 
   template <typename T>
