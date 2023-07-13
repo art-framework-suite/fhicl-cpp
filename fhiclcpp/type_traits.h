@@ -45,7 +45,7 @@ namespace fhicl {
   template <typename T>
   class OptionalAtom;
 
-  template <typename T, typename KeysToIgnore>
+  template <typename T, typename... KeysToIgnore>
   class Table;
   template <typename T>
   class OptionalTable;
