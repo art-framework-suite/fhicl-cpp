@@ -222,8 +222,8 @@ namespace tt {
   struct is_fhicl_type : std::false_type {};
 
   // ... Table
-  template <typename T, typename KeysToIgnore>
-  struct is_fhicl_type<fhicl::Table<T, KeysToIgnore>> : std::true_type {};
+  template <typename T, typename... KeysToIgnore>
+  struct is_fhicl_type<fhicl::Table<T, KeysToIgnore...>> : std::true_type {};
 
   template <typename T>
   struct is_fhicl_type<fhicl::OptionalTable<T>> : std::true_type {};
@@ -279,9 +279,9 @@ namespace tt {
     using type = fhicl::Sequence<T, SZ>;
   };
 
-  template <typename T, typename KeysToIgnore>
-  struct fhicl_type_impl<fhicl::Table<T, KeysToIgnore>> {
-    using type = fhicl::Table<T, KeysToIgnore>;
+  template <typename T, typename... KeysToIgnore>
+  struct fhicl_type_impl<fhicl::Table<T, KeysToIgnore...>> {
+    using type = fhicl::Table<T, KeysToIgnore...>;
   };
 
   template <typename... ARGS>
@@ -351,9 +351,9 @@ namespace tt {
     using value_type = typename fhicl::Sequence<T, SZ>::value_type;
   };
 
-  template <typename S, typename KeysToIgnore>
-  struct return_type_impl<fhicl::Table<S, KeysToIgnore>> {
-    using value_type = typename fhicl::Table<S, KeysToIgnore>::value_type;
+  template <typename S, typename... KeysToIgnore>
+  struct return_type_impl<fhicl::Table<S, KeysToIgnore...>> {
+    using value_type = typename fhicl::Table<S, KeysToIgnore...>::value_type;
   };
 
   template <typename... ARGS>
