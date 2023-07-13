@@ -70,4 +70,10 @@ BOOST_AUTO_TEST_CASE(template_test_2)
   BOOST_TEST(test == ref, boost::test_tools::per_element{});
 }
 
+BOOST_AUTO_TEST_CASE(null_case)
+{
+  auto const& test = fhicl::KeysToIgnore<>{}();
+  BOOST_TEST(test.empty());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
