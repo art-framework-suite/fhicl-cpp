@@ -152,8 +152,8 @@ namespace tt {
   template <typename T>
   struct is_table : std::false_type {};
 
-  template <typename T, typename KeysToIgnore>
-  struct is_table<fhicl::Table<T, KeysToIgnore>> : std::true_type {};
+  template <typename T, typename... KeysToIgnore>
+  struct is_table<fhicl::Table<T, KeysToIgnore...>> : std::true_type {};
 
   template <typename T>
   inline constexpr bool is_table_v{is_table<T>::value};
