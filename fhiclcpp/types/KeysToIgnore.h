@@ -26,17 +26,16 @@ namespace fhicl {
 
   } // detail
 
-  template <typename H, typename... T>
-  requires std::invocable<H> && detail::invocable_pack<T...>
+  template <detail::string_set_invocable... T>
   struct KeysToIgnore {
     std::set<std::string>
     operator()()
     {
-      std::set<std::string> keys_to_ignore{H{}()};
-      return detail::concatenate_keys(keys_to_ignore,
-                                      T{}()...);
+      std::set<std::string> result;
+      return detail::concatenate_keys(result, T{}()...);
     }
   };
+
 }
 
 #endif /* fhiclcpp_types_KeysToIgnore_h */

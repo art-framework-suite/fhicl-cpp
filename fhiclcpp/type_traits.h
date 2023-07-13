@@ -10,6 +10,7 @@
 
 #include <array>
 #include <complex>
+#include <functional>
 #include <set>
 #include <string>
 #include <tuple>
@@ -23,11 +24,17 @@ namespace fhicl {
   namespace detail {
     template <typename T>
     concept numeric = std::is_arithmetic_v<T>;
+
     template <typename T>
     concept non_numeric = !
     numeric<T>;
-    template <typename... T>
-    concept invocable_pack = (std::invocable<T> && ...);
+
+    template <typename T>
+    concept string_set = std::same_as<T, std::set<std::string>>;
+
+    template <typename T>
+    concept string_set_invocable =
+      requires (T t) { { std::invoke(std::forward<T>(t)) } -> string_set; };
   }
 
   template <typename T>
