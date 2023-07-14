@@ -28,6 +28,7 @@ namespace fhicl {
     template <typename T>
     concept non_numeric = !
     numeric<T>;
+    
   }
 
   template <typename T>
@@ -37,6 +38,7 @@ namespace fhicl {
         std::invoke(std::forward<T>(t))
         } -> std::same_as<std::set<std::string>>;
     };
+ 
 
   template <typename T>
   class Atom;
@@ -50,6 +52,9 @@ namespace fhicl {
 
   template <typename T>
   class TableFragment;
+
+  template <typename T>
+  concept is_table_fragment = std::same_as<T, typename ::fhicl::TableFragment<T>>;
 
   template <typename... ARGS>
   class Tuple;

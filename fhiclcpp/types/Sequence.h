@@ -20,6 +20,9 @@
 #include <variant>
 
 namespace fhicl {
+  namespace detail {
+    
+  }
 
   namespace sequence_detail {
 
@@ -75,7 +78,7 @@ namespace fhicl {
   class Sequence final : public detail::SequenceBase,
                          private detail::RegisterIfTableMember {
   public:
-    static_assert(!tt::is_table_fragment_v<T>, NO_NESTED_TABLE_FRAGMENTS);
+    static_assert(!fhicl::is_table_fragment<T>, NO_NESTED_TABLE_FRAGMENTS);
     static_assert(!tt::is_optional_parameter_v<T>, NO_OPTIONAL_TYPES);
     static_assert(!tt::is_delegated_parameter_v<T>, NO_DELEGATED_PARAMETERS);
 
