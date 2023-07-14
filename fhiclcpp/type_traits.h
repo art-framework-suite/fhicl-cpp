@@ -28,7 +28,7 @@ namespace fhicl {
     template <typename T>
     concept non_numeric = !
     numeric<T>;
-    
+
   }
 
   template <typename T>
@@ -38,7 +38,6 @@ namespace fhicl {
         std::invoke(std::forward<T>(t))
         } -> std::same_as<std::set<std::string>>;
     };
- 
 
   template <typename T>
   class Atom;
@@ -52,9 +51,6 @@ namespace fhicl {
 
   template <typename T>
   class TableFragment;
-
-  template <typename T>
-  concept is_table_fragment = std::same_as<T, typename ::fhicl::TableFragment<T>>;
 
   template <typename... ARGS>
   class Tuple;
@@ -78,6 +74,23 @@ namespace fhicl {
 
   class DelegatedParameter;
   class OptionalDelegatedParameter;
+
+  template <typename T>
+  concept is_table_fragment =
+    std::same_as<T, typename ::fhicl::TableFragment<T>>;
+
+  template <typename T>
+  concept is_optional_parameter =
+    std::is_base_of_v<::fhicl::OptionalTable, T> ||
+    std::is_base_of_v<::fhicl::OptionalAtom, T> ||
+    std::is_base_of_v<::fhicl::OptionalSequence, T> ||
+    std::is_base_of_v<::fhicl::OptionalTuple, T> ||
+    std::is_base_of_v<::fhicl::OptionalTupleAs, T>;
+
+  template <typename T>
+  concept is_delegated_parameter =
+    std::is_base_of_v<::fhicl::DelegatedParameter, T> ||
+    std::is_base_of_v<::fhicl::OptionalDelegatedParameter, T>;
 }
 
 namespace tt {
