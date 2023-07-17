@@ -85,10 +85,11 @@
 * [ ] `types/OptionalTableAs.h`
 * [ ] `types/OptionalTuple.h`
 * [ ] `types/OptionalTupleAs.h`
-* [ ] `types/Sequence.h`
+* [x] `types/Sequence.h`
 * [x] `types/Table.h`
-* [ ] `types/TableAs.h`
-* [ ] `types/TableFragment.h`
+* [x] `types/TableAs.h`
+  * Concepts not necessary.
+* [x] `types/TableFragment.h`
 * [ ] `types/Tuple.h`
 * [ ] `types/TupleAs.h`
 * [x] `types/detail/AtomBase.h`

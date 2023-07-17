@@ -94,6 +94,19 @@ namespace fhicl {
 
   template <typename T>
   concept a_table = std::is_base_of_v<::fhicl::Table, T>;
+
+  template <typename T>
+  concept is_sequence_type =
+    std::is_base_of_v<std::array, T> || std::is_base_of_v<std::tuple, T> ||
+    std::is_base_of_v<std::vector, T>;
+
+  template <typename T>
+  concept is_fhicl_type =
+    is_optional_parameter<T> || std::is_base_of_v<::fhicl::Atom, T> ||
+    std::is_base_of_v<::fhicl::Sequence, T> ||
+    std::is_base_of_v<::fhicl::Tuple, T> ||
+    std::is_base_of_v<::fhicl::TupleAs, T> ||
+    std::is_base_of_v<::fhicl::TableAs, T>;
 }
 
 namespace tt {
