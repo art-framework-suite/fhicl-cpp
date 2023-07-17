@@ -61,15 +61,11 @@ namespace fhicl {
     using value_type = std::tuple<tt::return_type<T>...>;
     using ftype = std::tuple<std::shared_ptr<tt::fhicl_type<T>>...>;
 
-    static_assert(
-      !std::disjunction_v<tt::is_table_fragment<tt::return_type<T>>...>,
-      NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(
-      !std::disjunction_v<tt::is_optional_parameter<tt::return_type<T>>...>,
-      NO_OPTIONAL_TYPES);
-    static_assert(
-      !std::disjunction_v<tt::is_delegated_parameter<tt::return_type<T>>...>,
-      NO_DELEGATED_PARAMETERS);
+    static_assert(!(fhicl::is_table_fragment<T> || ...),
+                  NO_NESTED_TABLE_FRAGMENTS);
+    static_assert(!(fhicl::is_optional_parameter<T> || ...), NO_OPTIONAL_TYPES);
+    static_assert(!(fhicl::is_delegated_parameter<T> || ...),
+                  NO_DELEGATED_PARAMETERS);
 
     explicit Tuple(Name&& name);
     explicit Tuple(Name&& name, Comment&& comment);
