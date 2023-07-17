@@ -91,6 +91,9 @@ namespace fhicl {
   concept is_delegated_parameter =
     std::is_base_of_v<::fhicl::DelegatedParameter, T> ||
     std::is_base_of_v<::fhicl::OptionalDelegatedParameter, T>;
+
+  template <typename T>
+  concept a_table = std::is_base_of_v<::fhicl::Table, T>;
 }
 
 namespace tt {
