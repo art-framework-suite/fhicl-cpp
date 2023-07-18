@@ -6,7 +6,6 @@
 #include "fhiclcpp/types/Comment.h"
 #include "fhiclcpp/types/ConfigPredicate.h"
 #include "fhiclcpp/types/KeysToIgnore.h"
-#include "fhiclcpp/types/MaybeUseFunction.h"
 #include "fhiclcpp/types/Name.h"
 #include "fhiclcpp/types/detail/NameStackRegistry.h"
 #include "fhiclcpp/types/detail/ParameterArgumentTypes.h"
@@ -41,10 +40,10 @@ namespace fhicl {
     explicit Table(Name&& name, TCARGS&&... tcargs);
     template <typename... TCARGS>
     explicit Table(Name&& name, Comment&& comment, TCARGS&&... tcargs);
-    template <typename... TCARGS>
+    template <fhicl::maybe_use_param F, typename... TCARGS>
     explicit Table(Name&& name,
                    Comment&& comment,
-                   MaybeUseFunction maybeUse,
+                   F maybeUse,
                    TCARGS&&... tcargs);
 
     Table(ParameterSet const& pset,
@@ -99,10 +98,10 @@ namespace fhicl {
   }
 
   template <typename T, keys_to_ignore_provider... KeysToIgnore>
-  template <typename... TCARGS>
+  template <fhicl::maybe_use_param F, typename... TCARGS>
   Table<T, KeysToIgnore...>::Table(Name&& name,
                                    Comment&& comment,
-                                   MaybeUseFunction maybeUse,
+                                   F maybeUse,
                                    TCARGS&&... tcargs)
     : TableBase{std::move(name),
                 std::move(comment),

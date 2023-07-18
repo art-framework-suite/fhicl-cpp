@@ -108,12 +108,7 @@ namespace fhicl {
     std::is_base_of_v<::fhicl::TableAs, T>;
 
   template <typename T>
-  concept maybe_use_param = requires(T t) {
-                              requires std::invocable<T>;
-                              {
-                                t()
-                                } -> std::same_as<bool>;
-                            };
+  concept maybe_use_param = std::convertible_to<T, std::function<bool()>>;
 }
 
 namespace tt {
