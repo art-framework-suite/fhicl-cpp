@@ -38,9 +38,8 @@ namespace fhicl {
 
     explicit OptionalSequence(Name&& name);
     explicit OptionalSequence(Name&& name, Comment&& comment);
-    explicit OptionalSequence(Name&& name,
-                              Comment&& comment,
-                              std::function<bool()> maybeUse);
+    template <fhicl::maybe_use_param F>
+    explicit OptionalSequence(Name&& name, Comment&& comment, F maybeUse);
 
     std::optional<value_type>
     operator()() const
@@ -134,9 +133,8 @@ namespace fhicl {
 
     explicit OptionalSequence(Name&& name);
     explicit OptionalSequence(Name&& name, Comment&& comment);
-    explicit OptionalSequence(Name&& name,
-                              Comment&& comment,
-                              std::function<bool()> maybeUse);
+    template <fhicl::maybe_use_param F>
+    explicit OptionalSequence(Name&& name, Comment&& comment, F maybeUse);
 
     std::optional<value_type>
     operator()() const
@@ -269,9 +267,10 @@ namespace fhicl {
   }
 
   template <typename T, std::size_t N>
+  template <fhicl::maybe_use_param F>
   OptionalSequence<T, N>::OptionalSequence(Name&& name,
                                            Comment&& comment,
-                                           std::function<bool()> maybeUse)
+                                           F maybeUse)
     : SequenceBase{std::move(name),
                    std::move(comment),
                    par_style::OPTIONAL_CONDITIONAL,
@@ -337,9 +336,10 @@ namespace fhicl {
   }
 
   template <typename T>
+  template <fhicl::maybe_use_param F>
   OptionalSequence<T, -1ull>::OptionalSequence(Name&& name,
                                                Comment&& comment,
-                                               std::function<bool()> maybeUse)
+                                               F maybeUse)
     : SequenceBase{std::move(name),
                    std::move(comment),
                    par_style::OPTIONAL_CONDITIONAL,

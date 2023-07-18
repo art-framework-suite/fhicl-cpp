@@ -47,11 +47,13 @@ namespace fhicl {
   template <typename T>
   class TableFragment final {
   public:
-    static_assert(!fhicl::is_sequence_type<T>, NO_STD_CONTAINERS);
-    static_assert(!fhicl::is_fhicl_type<T>, NO_NESTED_FHICL_TYPES_IN_TABLE);
-    static_assert(!fhicl::is_table_fragment<T>, NO_NESTED_TABLE_FRAGMENTS);
+    static_assert(!fhicl::is_sequence_type_param<T>, NO_STD_CONTAINERS);
+    static_assert(!fhicl::is_fhicl_type_param<T>,
+                  NO_NESTED_FHICL_TYPES_IN_TABLE);
+    static_assert(!fhicl::is_table_fragment_param<T>,
+                  NO_NESTED_TABLE_FRAGMENTS);
     static_assert(std::is_class_v<T>, REQUIRE_CLASS_TABLE_FRAGMENT);
-    static_assert(!fhicl::is_delegated_parameter<T>, NO_DELEGATED_PARAMETERS);
+    static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
 
     // Compiler-produced default c'tor (and friends) is fine since 'T'
     // is of class type.

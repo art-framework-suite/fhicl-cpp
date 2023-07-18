@@ -43,9 +43,8 @@ namespace fhicl {
 
     explicit OptionalTuple(Name&& name);
     explicit OptionalTuple(Name&& name, Comment&& comment);
-    explicit OptionalTuple(Name&& name,
-                           Comment&& comment,
-                           std::function<bool()> maybeUse);
+    template <fhicl::maybe_use_param F>
+    explicit OptionalTuple(Name&& name, Comment&& comment, F maybeUse);
 
     auto operator()() const -> std::optional<value_type>;
     auto operator()(value_type&) const -> bool;
@@ -165,9 +164,8 @@ namespace fhicl {
   }
 
   template <typename... T>
-  OptionalTuple<T...>::OptionalTuple(Name&& name,
-                                     Comment&& comment,
-                                     std::function<bool()> maybeUse)
+  template <fhicl::maybe_use_param F>
+  OptionalTuple<T...>::OptionalTuple(Name&& name, Comment&& comment, F maybeUse)
     : SequenceBase{std::move(name),
                    std::move(comment),
                    par_style::OPTIONAL_CONDITIONAL,

@@ -37,7 +37,7 @@ namespace fhicl {
     Atom<bool> flag{Name("flag")};
 
     bool
-    flag_is_true() const
+    flag_is_true() const noexcept
     {
       return flag();
     }

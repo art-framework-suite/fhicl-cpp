@@ -33,17 +33,14 @@ namespace fhicl {
 
     explicit TupleAs(Name&& name);
     explicit TupleAs(Name&& name, Comment&& comment);
-    explicit TupleAs(Name&& name,
-                     Comment&& comment,
-                     std::function<bool()> maybeUse);
+    template <fhicl::maybe_use_param F>
+    explicit TupleAs(Name&& name, Comment&& comment, F maybeUse);
 
     // c'tors supporting default values
     explicit TupleAs(Name&& name, T const& t);
     explicit TupleAs(Name&& name, Comment&& comment, T const& t);
-    explicit TupleAs(Name&& name,
-                     Comment&& comment,
-                     std::function<bool()> maybeUse,
-                     T const& t);
+    template <fhicl::maybe_use_param F>
+    explicit TupleAs(Name&& name, Comment&& comment, F maybeUse, T const& t);
 
     T
     operator()() const
@@ -90,9 +87,8 @@ namespace fhicl {
   }
 
   template <typename T, typename... ARGS>
-  TupleAs<T(ARGS...)>::TupleAs(Name&& name,
-                               Comment&& comment,
-                               std::function<bool()> maybeUse)
+  template <fhicl::maybe_use_param F>
+  TupleAs<T(ARGS...)>::TupleAs(Name&& name, Comment&& comment, F maybeUse)
     : tupleObj_{std::move(name),
                 conversion_comment(std::move(comment)),
                 maybeUse}
@@ -115,9 +111,10 @@ namespace fhicl {
   }
 
   template <typename T, typename... ARGS>
+  template <fhicl::maybe_use_param F>
   TupleAs<T(ARGS...)>::TupleAs(Name&& name,
                                Comment&& comment,
-                               std::function<bool()> maybeUse,
+                               F maybeUse,
                                T const& t)
     : tupleObj_{std::move(name),
                 conversion_comment(std::move(comment), t),

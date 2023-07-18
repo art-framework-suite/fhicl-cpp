@@ -61,26 +61,26 @@ namespace fhicl {
     using value_type = std::tuple<tt::return_type<T>...>;
     using ftype = std::tuple<std::shared_ptr<tt::fhicl_type<T>>...>;
 
-    static_assert(!(fhicl::is_table_fragment<T> || ...),
+    static_assert(!(fhicl::is_table_fragment_param<T> || ...),
                   NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!(fhicl::is_optional_parameter<T> || ...), NO_OPTIONAL_TYPES);
-    static_assert(!(fhicl::is_delegated_parameter<T> || ...),
+    static_assert(!(fhicl::is_optional_param<T> || ...), NO_OPTIONAL_TYPES);
+    static_assert(!(fhicl::is_delegated_param<T> || ...),
                   NO_DELEGATED_PARAMETERS);
 
     explicit Tuple(Name&& name);
     explicit Tuple(Name&& name, Comment&& comment);
-    explicit Tuple(Name&& name,
-                   Comment&& comment,
-                   std::function<bool()> maybeUse);
+    template <fhicl::maybe_use_param F>
+    explicit Tuple(Name&& name, Comment&& comment, F maybeUse);
 
     // c'tors supporting defaults;
     explicit Tuple(Name&& name, default_type const& defaults);
     explicit Tuple(Name&& name,
                    Comment&& comment,
                    default_type const& defaults);
+    template <fhicl::maybe_use_param F>
     explicit Tuple(Name&& name,
                    Comment&& comment,
-                   std::function<bool()> maybeUse,
+                   F maybeUse,
                    default_type const& defaults);
 
     auto operator()() const;
@@ -211,9 +211,8 @@ namespace fhicl {
   }
 
   template <typename... T>
-  Tuple<T...>::Tuple(Name&& name,
-                     Comment&& comment,
-                     std::function<bool()> maybeUse)
+  template <fhicl::maybe_use_param F>
+  Tuple<T...>::Tuple(Name&& name, Comment&& comment, F maybeUse)
     : SequenceBase{std::move(name),
                    std::move(comment),
                    par_style::REQUIRED_CONDITIONAL,
@@ -248,9 +247,10 @@ namespace fhicl {
   }
 
   template <typename... T>
+  template <fhicl::maybe_use_param F>
   Tuple<T...>::Tuple(Name&& name,
                      Comment&& comment,
-                     std::function<bool()> maybeUse,
+                     F maybeUse,
                      default_type const& defaults)
     : SequenceBase{std::move(name),
                    std::move(comment),

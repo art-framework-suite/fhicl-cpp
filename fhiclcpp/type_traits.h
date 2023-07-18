@@ -76,37 +76,44 @@ namespace fhicl {
   class OptionalDelegatedParameter;
 
   template <typename T>
-  concept is_table_fragment =
+  concept is_table_fragment_param =
     std::same_as<T, typename ::fhicl::TableFragment<T>>;
 
   template <typename T>
-  concept is_optional_parameter =
-    std::is_base_of_v<::fhicl::OptionalTable, T> ||
-    std::is_base_of_v<::fhicl::OptionalAtom, T> ||
-    std::is_base_of_v<::fhicl::OptionalSequence, T> ||
-    std::is_base_of_v<::fhicl::OptionalTuple, T> ||
-    std::is_base_of_v<::fhicl::OptionalTupleAs, T>;
+  concept is_optional_param = std::is_base_of_v<::fhicl::OptionalTable, T> ||
+                              std::is_base_of_v<::fhicl::OptionalAtom, T> ||
+                              std::is_base_of_v<::fhicl::OptionalSequence, T> ||
+                              std::is_base_of_v<::fhicl::OptionalTuple, T> ||
+                              std::is_base_of_v<::fhicl::OptionalTupleAs, T>;
 
   template <typename T>
-  concept is_delegated_parameter =
+  concept is_delegated_param =
     std::is_base_of_v<::fhicl::DelegatedParameter, T> ||
     std::is_base_of_v<::fhicl::OptionalDelegatedParameter, T>;
 
   template <typename T>
-  concept a_table = std::is_base_of_v<::fhicl::Table, T>;
+  concept is_table_param = std::is_base_of_v<::fhicl::Table, T>;
 
   template <typename T>
-  concept is_sequence_type =
+  concept is_sequence_type_param =
     std::is_base_of_v<std::array, T> || std::is_base_of_v<std::tuple, T> ||
     std::is_base_of_v<std::vector, T>;
 
   template <typename T>
-  concept is_fhicl_type =
-    is_optional_parameter<T> || std::is_base_of_v<::fhicl::Atom, T> ||
+  concept is_fhicl_type_param =
+    is_optional_param<T> || std::is_base_of_v<::fhicl::Atom, T> ||
     std::is_base_of_v<::fhicl::Sequence, T> ||
     std::is_base_of_v<::fhicl::Tuple, T> ||
     std::is_base_of_v<::fhicl::TupleAs, T> ||
     std::is_base_of_v<::fhicl::TableAs, T>;
+
+  template <typename T>
+  concept maybe_use_param = requires(T t) {
+                              requires std::invocable<T>;
+                              {
+                                t()
+                                } -> std::same_as<bool>;
+                            };
 }
 
 namespace tt {
