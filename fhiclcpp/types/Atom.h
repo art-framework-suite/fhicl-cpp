@@ -74,7 +74,7 @@ namespace fhicl {
     : AtomBase{std::move(name),
                std::move(comment),
                par_style::REQUIRED,
-               detail::AlwaysUse()}
+               detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     NameStackRegistry::end_of_ctor();
@@ -96,7 +96,7 @@ namespace fhicl {
     : AtomBase{std::move(name),
                std::move(comment),
                par_style::DEFAULT,
-               detail::AlwaysUse()}
+               detail::AlwaysUse}
     , RegisterIfTableMember{this}
     , value_{dflt_value}
   {

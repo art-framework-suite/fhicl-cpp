@@ -41,7 +41,7 @@ namespace fhicl::detail {
                   Comment const& comment,
                   par_style const vt,
                   par_type const type,
-                  F maybeUse = AlwaysUse());
+                  F maybeUse = AlwaysUse);
     virtual ~ParameterBase();
 
     std::string const& key() const;

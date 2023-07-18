@@ -12,7 +12,7 @@ namespace fhicl {
     : DelegateBase{std::move(name),
                    std::move(comment),
                    par_style::REQUIRED,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     NameStackRegistry::end_of_ctor();

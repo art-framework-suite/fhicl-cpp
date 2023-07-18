@@ -6,25 +6,21 @@
 namespace fhicl {
 
   namespace detail {
-    inline std::function<bool()>
-    AlwaysUse()
-    {
-      return []() { return true; };
-    }
+    inline auto AlwaysUse = []() { return true; };
   }
 
   template <typename T>
   using NullaryConfigPredicate_t = bool (T::*)() const;
 
   template <typename T>
-  std::function<bool()>
+  auto
   use_if(T* p, NullaryConfigPredicate_t<T> f)
   {
     return [p, f]() { return (p->*f)(); };
   }
 
   template <typename T>
-  std::function<bool()>
+  auto
   use_unless(T* p, NullaryConfigPredicate_t<T> f)
   {
     return [p, f]() { return !(p->*f)(); };

@@ -335,7 +335,7 @@ namespace fhicl {
                    std::move(comment),
                    par_style::REQUIRED,
                    par_type::SEQ_ARRAY,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
     , value_{ftype{nullptr}}
   {
@@ -381,7 +381,7 @@ namespace fhicl {
                    std::move(comment),
                    par_style::DEFAULT,
                    par_type::SEQ_ARRAY,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
     , value_{ftype{nullptr}}
   {
@@ -432,7 +432,7 @@ namespace fhicl {
                    std::move(comment),
                    par_style::REQUIRED,
                    par_type::SEQ_VECTOR,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
     , value_{
         ftype{std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(0ul))}}
@@ -470,7 +470,7 @@ namespace fhicl {
                    std::move(comment),
                    par_style::DEFAULT,
                    par_type::SEQ_VECTOR,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     static_assert(!fhicl::is_table_param<T>, NO_DEFAULTS_FOR_TABLE);

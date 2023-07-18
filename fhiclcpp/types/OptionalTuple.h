@@ -156,7 +156,7 @@ namespace fhicl {
                    std::move(comment),
                    par_style::OPTIONAL,
                    par_type::TUPLE,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     finalize_elements(std::index_sequence_for<T...>{});

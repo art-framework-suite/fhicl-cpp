@@ -254,7 +254,7 @@ namespace fhicl {
                    std::move(comment),
                    par_style::OPTIONAL,
                    par_type::SEQ_ARRAY,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
     , value_{ftype{nullptr}}
   {
@@ -327,7 +327,7 @@ namespace fhicl {
                    std::move(comment),
                    par_style::OPTIONAL,
                    par_type::SEQ_VECTOR,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
     , value_{
         ftype{std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(0ul))}}

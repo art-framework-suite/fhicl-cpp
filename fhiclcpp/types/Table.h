@@ -88,7 +88,7 @@ namespace fhicl {
     : TableBase{std::move(name),
                 std::move(comment),
                 par_style::REQUIRED,
-                detail::AlwaysUse()}
+                detail::AlwaysUse}
     , RegisterIfTableMember{this}
     , value_{std::make_shared<T>(std::forward<TCARGS>(tcargs)...)}
   {
@@ -121,7 +121,7 @@ namespace fhicl {
     : TableBase{Name("<top_level>"),
                 Comment(""),
                 par_style::REQUIRED,
-                detail::AlwaysUse()}
+                detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     finalize_members();

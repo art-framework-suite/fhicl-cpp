@@ -93,7 +93,7 @@ namespace fhicl {
     : TableBase{std::move(name),
                 std::move(comment),
                 par_style::OPTIONAL,
-                detail::AlwaysUse()}
+                detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     finalize_members();
@@ -120,7 +120,7 @@ namespace fhicl {
     : TableBase{Name("<top_level>"),
                 Comment(""),
                 par_style::OPTIONAL,
-                detail::AlwaysUse()}
+                detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     finalize_members();

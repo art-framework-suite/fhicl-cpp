@@ -91,7 +91,7 @@ namespace fhicl {
     : AtomBase{std::move(name),
                std::move(comment),
                par_style::OPTIONAL,
-               detail::AlwaysUse()}
+               detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     NameStackRegistry::end_of_ctor();

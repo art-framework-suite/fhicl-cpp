@@ -203,7 +203,7 @@ namespace fhicl {
                    std::move(comment),
                    par_style::REQUIRED,
                    par_type::TUPLE,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     finalize_elements(std::index_sequence_for<T...>{});
@@ -239,7 +239,7 @@ namespace fhicl {
                    std::move(comment),
                    par_style::DEFAULT,
                    par_type::TUPLE,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     fill_tuple_elements(defaults, std::index_sequence_for<T...>());
