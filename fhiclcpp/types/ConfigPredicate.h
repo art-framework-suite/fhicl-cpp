@@ -14,14 +14,14 @@ namespace fhicl {
 
   template <typename T>
   auto
-  use_if(T* p, NullaryConfigPredicate_t<T> f)
+  use_if(T const* p, NullaryConfigPredicate_t<T> f)
   {
     return [p, f]() { return (p->*f)(); };
   }
 
   template <typename T>
   auto
-  use_unless(T* p, NullaryConfigPredicate_t<T> f)
+  use_unless(T const* p, NullaryConfigPredicate_t<T> f)
   {
     return [p, f]() { return !(p->*f)(); };
   }
