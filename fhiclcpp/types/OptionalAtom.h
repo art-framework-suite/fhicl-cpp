@@ -36,9 +36,8 @@ namespace fhicl {
     // ... c'tors
     explicit OptionalAtom(Name&& name);
     explicit OptionalAtom(Name&& name, Comment&& comment);
-    explicit OptionalAtom(Name&& name,
-                          Comment&& comment,
-                          std::function<bool()> maybeUse);
+    template <fhicl::maybe_use_param F>
+    explicit OptionalAtom(Name&& name, Comment&& comment, F maybeUse);
 
     // ... Accessors
     std::optional<T>
@@ -99,9 +98,8 @@ namespace fhicl {
   }
 
   template <typename T>
-  OptionalAtom<T>::OptionalAtom(Name&& name,
-                                Comment&& comment,
-                                std::function<bool()> maybeUse)
+  template <fhicl::maybe_use_param F>
+  OptionalAtom<T>::OptionalAtom(Name&& name, Comment&& comment, F maybeUse)
     : AtomBase{std::move(name),
                std::move(comment),
                par_style::OPTIONAL_CONDITIONAL,

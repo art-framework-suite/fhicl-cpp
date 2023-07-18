@@ -53,17 +53,14 @@ namespace fhicl {
 
     explicit TableAs(Name&& name);
     explicit TableAs(Name&& name, Comment&& comment);
-    explicit TableAs(Name&& name,
-                     Comment&& comment,
-                     std::function<bool()> maybeUse);
+    template <fhicl::maybe_use_param F>
+    explicit TableAs(Name&& name, Comment&& comment, F maybeUse);
 
     // c'tors supporting default values
     explicit TableAs(Name&& name, T const& t);
     explicit TableAs(Name&& name, Comment&& comment, T const& t);
-    explicit TableAs(Name&& name,
-                     Comment&& comment,
-                     std::function<bool()> maybeUse,
-                     T const& t);
+    template <fhicl::maybe_use_param F>
+    explicit TableAs(Name&& name, Comment&& comment, F maybeUse, T const& t);
 
     T
     operator()() const
@@ -113,9 +110,8 @@ namespace fhicl {
   }
 
   template <typename T, typename Config>
-  TableAs<T, Config>::TableAs(Name&& name,
-                              Comment&& comment,
-                              std::function<bool()> maybeUse)
+  template <fhicl::maybe_use_param F>
+  TableAs<T, Config>::TableAs(Name&& name, Comment&& comment, F maybeUse)
     : tableObj_{std::move(name),
                 conversion_comment(std::move(comment)),
                 maybeUse}
@@ -138,9 +134,10 @@ namespace fhicl {
   }
 
   template <typename T, typename Config>
+  template <fhicl::maybe_use_param F>
   TableAs<T, Config>::TableAs(Name&& name,
                               Comment&& comment,
-                              std::function<bool()> maybeUse,
+                              F maybeUse,
                               T const& t)
     : tableObj_{std::move(name),
                 conversion_comment(std::move(comment), t),

@@ -1,16 +1,18 @@
 #ifndef fhiclcpp_types_detail_AtomBase_h
 #define fhiclcpp_types_detail_AtomBase_h
 
+#include "fhiclcpp/type_traits.h"
 #include "fhiclcpp/types/ConfigPredicate.h"
 #include "fhiclcpp/types/detail/ParameterBase.h"
 
 namespace fhicl::detail {
   class AtomBase : public ParameterBase {
   public:
+    template <fhicl::maybe_use_param F>
     AtomBase(Name const& name,
              Comment const& comment,
              par_style const vt,
-             std::function<bool()> maybeUse)
+             F maybeUse)
       : ParameterBase{name, comment, vt, par_type::ATOM, maybeUse}
     {}
 

@@ -16,11 +16,12 @@ namespace fhicl::detail {
   //========================================================
   class SequenceBase : public ParameterBase {
   public:
+    template <fhicl::maybe_use_param F>
     SequenceBase(Name&& name,
                  Comment&& comment,
                  par_style const vt,
                  par_type const type,
-                 std::function<bool()> maybeUse)
+                 F maybeUse)
       : ParameterBase{name, comment, vt, type, maybeUse}
     {}
 
