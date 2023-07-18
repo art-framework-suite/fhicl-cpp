@@ -8,8 +8,7 @@
 #include <ostream>
 
 namespace fhicl::detail {
-  
- 
+
   TableBase::~TableBase() = default;
 
   void

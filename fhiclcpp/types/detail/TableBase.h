@@ -52,12 +52,11 @@ namespace fhicl::detail {
 
 template <fhicl::maybe_use_param F>
 fhicl::detail::TableBase::TableBase(Name const& name,
-                       Comment const& comment,
-                       par_style const vt,
-                       F maybeUse)
-    : ParameterBase{name, comment, vt, par_type::TABLE, std::move(maybeUse)}
-  {}
-
+                                    Comment const& comment,
+                                    par_style const vt,
+                                    F maybeUse)
+  : ParameterBase{name, comment, vt, par_type::TABLE, std::move(maybeUse)}
+{}
 
 #endif /* fhiclcpp_types_detail_TableBase_h */
 

@@ -58,10 +58,9 @@ namespace fhicl {
       OptionalAtom<std::string> boxName{Name("boxName")};
       Atom<std::string> material{Name("material")};
     };
-    Table<BoxParameters> boxParams{
-      Name("parameters"),
-      Comment("Used if \"shape: box\"."),
-      [this]() { return shape() == "box"; }};
+    Table<BoxParameters> boxParams{Name("parameters"),
+                                   Comment("Used if \"shape: box\"."),
+                                   [this]() { return shape() == "box"; }};
 
     struct SphereParameters {
       Atom<int> radius{Name("radius")};
