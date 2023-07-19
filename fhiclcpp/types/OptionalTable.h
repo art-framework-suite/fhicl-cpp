@@ -25,8 +25,10 @@ namespace fhicl {
                               private detail::RegisterIfTableMember {
   public:
     static_assert(!fhicl::is_sequence_type_param<T>, NO_STD_CONTAINERS);
-    static_assert(!fhicl::is_fhicl_type_param<T>, NO_NESTED_FHICL_TYPES_IN_TABLE);
-    static_assert(!fhicl::is_table_fragment_param<T>, NO_NESTED_TABLE_FRAGMENTS);
+    static_assert(!fhicl::is_fhicl_type_param<T>,
+                  NO_NESTED_FHICL_TYPES_IN_TABLE);
+    static_assert(!fhicl::is_table_fragment_param<T>,
+                  NO_NESTED_TABLE_FRAGMENTS);
     static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
 
     //=====================================================
@@ -35,9 +37,7 @@ namespace fhicl {
     explicit OptionalTable(Name&& name);
     explicit OptionalTable(Name&& name, Comment&& comment);
     template <fhicl::maybe_use_param F>
-    explicit OptionalTable(Name&& name,
-                           Comment&& comment,
-                           F maybeUse);
+    explicit OptionalTable(Name&& name, Comment&& comment, F maybeUse);
     OptionalTable(ParameterSet const& pset,
                   std::set<std::string> const& keysToIgnore);
 
@@ -103,9 +103,7 @@ namespace fhicl {
 
   template <typename T>
   template <fhicl::maybe_use_param F>
-  OptionalTable<T>::OptionalTable(Name&& name,
-                                  Comment&& comment,
-                                  F maybeUse)
+  OptionalTable<T>::OptionalTable(Name&& name, Comment&& comment, F maybeUse)
     : TableBase{std::move(name),
                 std::move(comment),
                 par_style::OPTIONAL_CONDITIONAL,

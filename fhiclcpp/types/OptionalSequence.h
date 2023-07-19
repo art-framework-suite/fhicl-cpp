@@ -29,7 +29,8 @@ namespace fhicl {
   class OptionalSequence final : public detail::SequenceBase,
                                  private detail::RegisterIfTableMember {
   public:
-    static_assert(!fhicl::is_table_fragment_param<T>, NO_NESTED_TABLE_FRAGMENTS);
+    static_assert(!fhicl::is_table_fragment_param<T>,
+                  NO_NESTED_TABLE_FRAGMENTS);
     static_assert(!fhicl::is_optional_param<T>, NO_OPTIONAL_TYPES);
     static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
 
@@ -124,7 +125,8 @@ namespace fhicl {
     : public detail::SequenceBase,
       private detail::RegisterIfTableMember {
   public:
-    static_assert(!fhicl::is_table_fragment_param<T>, NO_NESTED_TABLE_FRAGMENTS);
+    static_assert(!fhicl::is_table_fragment_param<T>,
+                  NO_NESTED_TABLE_FRAGMENTS);
     static_assert(!fhicl::is_optional_param<T>, NO_OPTIONAL_TYPES);
     static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
 

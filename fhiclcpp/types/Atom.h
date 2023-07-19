@@ -25,8 +25,10 @@ namespace fhicl {
                      private detail::RegisterIfTableMember {
   public:
     static_assert(!fhicl::is_sequence_type_param<T>, NO_STD_CONTAINERS);
-    static_assert(!fhicl::is_fhicl_type_param<T>, NO_NESTED_FHICL_TYPES_IN_ATOM);
-    static_assert(!fhicl::is_table_fragment_param<T>, NO_NESTED_TABLE_FRAGMENTS);
+    static_assert(!fhicl::is_fhicl_type_param<T>,
+                  NO_NESTED_FHICL_TYPES_IN_ATOM);
+    static_assert(!fhicl::is_table_fragment_param<T>,
+                  NO_NESTED_TABLE_FRAGMENTS);
     static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
 
     //=====================================================
@@ -41,10 +43,7 @@ namespace fhicl {
     explicit Atom(Name&& name, T const& dflt_value);
     explicit Atom(Name&& name, Comment&& comment, T const& dflt_value);
     template <fhicl::maybe_use_param F>
-    explicit Atom(Name&& name,
-                  Comment&& comment,
-                  F useIf,
-                  T const& dflt_value);
+    explicit Atom(Name&& name, Comment&& comment, F useIf, T const& dflt_value);
 
     // ... Accessors
     auto const&
@@ -108,10 +107,7 @@ namespace fhicl {
 
   template <typename T>
   template <fhicl::maybe_use_param F>
-  Atom<T>::Atom(Name&& name,
-                Comment&& comment,
-                F maybeUse,
-                T const& dflt_value)
+  Atom<T>::Atom(Name&& name, Comment&& comment, F maybeUse, T const& dflt_value)
     : AtomBase{std::move(name),
                std::move(comment),
                par_style::DEFAULT_CONDITIONAL,
