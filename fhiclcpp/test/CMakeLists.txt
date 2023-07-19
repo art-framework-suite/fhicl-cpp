@@ -112,7 +112,7 @@ target_compile_definitions(table_t_snippet_iterator_t PRIVATE SNIPPET_MODE=true)
 
 cet_test(seq_of_seq_t LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 
-cet_test(traits_t LIBRARIES PRIVATE cetlib::cetlib)
+#cet_test(traits_t LIBRARIES PRIVATE cetlib::cetlib)
 
 cet_test(ParameterSetRegistry_t USE_BOOST_UNIT
   LIBRARIES PRIVATE

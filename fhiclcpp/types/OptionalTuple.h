@@ -32,13 +32,13 @@ namespace fhicl {
     using value_type = std::tuple<tt::return_type<T>...>;
 
     static_assert(
-      !std::disjunction_v<tt::is_table_fragment<tt::return_type<T>>...>,
+      !(fhicl::is_table_fragment_param<T> || ...),
       NO_NESTED_TABLE_FRAGMENTS);
     static_assert(
-      !std::disjunction_v<tt::is_optional_parameter<tt::return_type<T>>...>,
+      !(fhicl::is_optional_param<T> || ...),
       NO_OPTIONAL_TYPES);
     static_assert(
-      !std::disjunction_v<tt::is_delegated_parameter<tt::return_type<T>>...>,
+      !(fhicl::is_delegated_param<T> || ...),
       NO_DELEGATED_PARAMETERS);
 
     explicit OptionalTuple(Name&& name);

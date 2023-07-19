@@ -24,10 +24,10 @@ namespace fhicl {
   class Atom final : public detail::AtomBase,
                      private detail::RegisterIfTableMember {
   public:
-    static_assert(!tt::is_sequence_type_v<T>, NO_STD_CONTAINERS);
-    static_assert(!tt::is_fhicl_type_v<T>, NO_NESTED_FHICL_TYPES_IN_ATOM);
-    static_assert(!tt::is_table_fragment_v<T>, NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!tt::is_delegated_parameter_v<T>, NO_DELEGATED_PARAMETERS);
+    static_assert(!fhicl::is_sequence_type_param<T>, NO_STD_CONTAINERS);
+    static_assert(!fhicl::is_fhicl_type_param<T>, NO_NESTED_FHICL_TYPES_IN_ATOM);
+    static_assert(!fhicl::is_table_fragment_param<T>, NO_NESTED_TABLE_FRAGMENTS);
+    static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
 
     //=====================================================
     // User-friendly
