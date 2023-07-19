@@ -81,7 +81,7 @@
 * [x] `types/OptionalDelegatedParameter.h`
   * No use of templates.
 * [x] `types/OptionalSequence.h`
-* [ ] `types/OptionalTable.h`
+* [x] `types/OptionalTable.h`
 * [ ] `types/OptionalTableAs.h`
 * [ ] `types/OptionalTuple.h`
 * [ ] `types/OptionalTupleAs.h`
