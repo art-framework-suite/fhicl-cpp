@@ -91,7 +91,8 @@
   * Concepts not necessary.
 * [x] `types/TableFragment.h`
 * [x] `types/Tuple.h`
-* [ ] `types/TupleAs.h`
+* [x] `types/TupleAs.h`
+  * Concepts not necessary.
 * [x] `types/detail/AtomBase.h`
   * No use of templates.
 * [x] `types/detail/DelegateBase.h`
