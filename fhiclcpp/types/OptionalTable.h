@@ -24,19 +24,20 @@ namespace fhicl {
   class OptionalTable final : public detail::TableBase,
                               private detail::RegisterIfTableMember {
   public:
-    static_assert(!tt::is_sequence_type_v<T>, NO_STD_CONTAINERS);
-    static_assert(!tt::is_fhicl_type_v<T>, NO_NESTED_FHICL_TYPES_IN_TABLE);
-    static_assert(!tt::is_table_fragment_v<T>, NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!tt::is_delegated_parameter_v<T>, NO_DELEGATED_PARAMETERS);
+    static_assert(!fhicl::is_sequence_type_param<T>, NO_STD_CONTAINERS);
+    static_assert(!fhicl::is_fhicl_type_param<T>, NO_NESTED_FHICL_TYPES_IN_TABLE);
+    static_assert(!fhicl::is_table_fragment_param<T>, NO_NESTED_TABLE_FRAGMENTS);
+    static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
 
     //=====================================================
     // User-friendly
     // ... c'tors
     explicit OptionalTable(Name&& name);
     explicit OptionalTable(Name&& name, Comment&& comment);
+    template <fhicl::maybe_use_param F>
     explicit OptionalTable(Name&& name,
                            Comment&& comment,
-                           std::function<bool()> maybeUse);
+                           F maybeUse);
     OptionalTable(ParameterSet const& pset,
                   std::set<std::string> const& keysToIgnore);
 
@@ -101,9 +102,10 @@ namespace fhicl {
   }
 
   template <typename T>
+  template <fhicl::maybe_use_param F>
   OptionalTable<T>::OptionalTable(Name&& name,
                                   Comment&& comment,
-                                  std::function<bool()> maybeUse)
+                                  F maybeUse)
     : TableBase{std::move(name),
                 std::move(comment),
                 par_style::OPTIONAL_CONDITIONAL,
