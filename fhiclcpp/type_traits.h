@@ -121,21 +121,6 @@ namespace tt {
   template <bool b, typename T = void>
   using disable_if_t = typename disable_if<b, T>::type;
 
-  template <typename T, typename = void>
-  struct is_callable : std::false_type {};
-
-  template <typename T>
-  struct is_callable<
-    T,
-    enable_if_function_exists_t<std::set<std::string> (T::*)(), &T::operator()>>
-    : std::true_type {};
-
-  template <typename T>
-  struct is_callable<
-    T,
-    enable_if_function_exists_t<std::set<std::string> (T::*)() const,
-                                &T::operator()>> : std::true_type {};
-
   //=======================================================
   // Enforce (non)const-ness
   //
