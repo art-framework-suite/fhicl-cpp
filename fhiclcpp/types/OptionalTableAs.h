@@ -21,9 +21,7 @@ namespace fhicl {
     explicit OptionalTableAs(Name&& name);
     explicit OptionalTableAs(Name&& name, Comment&& comment);
     template <fhicl::maybe_use_param F>
-    explicit OptionalTableAs(Name&& name,
-                             Comment&& comment,
-                             F maybeUse);
+    explicit OptionalTableAs(Name&& name, Comment&& comment, F maybeUse);
 
     std::optional<T>
     operator()() const

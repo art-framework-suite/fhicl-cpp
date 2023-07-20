@@ -25,17 +25,17 @@ namespace shims {
     using listmap_t = std::list<std::pair<const Key, T>, Allocator>;
 
     static_assert(std::same_as<typename mapmap_t::key_type,
-                                 typename listmap_t::value_type::first_type>,
+                               typename listmap_t::value_type::first_type>,
                   "type mismatch for key_type");
     static_assert(std::same_as<typename mapmap_t::mapped_type,
-                                 typename listmap_t::value_type::second_type>,
+                               typename listmap_t::value_type::second_type>,
                   "type mismatch for mapped_type");
     static_assert(std::same_as<typename mapmap_t::value_type,
-                                 typename listmap_t::value_type>,
+                               typename listmap_t::value_type>,
                   "type mismatch for value_type");
-    static_assert(std::same_as<typename mapmap_t::size_type,
-                                 typename listmap_t::size_type>,
-                  "type mismatch for size_type");
+    static_assert(
+      std::same_as<typename mapmap_t::size_type, typename listmap_t::size_type>,
+      "type mismatch for size_type");
 
     using size_type = typename mapmap_t::size_type;
 
@@ -104,7 +104,7 @@ namespace shims {
       }
 
       template <typename II>
-      requires std::same_as<typename mapmap_t::iterator, II>
+        requires std::same_as<typename mapmap_t::iterator, II>
       II
       get(II)
       {
@@ -112,7 +112,7 @@ namespace shims {
       }
 
       template <typename II>
-      requires std::same_as<typename listmap_t::iterator, II>
+        requires std::same_as<typename listmap_t::iterator, II>
       II
       get(II)
       {

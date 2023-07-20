@@ -6,7 +6,6 @@
 //
 // ======================================================================
 
-
 #include <array>
 #include <complex>
 #include <functional>
