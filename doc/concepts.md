@@ -124,11 +124,12 @@
   * No use of templates.
 * [x] `types/detail/check_nargs_for_bounded_sequences.h`
   * No use of templates.
-* [ ] `types/detail/maybe_insert.h`
+* [x] `types/detail/maybe_insert.h`
 * [x] `types/detail/optional_parameter_message.h`
   * No use of templates.
-* [ ] `types/detail/ostream_helpers.h`
-* [ ] `types/detail/per_thread_holder.h`
+* [x] `types/detail/ostream_helpers.h`
+* [x] `types/detail/per_thread_holder.h`
+  * Concepts not necessary.
 * [x] `types/detail/strip_containing_names.h`
   * No use of templates.
 * [ ] `types/detail/type_traits_error_msgs.h`

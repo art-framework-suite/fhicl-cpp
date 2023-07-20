@@ -7,16 +7,11 @@
 #include <utility>
 
 namespace fhicl::detail {
-  template <typename T>
-  using insertion_expression_t =
-    decltype(std::declval<std::ostream&>() << std::declval<T const&>());
-
-  template <typename T, typename = void>
-  constexpr bool has_insertion_operator{false};
 
   template <typename T>
-  constexpr bool
-    has_insertion_operator<T, std::void_t<insertion_expression_t<T>>>{true};
+  concept has_insertion_operator = requires(T t, std::ostream os){
+    os << t;
+  };
 
   template <typename T>
   std::string
