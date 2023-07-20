@@ -26,9 +26,10 @@ namespace fhicl {
   public:
     explicit OptionalTupleAs(Name&& name);
     explicit OptionalTupleAs(Name&& name, Comment&& comment);
+    template <fhicl::maybe_use_param F>
     explicit OptionalTupleAs(Name&& name,
                              Comment&& comment,
-                             std::function<bool()> maybeUse);
+                             F maybeUse);
 
     std::optional<T>
     operator()() const
@@ -90,9 +91,10 @@ namespace fhicl {
   {}
 
   template <typename T, typename... ARGS>
+  template <fhicl::maybe_use_param F>
   OptionalTupleAs<T(ARGS...)>::OptionalTupleAs(Name&& name,
                                                Comment&& comment,
-                                               std::function<bool()> maybeUse)
+                                               F maybeUse)
     : tupleObj_{std::move(name),
                 conversion_comment(std::move(comment)),
                 maybeUse}

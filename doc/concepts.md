@@ -83,7 +83,7 @@
 * [x] `types/OptionalSequence.h`
 * [x] `types/OptionalTable.h`
 * [x] `types/OptionalTableAs.h`
-* [ ] `types/OptionalTuple.h`
+* [x] `types/OptionalTuple.h`
 * [ ] `types/OptionalTupleAs.h`
 * [x] `types/Sequence.h`
 * [x] `types/Table.h`
