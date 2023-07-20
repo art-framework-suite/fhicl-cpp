@@ -82,7 +82,7 @@
   * No use of templates.
 * [x] `types/OptionalSequence.h`
 * [x] `types/OptionalTable.h`
-* [ ] `types/OptionalTableAs.h`
+* [x] `types/OptionalTableAs.h`
 * [ ] `types/OptionalTuple.h`
 * [ ] `types/OptionalTupleAs.h`
 * [x] `types/Sequence.h`
