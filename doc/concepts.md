@@ -56,9 +56,7 @@
 * [x] `stdmap_shims.h`
 * [x] `tokens.h`
   * Concepts not necessary.
-* [ ] `type_traits.h`
-  * Adjustments/replacements as appropriate while examining other
-    classes.
+* [x] `type_traits.h`
 * [x] `types/AllowedConfigurationMacro.h`
   * Concepts not necessary.
 * [x] `types/Atom.h`
@@ -84,7 +82,7 @@
 * [x] `types/OptionalTable.h`
 * [x] `types/OptionalTableAs.h`
 * [x] `types/OptionalTuple.h`
-* [ ] `types/OptionalTupleAs.h`
+* [x] `types/OptionalTupleAs.h`
 * [x] `types/Sequence.h`
 * [x] `types/Table.h`
 * [x] `types/TableAs.h`
@@ -132,6 +130,7 @@
   * Concepts not necessary.
 * [x] `types/detail/strip_containing_names.h`
   * No use of templates.
-* [ ] `types/detail/type_traits_error_msgs.h`
+* [x] `types/detail/type_traits_error_msgs.h`
+  * No use of templates.
 * [x] `types/detail/validationException.h`
   * No use of templates.
