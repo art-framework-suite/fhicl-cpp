@@ -10,7 +10,7 @@
 namespace fhicl {
 
   class KeyMap
-    : public detail::ParameterWalker<tt::const_flavor::require_const> {
+    : public detail::ConstParameterWalker {
   public:
     auto const&
     result() const

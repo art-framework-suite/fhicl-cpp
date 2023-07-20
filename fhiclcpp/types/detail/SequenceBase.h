@@ -1,7 +1,7 @@
 #ifndef fhiclcpp_types_detail_SequenceBase_h
 #define fhiclcpp_types_detail_SequenceBase_h
 
-#include "fhiclcpp/type_traits.h"
+#include "fhiclcpp/types/detail/PW_fwd.h"
 #include "fhiclcpp/types/detail/ParameterBase.h"
 
 #include <array>
@@ -9,9 +9,6 @@
 #include <vector>
 
 namespace fhicl::detail {
-
-  template <tt::const_flavor C>
-  class ParameterWalker;
 
   //========================================================
   class SequenceBase : public ParameterBase {
@@ -25,6 +22,11 @@ namespace fhicl::detail {
       : ParameterBase{name, comment, vt, type, maybeUse}
     {}
 
+  protected:
+    using ConstParameterWalker = ParameterWalkerImpl<tt::const_flavor::require_const>;
+    using ParameterWalker = ParameterWalkerImpl<tt::const_flavor::require_non_const>;
+
+  public:
     bool
     empty() const noexcept
     {
@@ -42,12 +44,12 @@ namespace fhicl::detail {
       do_prepare_elements_for_validation(n);
     }
     void
-    walk_elements(ParameterWalker<tt::const_flavor::require_non_const>& pw)
+    walk_elements(ParameterWalker& pw)
     {
       do_walk_elements(pw);
     }
     void
-    walk_elements(ParameterWalker<tt::const_flavor::require_const>& pw) const
+    walk_elements(ConstParameterWalker& pw) const
     {
       do_walk_elements(pw);
     }
@@ -56,10 +58,8 @@ namespace fhicl::detail {
     virtual std::size_t get_size() const noexcept = 0;
 
     virtual void do_prepare_elements_for_validation(std::size_t) = 0;
-    virtual void do_walk_elements(
-      ParameterWalker<tt::const_flavor::require_non_const>&) = 0;
-    virtual void do_walk_elements(
-      ParameterWalker<tt::const_flavor::require_const>&) const = 0;
+    virtual void do_walk_elements(ParameterWalker&) = 0;
+    virtual void do_walk_elements(ConstParameterWalker&) const = 0;
   };
 }
 

@@ -107,12 +107,15 @@
   * No use of templates.
 * [x] `types/detail/ParameterMetadata.h`
   * No use of templates.
-* [ ] `types/detail/ParameterWalker.h`
+* [x] `types/detail/ParameterWalker.h`
+  * Reorganized to hide complex implementation from users.
+  * Concepts not necessary.
 * [x] `types/detail/PrintAllowedConfiguration.h`
   * No use of templates.
 * [x] `types/detail/SearchAllowedConfiguration.h`
   * No use of templates.
-* [ ] `types/detail/SequenceBase.h`
+* [x] `types/detail/SequenceBase.h`
+  * Concepts not necessary.
 * [x] `types/detail/TableBase.h`
   * No use of templates.
 * [x] `types/detail/TableMemberRegistry.h`

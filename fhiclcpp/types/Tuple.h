@@ -107,9 +107,8 @@ namespace fhicl {
 
     //===================================================================
     // iterate over tuple elements
-    using PW_non_const =
-      detail::ParameterWalker<tt::const_flavor::require_non_const>;
-    using PW_const = detail::ParameterWalker<tt::const_flavor::require_const>;
+    using PW_non_const = detail::ParameterWalker;
+    using PW_const = detail::ConstParameterWalker;
 
     template <std::size_t... I>
     void

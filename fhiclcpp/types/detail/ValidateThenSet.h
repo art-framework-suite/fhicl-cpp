@@ -13,7 +13,7 @@
 namespace fhicl::detail {
 
   class ValidateThenSet
-    : public ParameterWalker<tt::const_flavor::require_non_const> {
+    : public ParameterWalker {
   public:
     ValidateThenSet(ParameterSet const& pset,
                     std::set<std::string> const& keysToIgnore);

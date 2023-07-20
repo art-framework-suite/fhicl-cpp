@@ -4,25 +4,25 @@
 /*
   ======================================================================
 
+  ConstParameterWalker
   ParameterWalker
 
   ======================================================================
 
-  The ParameterWalker class makes it possible to traverse the nested
-  configuration for a given parameter.  This class is very similar in
-  functionality to the 'ParameterSet::walk_' function.
+  These classes make it possible to traverse the nested configuration
+  for a given parameter.  They are very similar in functionality to
+  the 'ParameterSet::walk_' function.
 
   The tree-walking functionality is provided via derivation:
 
-      class MyWalker : ParameterWalker<tt::const_flavor::require(_non)_const>
+      class MyWalker : (Const)?ParameterWalker
       {
         // members, functions, etc.
       };
 
-  where a provided template argument of
-  'tt::const_flavor::require_const ' makes all virtual functions
-  accept "T const*" arguments, whereas require_non_const makes all
-  virtual functions accept "T*" arguments.
+  By inheriting from ConstParameterWalker, the subclass promises not to
+  alter the configuration during the walk; inheriting from
+  ParameterWalker confers no such obligation.
 
   Heuristically, it looks like:
 
@@ -56,7 +56,7 @@
 
   The actions that are to be taken per parameter category (table,
   sequence, or atom) are defined entirely by overrides to the
-  ParameterWalker virtual functions that 'psw' calls (as shown above).
+  ParameterWalkerImpl virtual functions that 'psw' calls (as shown above).
 
   The function calls prefaced with '***' correspond to pure virtual
   functions, which must have corresponding overrides in any derived
@@ -67,135 +67,46 @@
   traversal.  The '{before,after}_action' virtual functions are
   provided so that category-agnostic instructions can be executed
   before or after the category-specific ones.
-*/
 
-#include "cetlib/container_algorithms.h"
-#include "cetlib_except/demangle.h"
-#include "fhiclcpp/type_traits.h"
-#include "fhiclcpp/types/detail/AtomBase.h"
-#include "fhiclcpp/types/detail/DelegateBase.h"
-#include "fhiclcpp/types/detail/SequenceBase.h"
-#include "fhiclcpp/types/detail/TableBase.h"
+  The required and optional member functions to be overridden by
+  subclasses of ParameterWalker and ConstParameterWalker are shown
+  below:
 
-namespace fhicl::detail {
-
-  template <tt::const_flavor C>
-  class ParameterWalker {
-  public:
-    ParameterWalker() = default;
-    virtual ~ParameterWalker() = default;
-
-    void walk_over(tt::maybe_const_t<ParameterBase, C>&);
-
-    bool
-    do_before_action(tt::maybe_const_t<ParameterBase, C>& p)
-    {
-      return before_action(p);
-    }
-    void
-    do_after_action(tt::maybe_const_t<ParameterBase, C>& p)
-    {
-      after_action(p);
-    }
-
-    void
-    do_enter_table(tt::maybe_const_t<TableBase, C>& t)
-    {
-      enter_table(t);
-    }
-    void
-    do_exit_table(tt::maybe_const_t<TableBase, C>& t)
-    {
-      exit_table(t);
-    }
-
-    void
-    do_enter_sequence(tt::maybe_const_t<SequenceBase, C>& s)
-    {
-      enter_sequence(s);
-    }
-    void
-    do_exit_sequence(tt::maybe_const_t<SequenceBase, C>& s)
-    {
-      exit_sequence(s);
-    }
-
-    void
-    do_atom(tt::maybe_const_t<AtomBase, C>& a)
-    {
-      atom(a);
-    }
-
-    void
-    do_delegated_parameter(tt::maybe_const_t<DelegateBase, C>& dp)
-    {
-      delegated_parameter(dp);
-    }
-
-  private:
-    virtual void enter_table(tt::maybe_const_t<TableBase, C>&) = 0;
-    virtual void enter_sequence(tt::maybe_const_t<SequenceBase, C>&) = 0;
-    virtual void atom(tt::maybe_const_t<AtomBase, C>&) = 0;
-    virtual void delegated_parameter(tt::maybe_const_t<DelegateBase, C>&) = 0;
-
-    virtual bool
-    before_action(tt::maybe_const_t<ParameterBase, C>&)
-    {
-      return true;
-    }
-    virtual void
-    after_action(tt::maybe_const_t<ParameterBase, C>&)
-    {}
-    virtual void
-    exit_table(tt::maybe_const_t<TableBase, C>&)
-    {}
-    virtual void
-    exit_sequence(tt::maybe_const_t<SequenceBase, C>&)
-    {}
+  class ConstParameterWalker {
+  ⋮
+   virtual bool before_action(ParameterBase const&);
+   virtual void after_action(ParameterBase const&);
+  
+   virtual void atom(AtomBase const&) = 0;
+   virtual void delegatedParameter(DelegatedBase const&) = 0;
+   virtual void enter_table(TableBase const&) = 0;
+   virtual void exit_table(TableBase const&);
+   virtual void enter_sequence(SequenceBase const&) = 0;
+   virtual void exit_sequence(SequenceBase const&);
+  ⋮
   };
 
-  //=============================================================================
-  // IMPLEMENTATION BELOW
+  class ParameterWalker {
+  ⋮
+   virtual bool before_action(ParameterBase&);
+   virtual void after_action(ParameterBase&);
+  
+   virtual void atom(AtomBase&) = 0;
+   virtual void delegatedParameter(DelegatedBase&) = 0;
+   virtual void enter_table(TableBase&) = 0;
+   virtual void exit_table(TableBase&);
+   virtual void enter_sequence(SequenceBase&) = 0;
+   virtual void exit_sequence(SequenceBase&);
+  ⋮
+  };
 
-  template <tt::const_flavor C>
-  void
-  ParameterWalker<C>::walk_over(tt::maybe_const_t<ParameterBase, C>& p)
-  {
-    if (!do_before_action(p))
-      return;
+*/
 
-    fhicl::par_type const pt = p.parameter_type();
+#include "fhiclcpp/types/detail/ParameterWalkerImpl.h"
 
-    auto& tw = *this;
-
-    if (is_table(pt)) {
-      using maybe_const_table = tt::maybe_const_t<TableBase, C>;
-      maybe_const_table& t = dynamic_cast<maybe_const_table&>(p);
-      do_enter_table(t);
-      cet::for_all(t.members(), [&tw](auto m) { tw.walk_over(*m); });
-      do_exit_table(t);
-    } else if (is_sequence(pt)) {
-      using maybe_const_sequence = tt::maybe_const_t<SequenceBase, C>;
-      maybe_const_sequence& s = dynamic_cast<maybe_const_sequence&>(p);
-      do_enter_sequence(s);
-      s.walk_elements(tw);
-      do_exit_sequence(s);
-    } else if (is_atom(pt)) {
-      using maybe_const_atom = tt::maybe_const_t<AtomBase, C>;
-      maybe_const_atom& a = dynamic_cast<maybe_const_atom&>(p);
-      do_atom(a);
-    } else {
-      using maybe_const_delegate = tt::maybe_const_t<DelegateBase, C>;
-      maybe_const_delegate& dp = dynamic_cast<maybe_const_delegate&>(p);
-      do_delegated_parameter(dp);
-    }
-
-    do_after_action(p);
-  }
-
-  // Explicit instantiations to avoid code bloat
-  extern template class ParameterWalker<tt::const_flavor::require_const>;
-  extern template class ParameterWalker<tt::const_flavor::require_non_const>;
+namespace fhicl::detail {
+  using ParameterWalker = ParameterWalkerImpl<tt::const_flavor::require_non_const>;
+  using ConstParameterWalker = ParameterWalkerImpl<tt::const_flavor::require_const>;
 }
 
 #endif /* fhiclcpp_types_detail_ParameterWalker_h */

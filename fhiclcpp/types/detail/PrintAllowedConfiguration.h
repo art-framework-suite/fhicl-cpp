@@ -13,7 +13,7 @@
 namespace fhicl::detail {
 
   class PrintAllowedConfiguration
-    : public ParameterWalker<tt::const_flavor::require_const> {
+    : public ConstParameterWalker {
   public:
     PrintAllowedConfiguration(std::ostream& os,
                               bool const showParents = false,

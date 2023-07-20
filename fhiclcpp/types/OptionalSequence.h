@@ -97,7 +97,7 @@ namespace fhicl {
 
     void
     do_walk_elements(
-      detail::ParameterWalker<tt::const_flavor::require_non_const>& pw) override
+      detail::ParameterWalker& pw) override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -105,7 +105,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(detail::ParameterWalker<tt::const_flavor::require_const>&
+    do_walk_elements(detail::ConstParameterWalker&
                        pw) const override
     {
       // We only enter here if we do not have a preset value.
@@ -217,7 +217,7 @@ namespace fhicl {
 
     void
     do_walk_elements(
-      detail::ParameterWalker<tt::const_flavor::require_non_const>& pw) override
+      detail::ParameterWalker& pw) override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -225,7 +225,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(detail::ParameterWalker<tt::const_flavor::require_const>&
+    do_walk_elements(detail::ConstParameterWalker&
                        pw) const override
     {
       // We only enter here if we do not have a preset value.
