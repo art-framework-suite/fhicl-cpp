@@ -113,14 +113,6 @@ namespace fhicl {
 
 namespace tt {
 
-  using cet::enable_if_function_exists_t;
-
-  template <bool b, typename T = void>
-  using disable_if = std::enable_if<!b, T>;
-
-  template <bool b, typename T = void>
-  using disable_if_t = typename disable_if<b, T>::type;
-
   //=======================================================
   // Get FHiCL types: can be Atom, Sequence, Tuple, or Table
   //
