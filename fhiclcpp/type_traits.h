@@ -6,7 +6,6 @@
 //
 // ======================================================================
 
-#include "cetlib/metaprogramming.h"
 
 #include <array>
 #include <complex>
