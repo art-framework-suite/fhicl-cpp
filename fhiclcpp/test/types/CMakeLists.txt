@@ -105,7 +105,6 @@ cet_test(validate_large_sequence_t
 cet_test(tables_in_parallel_t LIBRARIES PRIVATE
   fhiclcpp::types hep_concurrency::simultaneous_function_spawner)
 
-
 foreach (bad_atom_test IN ITEMS seq_array seq_tuple seq_vector atom sequence_a sequence_v)
   cet_test(bad_atom_${bad_atom_test}_t COMPILE_ONLY LIBRARIES PRIVATE fhiclcpp::types)
 endforeach()
