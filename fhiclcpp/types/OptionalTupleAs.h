@@ -57,6 +57,10 @@ namespace fhicl {
       return tupleObj_.hasValue();
     }
 
+    // Expert
+    struct fhicl_type_tag {};
+    struct fhicl_optional_tag {};
+
   private:
     OptionalTuple<ARGS...> tupleObj_;
 

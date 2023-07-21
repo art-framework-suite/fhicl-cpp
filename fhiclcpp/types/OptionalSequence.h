@@ -76,6 +76,9 @@ namespace fhicl {
       return has_value_;
     }
 
+    // Expert
+    struct fhicl_optional_tag {};
+
   private:
     std::variant<ftype, value_type> value_;
     bool has_value_{false};

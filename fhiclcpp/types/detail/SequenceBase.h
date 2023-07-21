@@ -54,6 +54,8 @@ namespace fhicl::detail {
       do_walk_elements(pw);
     }
 
+    struct fhicl_sequence_tag {};
+
   private:
     virtual std::size_t get_size() const noexcept = 0;
 

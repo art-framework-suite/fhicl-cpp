@@ -64,6 +64,10 @@ namespace fhicl {
       return value_;
     }
 
+    // Expert
+    struct fhicl_type_tag {};
+    struct fhicl_table_fragment_tag {};
+
   private:
     T value_;
   };

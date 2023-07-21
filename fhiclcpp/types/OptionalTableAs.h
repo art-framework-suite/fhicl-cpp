@@ -53,6 +53,10 @@ namespace fhicl {
     // access metadata of underlying fhicl-cpp type.
     operator detail::ParameterBase const&() const noexcept { return tableObj_; }
 
+    // Expert
+    struct fhicl_type_tag {};
+    struct fhicl_optional_tag {};
+
   private:
     OptionalTable<Config> tableObj_;
 

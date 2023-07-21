@@ -64,6 +64,7 @@ namespace fhicl {
     }
 
     // Expert-only
+    struct fhicl_optional_tag {};
     using value_type = T;
 
     OptionalAtom();

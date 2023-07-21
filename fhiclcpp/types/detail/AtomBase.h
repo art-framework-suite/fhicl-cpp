@@ -22,6 +22,8 @@ namespace fhicl::detail {
       return get_stringified_value();
     }
 
+    struct fhicl_atom_tag {};
+
   private:
     virtual std::string get_stringified_value() const = 0;
   };

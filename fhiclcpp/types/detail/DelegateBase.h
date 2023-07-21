@@ -14,6 +14,7 @@ namespace fhicl::detail {
                  F maybeUse)
       : ParameterBase{name, comment, vt, par_type::DELEGATE, maybeUse}
     {}
+    struct fhicl_delegate_tag {};
   };
 }
 

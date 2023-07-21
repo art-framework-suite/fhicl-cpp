@@ -79,6 +79,8 @@ namespace fhicl {
 
     //=================================================================
     // expert only
+    struct fhicl_type_tag {};
+    struct fhicl_table_tag {};
 
     // The non-const conversion operator from is necessary for the
     // ParameterWalker to iterate through a sequence of TableAs

@@ -51,6 +51,9 @@ namespace fhicl {
       return has_value_;
     }
 
+    // Expert
+    struct fhicl_optional_tag {};
+
   private:
     ftype value_;
     bool has_value_{false};

@@ -55,6 +55,7 @@ namespace fhicl {
 
     //=================================================================
     // expert only
+    struct fhicl_type_tag {};
 
     operator detail::ParameterBase&()
     {

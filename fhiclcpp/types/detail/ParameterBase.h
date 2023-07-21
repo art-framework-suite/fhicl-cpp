@@ -58,6 +58,8 @@ namespace fhicl::detail {
     bool preset_value(fhicl::ParameterSet const& ps);
     void set_par_style(par_style const vt);
 
+    struct fhicl_type_tag {};
+
   private:
     virtual bool do_preset_value(fhicl::ParameterSet const&);
     virtual void do_set_value(fhicl::ParameterSet const&) = 0;

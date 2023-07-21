@@ -29,6 +29,8 @@ namespace fhicl::detail {
     void validate(ParameterSet const& pset,
                   std::set<std::string> const& ignorable_keys = {});
 
+    struct fhicl_table_tag {};
+
   protected:
     void finalize_members();
     void maybe_implicitly_default();
