@@ -38,6 +38,9 @@ namespace fhicl {
     };
 
   template <typename T>
+  concept maybe_use_param = std::convertible_to<T, std::function<bool()>>;
+
+  template <typename T>
   class Atom;
   template <typename T>
   class OptionalAtom;
@@ -73,40 +76,35 @@ namespace fhicl {
   class DelegatedParameter;
   class OptionalDelegatedParameter;
 
-  template <typename T>
-  concept is_table_fragment_param =
-    std::same_as<T, typename ::fhicl::TableFragment<T>>;
+  //////////////////////////////////////////////////////////////////////
+  // FHiCL type identification
 
+  // Sequence types
   template <typename T>
-  concept is_optional_param = std::is_base_of_v<::fhicl::OptionalTable, T> ||
-                              std::is_base_of_v<::fhicl::OptionalAtom, T> ||
-                              std::is_base_of_v<::fhicl::OptionalSequence, T> ||
-                              std::is_base_of_v<::fhicl::OptionalTuple, T> ||
-                              std::is_base_of_v<::fhicl::OptionalTupleAs, T>;
+  struct is_sequence_impl : std::false_type {};
+  template <typename T, std::size_t SZ>
+  struct is_sequence_impl<std::array<T, SZ>> : std::true_type {};
+  template <typename... ARGS>
+  struct is_sequence_impl<std::tuple<ARGS...>> : std::true_type {};
+  template <typename... ARGS>
+  struct is_sequence_impl<std::vector<ARGS...>> : std::true_type {};
+  
+  template <typename T>
+  concept is_sequence_type_param = is_sequence_impl<T>::value;
 
+  // FHiCL type attributes
   template <typename T>
-  concept is_delegated_param =
-    std::is_base_of_v<::fhicl::DelegatedParameter, T> ||
-    std::is_base_of_v<::fhicl::OptionalDelegatedParameter, T>;
-
+  concept is_sequence_param = requires { typename T::fhicl_sequence_tag; };
   template <typename T>
-  concept is_table_param = std::is_base_of_v<::fhicl::Table, T>;
-
+  concept is_table_param = requires { typename T::fhicl_table_tag; };
   template <typename T>
-  concept is_sequence_type_param =
-    std::is_base_of_v<std::array, T> || std::is_base_of_v<std::tuple, T> ||
-    std::is_base_of_v<std::vector, T>;
-
+  concept is_table_fragment_param = requires { typename T::fhicl_table_fragment_tag; };
   template <typename T>
-  concept is_fhicl_type_param =
-    is_optional_param<T> || std::is_base_of_v<::fhicl::Atom, T> ||
-    std::is_base_of_v<::fhicl::Sequence, T> ||
-    std::is_base_of_v<::fhicl::Tuple, T> ||
-    std::is_base_of_v<::fhicl::TupleAs, T> ||
-    std::is_base_of_v<::fhicl::TableAs, T>;
-
+  concept is_optional_param = requires { typename T::fhicl_optional_tag; };
   template <typename T>
-  concept maybe_use_param = std::convertible_to<T, std::function<bool()>>;
+  concept is_delegated_param = requires { typename T::fhicl_delegate_tag; };
+  template <typename T>
+  concept is_fhicl_type_param = requires { typename T::fhicl_type_tag; };
 }
 
 namespace tt {
