@@ -40,8 +40,7 @@ namespace fhicl {
   template <typename T>
   concept maybe_use_param = std::convertible_to<T, std::function<bool()>>;
 
-  template <typename T>
-  class Atom;
+
   template <typename T>
   class OptionalAtom;
 
@@ -105,6 +104,14 @@ namespace fhicl {
   concept is_delegated_param = requires { typename T::fhicl_delegate_tag; };
   template <typename T>
   concept is_fhicl_type_param = requires { typename T::fhicl_type_tag; };
+  template <typename T>
+  concept atom_compatible = !(is_sequence_type_param<T> ||
+                              is_fhicl_type_param<T> ||
+                              is_table_fragment_param<T> ||
+                              is_delegated_param<T>);
+  template <typename T>
+  requires atom_compatible<T>
+  class Atom;
 }
 
 namespace tt {

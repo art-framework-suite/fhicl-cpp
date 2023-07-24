@@ -119,3 +119,4 @@ set_property(TEST bad_atom_atom_t PROPERTY PASS_REGULAR_EXPRESSION
 set_tests_properties(bad_atom_sequence_a_t bad_atom_sequence_v_t
   PROPERTIES PASS_REGULAR_EXPRESSION
   "note: ‘! is_fhicl_type_param<fhicl::Sequence<int, [0-9]+> >’ evaluates to false\n")
+
