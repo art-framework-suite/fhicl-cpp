@@ -24,22 +24,16 @@ namespace fhicl {
   // e.g. OptionalTuple<int,double,bool> ====> std::tuple<int,double,bool>
   //
 
-  template <typename... T>
+  template <tuple_compatible... T>
   class OptionalTuple final : public detail::SequenceBase,
                               private detail::RegisterIfTableMember {
   public:
     using ftype = std::tuple<std::shared_ptr<tt::fhicl_type<T>>...>;
     using value_type = std::tuple<tt::return_type<T>...>;
 
-    static_assert(!(fhicl::is_table_fragment_param<T> || ...),
-                  NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!(fhicl::is_optional_param<T> || ...), NO_OPTIONAL_TYPES);
-    static_assert(!(fhicl::is_delegated_param<T> || ...),
-                  NO_DELEGATED_PARAMETERS);
-
     explicit OptionalTuple(Name&& name);
     explicit OptionalTuple(Name&& name, Comment&& comment);
-    template <fhicl::maybe_use_param F>
+    template <maybe_use_param F>
     explicit OptionalTuple(Name&& name, Comment&& comment, F maybeUse);
 
     auto operator()() const -> std::optional<value_type>;
@@ -143,12 +137,12 @@ namespace fhicl {
 
   //================= IMPLEMENTATION =========================
   //
-  template <typename... T>
+  template <tuple_compatible... T>
   OptionalTuple<T...>::OptionalTuple(Name&& name)
     : OptionalTuple{std::move(name), Comment("")}
   {}
 
-  template <typename... T>
+  template <tuple_compatible... T>
   OptionalTuple<T...>::OptionalTuple(Name&& name, Comment&& comment)
     : SequenceBase{std::move(name),
                    std::move(comment),
@@ -161,8 +155,8 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename... T>
-  template <fhicl::maybe_use_param F>
+  template <tuple_compatible... T>
+  template <maybe_use_param F>
   OptionalTuple<T...>::OptionalTuple(Name&& name, Comment&& comment, F maybeUse)
     : SequenceBase{std::move(name),
                    std::move(comment),
@@ -175,7 +169,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename... T>
+  template <tuple_compatible... T>
   auto
   OptionalTuple<T...>::operator()() const -> std::optional<value_type>
   {
@@ -185,7 +179,7 @@ namespace fhicl {
       get_rtype_result(std::index_sequence_for<T...>()));
   }
 
-  template <typename... T>
+  template <tuple_compatible... T>
   auto
   OptionalTuple<T...>::operator()(value_type& r) const -> bool
   {

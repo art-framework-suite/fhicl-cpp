@@ -27,7 +27,7 @@ namespace fhicl {
     static_assert(!fhicl::is_sequence_type_param<T>, NO_STD_CONTAINERS);
     static_assert(!fhicl::is_fhicl_type_param<T>,
                   NO_NESTED_FHICL_TYPES_IN_TABLE);
-    static_assert(!fhicl::is_table_fragment_param<T>,
+    static_assert(!fhicl::is_table_fragment<T>,
                   NO_NESTED_TABLE_FRAGMENTS);
     static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
 

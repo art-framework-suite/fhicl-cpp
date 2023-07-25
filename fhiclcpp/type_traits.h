@@ -40,24 +40,14 @@ namespace fhicl {
   template <typename T>
   concept maybe_use_param = std::convertible_to<T, std::function<bool()>>;
 
-  template <typename T>
-  class OptionalAtom;
 
-  template <typename T, keys_to_ignore_provider... KeysToIgnore>
-  class Table;
   template <typename T>
   class OptionalTable;
 
-  template <typename T>
-  class TableFragment;
 
-  template <typename... ARGS>
-  class Tuple;
-  template <typename... ARGS>
-  class OptionalTuple;
 
-  template <typename T, std::size_t SZ>
-  class Sequence;
+
+
 
 
   template <typename T, typename... ARGS>
@@ -95,7 +85,7 @@ namespace fhicl {
   template <typename T>
   concept is_table_param = requires { typename T::fhicl_table_tag; };
   template <typename T>
-  concept is_table_fragment_param =
+  concept is_table_fragment =
     requires { typename T::fhicl_table_fragment_tag; };
   template <typename T>
   concept is_optional_param = requires { typename T::fhicl_optional_tag; };
@@ -104,18 +94,34 @@ namespace fhicl {
   template <typename T>
   concept is_fhicl_type_param = requires { typename T::fhicl_type_tag; };
   template <typename T>
-  concept atom_compatible =
+  concept table_or_atom_compatible =
     !(is_stl_sequence_param<T> || is_fhicl_type_param<T> ||
-      is_table_fragment_param<T> || is_delegated_param<T>);
+      is_table_fragment<T> || is_delegated_param<T>);
   template <typename T>
   concept sequence_compatible = 
-    !(is_optional_param<T> || is_delegated_param<T> || is_table_fragment_param<T>);
+    !(is_optional_param<T> || is_delegated_param<T> || is_table_fragment<T>);
+  template <typename... T>
+  concept tuple_compatible = (sequence_compatible<T> && ...);
+  template <typename T>
+  concept table_fragment_compatible = !(is_stl_sequence_param<T> || is_fhicl_type_param<T> || is_table_fragment<T> || is_delegated_param<T>) && std::is_class_v<T>;
+  
 
-
-  template <atom_compatible T>
+  template <table_or_atom_compatible T>
   class Atom;
+  template <table_or_atom_compatible T>
+  class OptionalAtom;
+  template <table_or_atom_compatible T, keys_to_ignore_provider... KeysToIgnore>
+  class Table;
   template <sequence_compatible T, std::size_t SZ>
   class OptionalSequence;
+  template <tuple_compatible... ARGS>
+  class Tuple;
+  template <tuple_compatible... ARGS>
+  class OptionalTuple;
+  template <table_fragment_compatible T>
+  class TableFragment;
+  template <sequence_compatible T, std::size_t SZ>
+  class Sequence;
 }
 
 namespace tt {

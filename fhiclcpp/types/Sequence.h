@@ -72,15 +72,10 @@ namespace fhicl {
   //==================================================================
   // e.g. Sequence<int,4> ====> std::array<int,4>
   //
-  template <typename T, std::size_t N = -1ull>
+  template <sequence_compatible T, std::size_t N = -1ull>
   class Sequence final : public detail::SequenceBase,
                          private detail::RegisterIfTableMember {
   public:
-    static_assert(!fhicl::is_table_fragment_param<T>,
-                  NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!fhicl::is_optional_param<T>, NO_OPTIONAL_TYPES);
-    static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
-
     using default_type =
       sequence_detail::ValueHolder<typename tt::fhicl_type<T>::default_type>;
     using ftype = std::array<std::shared_ptr<tt::fhicl_type<T>>, N>;
@@ -177,15 +172,10 @@ namespace fhicl {
   //==================================================================
   // e.g. Sequence<int> ====> std::vector<int>
   //
-  template <typename T>
+  template <sequence_compatible T>
   class Sequence<T, -1ull> final : public detail::SequenceBase,
                                    private detail::RegisterIfTableMember {
   public:
-    static_assert(!fhicl::is_table_fragment_param<T>,
-                  NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!fhicl::is_optional_param<T>, NO_OPTIONAL_TYPES);
-    static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
-
     using default_type = std::vector<typename tt::fhicl_type<T>::default_type>;
     using ftype = std::vector<std::shared_ptr<tt::fhicl_type<T>>>;
     using value_type = std::vector<tt::return_type<T>>;
@@ -321,11 +311,11 @@ namespace fhicl {
   // e.g. Sequence<int,4> ====> std::array<int,4>
   //
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   Sequence<T, N>::Sequence(Name&& name) : Sequence{std::move(name), Comment("")}
   {}
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   Sequence<T, N>::Sequence(Name&& name, Comment&& comment)
     : SequenceBase{std::move(name),
                    std::move(comment),
@@ -343,7 +333,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   Sequence<T, N>::Sequence(Name&& name,
                            Comment&& comment,
                            std::function<bool()> maybeUse)
@@ -364,12 +354,12 @@ namespace fhicl {
   }
 
   // c'tors that support defaults
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   Sequence<T, N>::Sequence(Name&& name, default_type const& defaults)
     : Sequence{std::move(name), Comment{""}, defaults}
   {}
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   Sequence<T, N>::Sequence(Name&& name,
                            Comment&& comment,
                            default_type const& defaults)
@@ -391,7 +381,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   Sequence<T, N>::Sequence(Name&& name,
                            Comment&& comment,
                            std::function<bool()> maybeUse,
@@ -417,12 +407,12 @@ namespace fhicl {
   //==================================================================
   // e.g. Sequence<int> ====> std::vector<int>
   //
-  template <typename T>
+  template <sequence_compatible T>
   Sequence<T, -1ull>::Sequence(Name&& name)
     : Sequence{std::move(name), Comment{""}}
   {}
 
-  template <typename T>
+  template <sequence_compatible T>
   Sequence<T, -1ull>::Sequence(Name&& name, Comment&& comment)
     : SequenceBase{std::move(name),
                    std::move(comment),
@@ -436,7 +426,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
+  template <sequence_compatible T>
   Sequence<T, -1ull>::Sequence(Name&& name,
                                Comment&& comment,
                                std::function<bool()> maybeUse)
@@ -453,12 +443,14 @@ namespace fhicl {
   }
 
   // c'tors that support defaults
-  template <typename T>
+  template <sequence_compatible T>
+  requires (!fhicl::is_table_param<T>)
   Sequence<T, -1ull>::Sequence(Name&& name, default_type const& defaults)
     : Sequence{std::move(name), Comment{""}, defaults}
   {}
 
-  template <typename T>
+  template <sequence_compatible T>
+  requires (!fhicl::is_table_param<T>)
   Sequence<T, -1ull>::Sequence(Name&& name,
                                Comment&& comment,
                                default_type const& defaults)
@@ -469,7 +461,7 @@ namespace fhicl {
                    detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
-    static_assert(!fhicl::is_table_param<T>, NO_DEFAULTS_FOR_TABLE);
+//    static_assert(!fhicl::is_table_param<T>, NO_DEFAULTS_FOR_TABLE);
     std::size_t i{};
     auto& value = std::get<ftype>(value_);
     for (auto const& t : defaults) {
@@ -480,7 +472,8 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
+  template <sequence_compatible T>
+  requires (!fhicl::is_table_param<T>)
   Sequence<T, -1ull>::Sequence(Name&& name,
                                Comment&& comment,
                                std::function<bool()> maybeUse,
@@ -492,7 +485,7 @@ namespace fhicl {
                    maybeUse}
     , RegisterIfTableMember{this}
   {
-    static_assert(!fhicl::is_table_param<T>, NO_DEFAULTS_FOR_TABLE);
+//    static_assert(!fhicl::is_table_param<T>, NO_DEFAULTS_FOR_TABLE);
     std::size_t i{};
     auto& value = std::get<ftype>(value_);
     for (auto const& t : defaults) {

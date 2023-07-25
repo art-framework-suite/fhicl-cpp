@@ -24,17 +24,10 @@
 namespace fhicl {
 
   //========================================================
-  template <typename T, keys_to_ignore_provider... KeysToIgnore>
+  template <table_or_atom_compatible T, keys_to_ignore_provider... KeysToIgnore>
   class Table final : public detail::TableBase,
                       private detail::RegisterIfTableMember {
   public:
-    static_assert(!fhicl::is_sequence_type_param<T>, NO_STD_CONTAINERS);
-    static_assert(!fhicl::is_fhicl_type_param<T>,
-                  NO_NESTED_FHICL_TYPES_IN_TABLE);
-    static_assert(!fhicl::is_table_fragment_param<T>,
-                  NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
-
     //=====================================================
     // User-friendly
     // ... c'tors
@@ -76,13 +69,13 @@ namespace fhicl {
   //=====================================================
   // Implementation
 
-  template <typename T, keys_to_ignore_provider... KeysToIgnore>
+  template <table_or_atom_compatible T, keys_to_ignore_provider... KeysToIgnore>
   template <typename... TCARGS>
   Table<T, KeysToIgnore...>::Table(Name&& name, TCARGS&&... tcargs)
     : Table{std::move(name), Comment(""), std::forward<TCARGS>(tcargs)...}
   {}
 
-  template <typename T, keys_to_ignore_provider... KeysToIgnore>
+  template <table_or_atom_compatible T, keys_to_ignore_provider... KeysToIgnore>
   template <typename... TCARGS>
   Table<T, KeysToIgnore...>::Table(Name&& name,
                                    Comment&& comment,
@@ -99,7 +92,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T, keys_to_ignore_provider... KeysToIgnore>
+  template <table_or_atom_compatible T, keys_to_ignore_provider... KeysToIgnore>
   template <fhicl::maybe_use_param F, typename... TCARGS>
   Table<T, KeysToIgnore...>::Table(Name&& name,
                                    Comment&& comment,
@@ -117,7 +110,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T, keys_to_ignore_provider... KeysToIgnore>
+  template <table_or_atom_compatible T, keys_to_ignore_provider... KeysToIgnore>
   Table<T, KeysToIgnore...>::Table(ParameterSet const& pset,
                                    std::set<std::string> const& keysToIgnore)
     : TableBase{Name("<top_level>"),

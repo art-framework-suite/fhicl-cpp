@@ -20,7 +20,7 @@
 namespace fhicl {
 
   //========================================================
-  template <atom_compatible T>
+  template <table_or_atom_compatible T>
   class Atom final : public detail::AtomBase,
                      private detail::RegisterIfTableMember {
   public:
@@ -64,7 +64,7 @@ namespace fhicl {
 
 namespace fhicl {
 
-  template <atom_compatible T>
+  template <table_or_atom_compatible T>
   Atom<T>::Atom(Name&& name, Comment&& comment)
     : AtomBase{std::move(name),
                std::move(comment),
@@ -75,7 +75,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <atom_compatible T>
+  template <table_or_atom_compatible T>
   template <fhicl::maybe_use_param F>
   Atom<T>::Atom(Name&& name, Comment&& comment, F maybeUse)
     : AtomBase{std::move(name),
@@ -87,7 +87,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <atom_compatible T>
+  template <table_or_atom_compatible T>
   Atom<T>::Atom(Name&& name, Comment&& comment, T const& dflt_value)
     : AtomBase{std::move(name),
                std::move(comment),
@@ -99,8 +99,8 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <atom_compatible T>
-  template <fhicl::maybe_use_param F>
+  template <table_or_atom_compatible T>
+  template <maybe_use_param F>
   Atom<T>::Atom(Name&& name, Comment&& comment, F maybeUse, T const& dflt_value)
     : AtomBase{std::move(name),
                std::move(comment),
@@ -112,16 +112,16 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <atom_compatible T>
+  template <table_or_atom_compatible T>
   Atom<T>::Atom(Name&& name) : Atom{std::move(name), Comment("")}
   {}
 
-  template <atom_compatible T>
+  template <table_or_atom_compatible T>
   Atom<T>::Atom(Name&& name, T const& dflt_value)
     : Atom{std::move(name), Comment(""), dflt_value}
   {}
 
-  template <atom_compatible T>
+  template <table_or_atom_compatible T>
   std::string
   Atom<T>::get_stringified_value() const
   {
@@ -136,7 +136,7 @@ namespace fhicl {
     return oss.str();
   }
 
-  template <atom_compatible T>
+  template <table_or_atom_compatible T>
   void
   Atom<T>::do_set_value(fhicl::ParameterSet const& pset)
   {

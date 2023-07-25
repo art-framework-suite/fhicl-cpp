@@ -20,16 +20,10 @@
 namespace fhicl {
 
   //========================================================
-  template <typename T>
+  template <table_or_atom_compatible T>
   class OptionalAtom final : public detail::AtomBase,
                              private detail::RegisterIfTableMember {
   public:
-    static_assert(!fhicl::is_sequence_type_param<T>, NO_STD_CONTAINERS);
-    static_assert(!fhicl::is_fhicl_type_param<T>,
-                  NO_NESTED_FHICL_TYPES_IN_ATOM);
-    static_assert(!fhicl::is_table_fragment_param<T>,
-                  NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
 
     //=====================================================
     // User-friendly
@@ -82,12 +76,12 @@ namespace fhicl {
 
 namespace fhicl {
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   OptionalAtom<T>::OptionalAtom(Name&& name)
     : OptionalAtom{std::move(name), Comment("")}
   {}
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   OptionalAtom<T>::OptionalAtom(Name&& name, Comment&& comment)
     : AtomBase{std::move(name),
                std::move(comment),
@@ -98,8 +92,8 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
-  template <fhicl::maybe_use_param F>
+  template <table_or_atom_compatible T>
+  template <maybe_use_param F>
   OptionalAtom<T>::OptionalAtom(Name&& name, Comment&& comment, F maybeUse)
     : AtomBase{std::move(name),
                std::move(comment),
@@ -110,7 +104,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   std::string
   OptionalAtom<T>::get_stringified_value() const
   {
@@ -125,7 +119,7 @@ namespace fhicl {
     return oss.str();
   }
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   void
   OptionalAtom<T>::do_set_value(fhicl::ParameterSet const& pset)
   {

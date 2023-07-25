@@ -52,7 +52,7 @@ namespace fhicl {
   // e.g. Tuple<int,double,bool> ====> std::tuple<int,double,bool>
   //
 
-  template <typename... T>
+  template <tuple_compatible... T>
   class Tuple final : public detail::SequenceBase,
                       private detail::RegisterIfTableMember {
   public:
@@ -60,12 +60,6 @@ namespace fhicl {
       tuple_detail::ValueHolder<typename tt::fhicl_type<T>::default_type...>;
     using value_type = std::tuple<tt::return_type<T>...>;
     using ftype = std::tuple<std::shared_ptr<tt::fhicl_type<T>>...>;
-
-    static_assert(!(fhicl::is_table_fragment_param<T> || ...),
-                  NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!(fhicl::is_optional_param<T> || ...), NO_OPTIONAL_TYPES);
-    static_assert(!(fhicl::is_delegated_param<T> || ...),
-                  NO_DELEGATED_PARAMETERS);
 
     explicit Tuple(Name&& name);
     explicit Tuple(Name&& name, Comment&& comment);
@@ -192,11 +186,11 @@ namespace fhicl {
 
   //================= IMPLEMENTATION =========================
   //
-  template <typename... T>
+  template <tuple_compatible... T>
   Tuple<T...>::Tuple(Name&& name) : Tuple{std::move(name), Comment("")}
   {}
 
-  template <typename... T>
+  template <tuple_compatible... T>
   Tuple<T...>::Tuple(Name&& name, Comment&& comment)
     : SequenceBase{std::move(name),
                    std::move(comment),
@@ -209,8 +203,8 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename... T>
-  template <fhicl::maybe_use_param F>
+  template <tuple_compatible... T>
+  template <maybe_use_param F>
   Tuple<T...>::Tuple(Name&& name, Comment&& comment, F maybeUse)
     : SequenceBase{std::move(name),
                    std::move(comment),
@@ -225,12 +219,12 @@ namespace fhicl {
 
   // c'tors supporting defaults
 
-  template <typename... T>
+  template <tuple_compatible... T>
   Tuple<T...>::Tuple(Name&& name, default_type const& defaults)
     : Tuple{std::move(name), Comment(""), defaults}
   {}
 
-  template <typename... T>
+  template <tuple_compatible... T>
   Tuple<T...>::Tuple(Name&& name,
                      Comment&& comment,
                      default_type const& defaults)
@@ -245,7 +239,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename... T>
+  template <tuple_compatible... T>
   template <fhicl::maybe_use_param F>
   Tuple<T...>::Tuple(Name&& name,
                      Comment&& comment,
@@ -262,7 +256,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename... T>
+  template <tuple_compatible... T>
   auto
   Tuple<T...>::operator()() const
   {
