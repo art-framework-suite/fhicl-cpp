@@ -296,7 +296,7 @@ namespace fhicl {
   bool
   OptionalSequence<T, N>::do_preset_value(fhicl::ParameterSet const& ps)
   {
-    if constexpr (std::is_same_v<tt::fhicl_type<T>, Atom<T>>) {
+    if constexpr (fhicl::atom_ish<T>) {
       auto const trimmed_key = detail::strip_first_containing_name(key());
       value_ = ps.get<value_type>(trimmed_key);
       has_value_ = true;
@@ -361,7 +361,7 @@ namespace fhicl {
   bool
   OptionalSequence<T, -1ull>::do_preset_value(fhicl::ParameterSet const& ps)
   {
-    if constexpr (std::is_same_v<tt::fhicl_type<T>, Atom<T>>) {
+    if constexpr (fhicl::atom_ish<T>) {
       auto const trimmed_key = detail::strip_first_containing_name(key());
       value_ = ps.get<value_type>(trimmed_key);
       has_value_ = true;

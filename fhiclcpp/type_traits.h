@@ -112,7 +112,11 @@ namespace fhicl {
   template <typename T>
   requires atom_compatible<T>
   class Atom;
-}
+
+   
+
+  }
+ 
 
 namespace tt {
 
@@ -224,6 +228,16 @@ namespace tt {
   // The alias
   template <typename... ARGS>
   using return_type = typename return_type_impl<ARGS...>::value_type;
+}
+
+namespace fhicl {
+
+  template <typename T>
+  concept atom_ish = requires {
+    { Atom<T>{} } -> std::same_as<tt::fhicl_type<T>>;
+  };
+
+
 }
 
 #endif /* fhiclcpp_type_traits_h */

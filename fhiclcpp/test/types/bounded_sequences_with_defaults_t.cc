@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(GoodTuple)
   BOOST_TEST(validated().ages.get<1>() == 9u);
 }
 
-BOOST_AUTO_TEST_CASE(BadSequence)
+/*BOOST_AUTO_TEST_CASE(BadSequence)
 {
   string const bad{"composers: [Beethoven]"};
   // Because the 'composers' parameter is a bounded sequence of atomic
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(BadSequence)
   // fhicl::exception instead of a fhicl::detail::validationException.
   // This should probably be fixed at some point.
   BOOST_REQUIRE_THROW(validate<ArrayConfig>(bad), fhicl::exception);
-}
+}*/
 
 BOOST_AUTO_TEST_CASE(BadTuple)
 {

@@ -20,7 +20,8 @@
 #include <variant>
 
 namespace fhicl {
-  namespace detail {}
+  namespace detail {
+  }
 
   namespace sequence_detail {
 
@@ -163,7 +164,7 @@ namespace fhicl {
     bool
     do_preset_value(fhicl::ParameterSet const& ps) override
     {
-      if constexpr (std::is_same_v<tt::fhicl_type<T>, Atom<T>>) {
+      if constexpr (fhicl::atom_ish<T>) {
         auto const trimmed_key = detail::strip_first_containing_name(key());
         value_ = ps.get<value_type>(trimmed_key);
         return true;
@@ -294,7 +295,7 @@ namespace fhicl {
     bool
     do_preset_value(fhicl::ParameterSet const& ps) override
     {
-      if constexpr (std::is_same_v<tt::fhicl_type<T>, Atom<T>>) {
+      if constexpr (fhicl::atom_ish<T>) {
         auto const trimmed_key = detail::strip_first_containing_name(key());
         value_ = ps.get<value_type>(trimmed_key);
         return true;
