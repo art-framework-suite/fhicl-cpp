@@ -12,8 +12,7 @@
 
 namespace fhicl::detail {
 
-  class PrintAllowedConfiguration
-    : public ConstParameterWalker {
+  class PrintAllowedConfiguration : public ConstParameterWalker {
   public:
     PrintAllowedConfiguration(std::ostream& os,
                               bool const showParents = false,

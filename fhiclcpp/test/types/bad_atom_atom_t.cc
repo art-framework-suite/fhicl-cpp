@@ -5,6 +5,8 @@
 using namespace fhicl;
 using namespace std::string_literals;
 
-int main() {
-  Atom<Atom<int>> atom_atom { Name{"Atom"s} };  
+int
+main()
+{
+  Atom<Atom<int>> atom_atom{Name{"Atom"s}};
 }

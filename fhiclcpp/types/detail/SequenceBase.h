@@ -23,8 +23,10 @@ namespace fhicl::detail {
     {}
 
   protected:
-    using ConstParameterWalker = ParameterWalkerImpl<tt::const_flavor::require_const>;
-    using ParameterWalker = ParameterWalkerImpl<tt::const_flavor::require_non_const>;
+    using ConstParameterWalker =
+      ParameterWalkerImpl<tt::const_flavor::require_const>;
+    using ParameterWalker =
+      ParameterWalkerImpl<tt::const_flavor::require_non_const>;
 
   public:
     bool

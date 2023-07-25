@@ -5,8 +5,8 @@
 #include "cetlib_except/demangle.h"
 #include "fhiclcpp/types/detail/AtomBase.h"
 #include "fhiclcpp/types/detail/DelegateBase.h"
-#include "fhiclcpp/types/detail/ParameterBase.h"
 #include "fhiclcpp/types/detail/PW_fwd.h"
+#include "fhiclcpp/types/detail/ParameterBase.h"
 #include "fhiclcpp/types/detail/SequenceBase.h"
 #include "fhiclcpp/types/detail/TableBase.h"
 
@@ -128,7 +128,8 @@ namespace fhicl::detail {
 
   // Explicit instantiations to avoid code bloat
   extern template class ParameterWalkerImpl<tt::const_flavor::require_const>;
-  extern template class ParameterWalkerImpl<tt::const_flavor::require_non_const>;
+  extern template class ParameterWalkerImpl<
+    tt::const_flavor::require_non_const>;
 }
 
 #endif /* fhiclcpp_types_detail_ParameterWalkerImpl_h */

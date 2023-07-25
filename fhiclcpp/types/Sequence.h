@@ -20,8 +20,7 @@
 #include <variant>
 
 namespace fhicl {
-  namespace detail {
-  }
+  namespace detail {}
 
   namespace sequence_detail {
 
@@ -144,8 +143,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(
-      detail::ParameterWalker& pw) override
+    do_walk_elements(detail::ParameterWalker& pw) override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -153,8 +151,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(detail::ConstParameterWalker&
-                       pw) const override
+    do_walk_elements(detail::ConstParameterWalker& pw) const override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -275,8 +272,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(
-      detail::ParameterWalker& pw) override
+    do_walk_elements(detail::ParameterWalker& pw) override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -284,8 +280,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(detail::ConstParameterWalker&
-                       pw) const override
+    do_walk_elements(detail::ConstParameterWalker& pw) const override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),

@@ -20,18 +20,11 @@
 namespace fhicl {
 
   //========================================================
-  template <typename T>
-  requires atom_compatible<T>
+  template <atom_compatible T>
   class Atom final : public detail::AtomBase,
                      private detail::RegisterIfTableMember {
   public:
-    static_assert(!fhicl::is_sequence_type_param<T>, NO_STD_CONTAINERS);
-    static_assert(!fhicl::is_fhicl_type_param<T>,
-                  NO_NESTED_FHICL_TYPES_IN_ATOM);
-    static_assert(!fhicl::is_table_fragment_param<T>,
-                  NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
-
+    
     //=====================================================
     // User-friendly
     // ... c'tors
@@ -71,8 +64,7 @@ namespace fhicl {
 
 namespace fhicl {
 
-  template <typename T>
-  requires atom_compatible<T>
+  template <atom_compatible T>
   Atom<T>::Atom(Name&& name, Comment&& comment)
     : AtomBase{std::move(name),
                std::move(comment),
@@ -83,8 +75,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
-  requires atom_compatible<T>
+  template <atom_compatible T>
   template <fhicl::maybe_use_param F>
   Atom<T>::Atom(Name&& name, Comment&& comment, F maybeUse)
     : AtomBase{std::move(name),
@@ -96,8 +87,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
-  requires atom_compatible<T>
+  template <atom_compatible T>
   Atom<T>::Atom(Name&& name, Comment&& comment, T const& dflt_value)
     : AtomBase{std::move(name),
                std::move(comment),
@@ -109,8 +99,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
-  requires atom_compatible<T>
+  template <atom_compatible T>
   template <fhicl::maybe_use_param F>
   Atom<T>::Atom(Name&& name, Comment&& comment, F maybeUse, T const& dflt_value)
     : AtomBase{std::move(name),
@@ -123,19 +112,16 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
-  requires atom_compatible<T>
+  template <atom_compatible T>
   Atom<T>::Atom(Name&& name) : Atom{std::move(name), Comment("")}
   {}
 
-  template <typename T>
-  requires atom_compatible<T>
+  template <atom_compatible T>
   Atom<T>::Atom(Name&& name, T const& dflt_value)
     : Atom{std::move(name), Comment(""), dflt_value}
   {}
 
-  template <typename T>
-  requires atom_compatible<T>
+  template <atom_compatible T>
   std::string
   Atom<T>::get_stringified_value() const
   {
@@ -150,8 +136,7 @@ namespace fhicl {
     return oss.str();
   }
 
-  template <typename T>
-  requires atom_compatible<T>
+  template <atom_compatible T>
   void
   Atom<T>::do_set_value(fhicl::ParameterSet const& pset)
   {

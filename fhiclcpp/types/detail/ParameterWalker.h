@@ -76,7 +76,7 @@
   ⋮
    virtual bool before_action(ParameterBase const&);
    virtual void after_action(ParameterBase const&);
-  
+
    virtual void atom(AtomBase const&) = 0;
    virtual void delegatedParameter(DelegatedBase const&) = 0;
    virtual void enter_table(TableBase const&) = 0;
@@ -90,7 +90,7 @@
   ⋮
    virtual bool before_action(ParameterBase&);
    virtual void after_action(ParameterBase&);
-  
+
    virtual void atom(AtomBase&) = 0;
    virtual void delegatedParameter(DelegatedBase&) = 0;
    virtual void enter_table(TableBase&) = 0;
@@ -105,8 +105,10 @@
 #include "fhiclcpp/types/detail/ParameterWalkerImpl.h"
 
 namespace fhicl::detail {
-  using ParameterWalker = ParameterWalkerImpl<tt::const_flavor::require_non_const>;
-  using ConstParameterWalker = ParameterWalkerImpl<tt::const_flavor::require_const>;
+  using ParameterWalker =
+    ParameterWalkerImpl<tt::const_flavor::require_non_const>;
+  using ConstParameterWalker =
+    ParameterWalkerImpl<tt::const_flavor::require_const>;
 }
 
 #endif /* fhiclcpp_types_detail_ParameterWalker_h */

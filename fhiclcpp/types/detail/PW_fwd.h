@@ -22,7 +22,8 @@ namespace tt {
 }
 
 namespace fhicl::detail {
-  template <tt::const_flavor C> class ParameterWalkerImpl;
+  template <tt::const_flavor C>
+  class ParameterWalkerImpl;
 }
 
 #endif /* fhiclcpp_types_detail_PW_fwd_h */
@@ -30,5 +31,3 @@ namespace fhicl::detail {
 // Local variables:
 // mode: c++
 // End:
-
-

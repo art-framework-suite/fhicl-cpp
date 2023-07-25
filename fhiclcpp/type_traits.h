@@ -40,7 +40,6 @@ namespace fhicl {
   template <typename T>
   concept maybe_use_param = std::convertible_to<T, std::function<bool()>>;
 
-
   template <typename T>
   class OptionalAtom;
 
@@ -59,8 +58,7 @@ namespace fhicl {
 
   template <typename T, std::size_t SZ>
   class Sequence;
-  template <typename T, std::size_t SZ>
-  class OptionalSequence;
+
 
   template <typename T, typename... ARGS>
   class TupleAs;
@@ -87,17 +85,18 @@ namespace fhicl {
   struct is_sequence_impl<std::tuple<ARGS...>> : std::true_type {};
   template <typename... ARGS>
   struct is_sequence_impl<std::vector<ARGS...>> : std::true_type {};
-  
+
   template <typename T>
   concept is_sequence_type_param = is_sequence_impl<T>::value;
 
   // FHiCL type attributes
   template <typename T>
-  concept is_sequence_param = requires { typename T::fhicl_sequence_tag; };
+  concept is_stl_sequence_param = requires { typename T::fhicl_sequence_tag; };
   template <typename T>
   concept is_table_param = requires { typename T::fhicl_table_tag; };
   template <typename T>
-  concept is_table_fragment_param = requires { typename T::fhicl_table_fragment_tag; };
+  concept is_table_fragment_param =
+    requires { typename T::fhicl_table_fragment_tag; };
   template <typename T>
   concept is_optional_param = requires { typename T::fhicl_optional_tag; };
   template <typename T>
@@ -105,18 +104,19 @@ namespace fhicl {
   template <typename T>
   concept is_fhicl_type_param = requires { typename T::fhicl_type_tag; };
   template <typename T>
-  concept atom_compatible = !(is_sequence_type_param<T> ||
-                              is_fhicl_type_param<T> ||
-                              is_table_fragment_param<T> ||
-                              is_delegated_param<T>);
+  concept atom_compatible =
+    !(is_stl_sequence_param<T> || is_fhicl_type_param<T> ||
+      is_table_fragment_param<T> || is_delegated_param<T>);
   template <typename T>
-  requires atom_compatible<T>
+  concept sequence_compatible = 
+    !(is_optional_param<T> || is_delegated_param<T> || is_table_fragment_param<T>);
+
+
+  template <atom_compatible T>
   class Atom;
-
-   
-
-  }
- 
+  template <sequence_compatible T, std::size_t SZ>
+  class OptionalSequence;
+}
 
 namespace tt {
 
@@ -234,9 +234,10 @@ namespace fhicl {
 
   template <typename T>
   concept atom_ish = requires {
-    { Atom<T>{} } -> std::same_as<tt::fhicl_type<T>>;
-  };
-
+                       {
+                         Atom<T>{}
+                         } -> std::same_as<tt::fhicl_type<T>>;
+                     };
 
 }
 

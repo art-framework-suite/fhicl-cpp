@@ -3,10 +3,10 @@
 
 #include "cetlib_except/demangle.h"
 
+#include <concepts>
 #include <ostream>
 #include <string>
 #include <typeinfo>
-#include <concepts>
 
 namespace fhicl::detail::yes_defaults {
 

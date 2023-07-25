@@ -9,8 +9,7 @@
 
 namespace fhicl {
 
-  class KeyMap
-    : public detail::ConstParameterWalker {
+  class KeyMap : public detail::ConstParameterWalker {
   public:
     auto const&
     result() const

@@ -25,14 +25,14 @@ namespace fhicl {
   //==================================================================
   // e.g. OptionalSequence<int,4> ====> std::array<int,4>
   //
-  template <typename T, std::size_t N = -1ull>
+  template <sequence_compatible T, std::size_t N = -1ull>
   class OptionalSequence final : public detail::SequenceBase,
                                  private detail::RegisterIfTableMember {
   public:
-    static_assert(!fhicl::is_table_fragment_param<T>,
-                  NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!fhicl::is_optional_param<T>, NO_OPTIONAL_TYPES);
-    static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
+    // static_assert(!fhicl::is_table_fragment_param<T>,
+    //               NO_NESTED_TABLE_FRAGMENTS);
+    // static_assert(!fhicl::is_optional_param<T>, NO_OPTIONAL_TYPES);
+    // static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
 
     using ftype = std::array<std::shared_ptr<tt::fhicl_type<T>>, N>;
     using value_type = std::array<tt::return_type<T>, N>;
@@ -99,8 +99,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(
-      detail::ParameterWalker& pw) override
+    do_walk_elements(detail::ParameterWalker& pw) override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -108,8 +107,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(detail::ConstParameterWalker&
-                       pw) const override
+    do_walk_elements(detail::ConstParameterWalker& pw) const override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -123,15 +121,15 @@ namespace fhicl {
   //==================================================================
   // e.g. OptionalSequence<int> ====> std::vector<int>
   //
-  template <typename T>
+  template <sequence_compatible T>
   class OptionalSequence<T, -1ull> final
     : public detail::SequenceBase,
       private detail::RegisterIfTableMember {
   public:
-    static_assert(!fhicl::is_table_fragment_param<T>,
-                  NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!fhicl::is_optional_param<T>, NO_OPTIONAL_TYPES);
-    static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
+    // static_assert(!fhicl::is_table_fragment_param<T>,
+    //               NO_NESTED_TABLE_FRAGMENTS);
+    // static_assert(!fhicl::is_optional_param<T>, NO_OPTIONAL_TYPES);
+    // static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
 
     using ftype = std::vector<std::shared_ptr<tt::fhicl_type<T>>>;
     using value_type = std::vector<tt::return_type<T>>;
@@ -219,8 +217,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(
-      detail::ParameterWalker& pw) override
+    do_walk_elements(detail::ParameterWalker& pw) override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -228,8 +225,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(detail::ConstParameterWalker&
-                       pw) const override
+    do_walk_elements(detail::ConstParameterWalker& pw) const override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -248,12 +244,12 @@ namespace fhicl {
   //==================================================================
   // e.g. OptionalSequence<int,4> ====> std::array<int,4>
   //
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   OptionalSequence<T, N>::OptionalSequence(Name&& name)
     : OptionalSequence{std::move(name), Comment("")}
   {}
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   OptionalSequence<T, N>::OptionalSequence(Name&& name, Comment&& comment)
     : SequenceBase{std::move(name),
                    std::move(comment),
@@ -271,8 +267,8 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T, std::size_t N>
-  template <fhicl::maybe_use_param F>
+  template <sequence_compatible T, std::size_t N>
+  template <maybe_use_param F>
   OptionalSequence<T, N>::OptionalSequence(Name&& name,
                                            Comment&& comment,
                                            F maybeUse)
@@ -292,7 +288,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   bool
   OptionalSequence<T, N>::do_preset_value(fhicl::ParameterSet const& ps)
   {
@@ -305,7 +301,7 @@ namespace fhicl {
     return false;
   }
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   void
   OptionalSequence<T, N>::do_set_value(fhicl::ParameterSet const&)
   {
@@ -321,12 +317,12 @@ namespace fhicl {
   // e.g. OptionalSequence<int> ====> std::vector<int>
   //
 
-  template <typename T>
+  template <sequence_compatible T>
   OptionalSequence<T, -1ull>::OptionalSequence(Name&& name)
     : OptionalSequence{std::move(name), Comment("")}
   {}
 
-  template <typename T>
+  template <sequence_compatible T>
   OptionalSequence<T, -1ull>::OptionalSequence(Name&& name, Comment&& comment)
     : SequenceBase{std::move(name),
                    std::move(comment),
@@ -340,8 +336,8 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
-  template <fhicl::maybe_use_param F>
+  template <sequence_compatible T>
+  template <maybe_use_param F>
   OptionalSequence<T, -1ull>::OptionalSequence(Name&& name,
                                                Comment&& comment,
                                                F maybeUse)
@@ -357,7 +353,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
+  template <sequence_compatible T>
   bool
   OptionalSequence<T, -1ull>::do_preset_value(fhicl::ParameterSet const& ps)
   {
@@ -370,7 +366,7 @@ namespace fhicl {
     return false;
   }
 
-  template <typename T>
+  template <sequence_compatible T>
   void
   OptionalSequence<T, -1ull>::do_set_value(fhicl::ParameterSet const&)
   {

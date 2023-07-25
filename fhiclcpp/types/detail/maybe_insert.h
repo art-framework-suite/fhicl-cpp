@@ -9,9 +9,7 @@
 namespace fhicl::detail {
 
   template <typename T>
-  concept has_insertion_operator = requires(T t, std::ostream os){
-    os << t;
-  };
+  concept has_insertion_operator = requires(T t, std::ostream os) { os << t; };
 
   template <typename T>
   std::string

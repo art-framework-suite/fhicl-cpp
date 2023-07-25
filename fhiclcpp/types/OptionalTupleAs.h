@@ -27,9 +27,7 @@ namespace fhicl {
     explicit OptionalTupleAs(Name&& name);
     explicit OptionalTupleAs(Name&& name, Comment&& comment);
     template <fhicl::maybe_use_param F>
-    explicit OptionalTupleAs(Name&& name,
-                             Comment&& comment,
-                             F maybeUse);
+    explicit OptionalTupleAs(Name&& name, Comment&& comment, F maybeUse);
 
     std::optional<T>
     operator()() const
