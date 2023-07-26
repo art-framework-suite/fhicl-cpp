@@ -2,6 +2,8 @@
 
 #include <tuple>
 
-int main() {
+int
+main()
+{
   [[maybe_unused]] fhicl::OptionalAtom<std::tuple<int, long, double>> oa{1};
 }

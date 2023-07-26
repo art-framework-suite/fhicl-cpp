@@ -3,6 +3,8 @@
 
 using namespace fhicl;
 
-int main() {
-  [[maybe_unused]] OptionalAtom<DelegatedParameter> oa{1};  
+int
+main()
+{
+  [[maybe_unused]] OptionalAtom<DelegatedParameter> oa{1};
 }

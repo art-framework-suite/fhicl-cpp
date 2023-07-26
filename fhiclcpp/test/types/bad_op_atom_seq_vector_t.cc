@@ -2,6 +2,8 @@
 
 #include <vector>
 
-int main() {
+int
+main()
+{
   [[maybe_unused]] fhicl::OptionalAtom<std::vector<int>> oa{1};
 }

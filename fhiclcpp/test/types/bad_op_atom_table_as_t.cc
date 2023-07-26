@@ -3,6 +3,8 @@
 
 using namespace fhicl;
 
-int main(){
+int
+main()
+{
   [[maybe_unused]] OptionalAtom<TableAs<int, long>> oa{1};
 }
