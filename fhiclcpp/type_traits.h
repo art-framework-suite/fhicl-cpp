@@ -75,13 +75,15 @@ namespace fhicl {
     !(is_stl_sequence_param<T> || is_fhicl_type_param<T> ||
       is_table_fragment<T> || is_delegated_param<T>);
   template <typename T>
-  concept sequence_compatible = 
+  concept sequence_compatible =
     !(is_optional_param<T> || is_delegated_param<T> || is_table_fragment<T>);
   template <typename... T>
   concept tuple_compatible = (sequence_compatible<T> && ...);
   template <typename T>
-  concept table_fragment_compatible = !(is_stl_sequence_param<T> || is_fhicl_type_param<T> || is_table_fragment<T> || is_delegated_param<T>) && std::is_class_v<T>;
-  
+  concept table_fragment_compatible =
+    !(is_stl_sequence_param<T> || is_fhicl_type_param<T> ||
+      is_table_fragment<T> || is_delegated_param<T>) &&
+    std::is_class_v<T>;
 
   template <table_or_atom_compatible T>
   class Atom;

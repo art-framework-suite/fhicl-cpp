@@ -24,7 +24,6 @@ namespace fhicl {
   class OptionalAtom final : public detail::AtomBase,
                              private detail::RegisterIfTableMember {
   public:
-
     //=====================================================
     // User-friendly
     // ... c'tors

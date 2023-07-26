@@ -29,7 +29,6 @@ namespace fhicl {
   class OptionalSequence final : public detail::SequenceBase,
                                  private detail::RegisterIfTableMember {
   public:
-
     using ftype = std::array<std::shared_ptr<tt::fhicl_type<T>>, N>;
     using value_type = std::array<tt::return_type<T>, N>;
 
@@ -122,7 +121,6 @@ namespace fhicl {
     : public detail::SequenceBase,
       private detail::RegisterIfTableMember {
   public:
-
     using ftype = std::vector<std::shared_ptr<tt::fhicl_type<T>>>;
     using value_type = std::vector<tt::return_type<T>>;
 

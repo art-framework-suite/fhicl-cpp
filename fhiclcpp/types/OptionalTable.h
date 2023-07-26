@@ -24,7 +24,6 @@ namespace fhicl {
   class OptionalTable final : public detail::TableBase,
                               private detail::RegisterIfTableMember {
   public:
-
     //=====================================================
     // User-friendly
     // ... c'tors
