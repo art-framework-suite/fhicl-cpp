@@ -20,16 +20,10 @@
 namespace fhicl {
 
   //========================================================
-  template <typename T>
+  template <table_or_atom_compatible T>
   class OptionalTable final : public detail::TableBase,
                               private detail::RegisterIfTableMember {
   public:
-    static_assert(!fhicl::is_sequence_type_param<T>, NO_STD_CONTAINERS);
-    static_assert(!fhicl::is_fhicl_type_param<T>,
-                  NO_NESTED_FHICL_TYPES_IN_TABLE);
-    static_assert(!fhicl::is_table_fragment<T>,
-                  NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!fhicl::is_delegated_param<T>, NO_DELEGATED_PARAMETERS);
 
     //=====================================================
     // User-friendly
@@ -85,12 +79,12 @@ namespace fhicl {
   //=====================================================
   // Implementation
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   OptionalTable<T>::OptionalTable(Name&& name)
     : OptionalTable{std::move(name), Comment("")}
   {}
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   OptionalTable<T>::OptionalTable(Name&& name, Comment&& comment)
     : TableBase{std::move(name),
                 std::move(comment),
@@ -102,7 +96,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   template <fhicl::maybe_use_param F>
   OptionalTable<T>::OptionalTable(Name&& name, Comment&& comment, F maybeUse)
     : TableBase{std::move(name),
@@ -115,7 +109,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   OptionalTable<T>::OptionalTable(ParameterSet const& pset,
                                   std::set<std::string> const& keysToIgnore)
     : TableBase{Name("<top_level>"),

@@ -444,13 +444,11 @@ namespace fhicl {
 
   // c'tors that support defaults
   template <sequence_compatible T>
-  requires (!fhicl::is_table_param<T>)
   Sequence<T, -1ull>::Sequence(Name&& name, default_type const& defaults)
     : Sequence{std::move(name), Comment{""}, defaults}
   {}
 
   template <sequence_compatible T>
-  requires (!fhicl::is_table_param<T>)
   Sequence<T, -1ull>::Sequence(Name&& name,
                                Comment&& comment,
                                default_type const& defaults)
@@ -461,7 +459,7 @@ namespace fhicl {
                    detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
-//    static_assert(!fhicl::is_table_param<T>, NO_DEFAULTS_FOR_TABLE);
+    static_assert(!fhicl::is_table_param<T>, NO_DEFAULTS_FOR_TABLE);
     std::size_t i{};
     auto& value = std::get<ftype>(value_);
     for (auto const& t : defaults) {
@@ -473,7 +471,6 @@ namespace fhicl {
   }
 
   template <sequence_compatible T>
-  requires (!fhicl::is_table_param<T>)
   Sequence<T, -1ull>::Sequence(Name&& name,
                                Comment&& comment,
                                std::function<bool()> maybeUse,
@@ -485,7 +482,7 @@ namespace fhicl {
                    maybeUse}
     , RegisterIfTableMember{this}
   {
-//    static_assert(!fhicl::is_table_param<T>, NO_DEFAULTS_FOR_TABLE);
+    static_assert(!fhicl::is_table_param<T>, NO_DEFAULTS_FOR_TABLE);
     std::size_t i{};
     auto& value = std::get<ftype>(value_);
     for (auto const& t : defaults) {

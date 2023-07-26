@@ -40,29 +40,6 @@ namespace fhicl {
   template <typename T>
   concept maybe_use_param = std::convertible_to<T, std::function<bool()>>;
 
-
-  template <typename T>
-  class OptionalTable;
-
-
-
-
-
-
-
-  template <typename T, typename... ARGS>
-  class TupleAs;
-  template <typename T, typename... ARGS>
-  class OptionalTupleAs;
-
-  template <typename T, typename Config>
-  class TableAs;
-  template <typename T, typename Config>
-  class OptionalTableAs;
-
-  class DelegatedParameter;
-  class OptionalDelegatedParameter;
-
   //////////////////////////////////////////////////////////////////////
   // FHiCL type identification
 
@@ -110,18 +87,38 @@ namespace fhicl {
   class Atom;
   template <table_or_atom_compatible T>
   class OptionalAtom;
+
   template <table_or_atom_compatible T, keys_to_ignore_provider... KeysToIgnore>
   class Table;
-  template <sequence_compatible T, std::size_t SZ>
-  class OptionalSequence;
+  template <table_or_atom_compatible T>
+  class OptionalTable;
+
   template <tuple_compatible... ARGS>
   class Tuple;
   template <tuple_compatible... ARGS>
   class OptionalTuple;
+
   template <table_fragment_compatible T>
   class TableFragment;
+
   template <sequence_compatible T, std::size_t SZ>
   class Sequence;
+  template <sequence_compatible T, std::size_t SZ>
+  class OptionalSequence;
+
+  template <typename T, typename... ARGS>
+  class TupleAs;
+  template <typename T, typename... ARGS>
+  class OptionalTupleAs;
+
+  template <typename T, typename Config>
+  class TableAs;
+  template <typename T, typename Config>
+  class OptionalTableAs;
+
+  class DelegatedParameter;
+  class OptionalDelegatedParameter;
+
 }
 
 namespace tt {
