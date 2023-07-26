@@ -459,7 +459,7 @@ namespace fhicl {
                    detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
-    static_assert(!fhicl::is_table_param<T>, NO_DEFAULTS_FOR_TABLE);
+    static_assert(!fhicl::is_fhicl_table<T>, NO_DEFAULTS_FOR_TABLE);
     std::size_t i{};
     auto& value = std::get<ftype>(value_);
     for (auto const& t : defaults) {
@@ -482,7 +482,7 @@ namespace fhicl {
                    maybeUse}
     , RegisterIfTableMember{this}
   {
-    static_assert(!fhicl::is_table_param<T>, NO_DEFAULTS_FOR_TABLE);
+    static_assert(!fhicl::is_fhicl_table<T>, NO_DEFAULTS_FOR_TABLE);
     std::size_t i{};
     auto& value = std::get<ftype>(value_);
     for (auto const& t : defaults) {

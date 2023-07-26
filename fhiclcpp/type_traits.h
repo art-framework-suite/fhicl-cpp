@@ -54,35 +54,35 @@ namespace fhicl {
   struct is_sequence_impl<std::vector<ARGS...>> : std::true_type {};
 
   template <typename T>
-  concept is_sequence_type_param = is_sequence_impl<T>::value;
+  concept is_stl_sequence = is_sequence_impl<T>::value;
 
   // FHiCL type attributes
   template <typename T>
-  concept is_stl_sequence_param = requires { typename T::fhicl_sequence_tag; };
+  concept is_fhicl_sequence = requires { typename T::fhicl_sequence_tag; };
   template <typename T>
-  concept is_table_param = requires { typename T::fhicl_table_tag; };
+  concept is_fhicl_table = requires { typename T::fhicl_table_tag; };
   template <typename T>
-  concept is_table_fragment =
+  concept is_fhicl_table_fragment =
     requires { typename T::fhicl_table_fragment_tag; };
   template <typename T>
   concept is_optional_param = requires { typename T::fhicl_optional_tag; };
   template <typename T>
   concept is_delegated_param = requires { typename T::fhicl_delegate_tag; };
   template <typename T>
-  concept is_fhicl_type_param = requires { typename T::fhicl_type_tag; };
+  concept is_fhicl_type = requires { typename T::fhicl_type_tag; };
   template <typename T>
   concept table_or_atom_compatible =
-    !(is_stl_sequence_param<T> || is_fhicl_type_param<T> ||
-      is_table_fragment<T> || is_delegated_param<T>);
+    !(is_stl_sequence<T> || is_fhicl_type<T> ||
+      is_fhicl_table_fragment<T> || is_delegated_param<T>);
   template <typename T>
   concept sequence_compatible =
-    !(is_optional_param<T> || is_delegated_param<T> || is_table_fragment<T>);
+    !(is_optional_param<T> || is_delegated_param<T> || is_fhicl_table_fragment<T>);
   template <typename... T>
   concept tuple_compatible = (sequence_compatible<T> && ...);
   template <typename T>
   concept table_fragment_compatible =
-    !(is_stl_sequence_param<T> || is_fhicl_type_param<T> ||
-      is_table_fragment<T> || is_delegated_param<T>) &&
+    !(is_stl_sequence<T> || is_fhicl_type<T> ||
+      is_fhicl_table_fragment<T> || is_delegated_param<T>) &&
     std::is_class_v<T>;
 
   template <table_or_atom_compatible T>
