@@ -9,6 +9,7 @@
 #include "fhiclcpp/types/detail/SequenceBase.h"
 #include "fhiclcpp/types/detail/check_nargs_for_bounded_sequences.h"
 #include "fhiclcpp/types/detail/type_traits_error_msgs.h"
+#include "fhiclcpp/types/detail/ParameterWalker.h"
 
 #include <memory>
 #include <string>
