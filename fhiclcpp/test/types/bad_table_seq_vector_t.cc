@@ -6,5 +6,5 @@ using namespace fhicl;
 int
 main()
 {
-  [[maybe_unused]] Table<std::vector<int>> t{Name{"Table"}, 1};
+  [[maybe_unused]] Table<std::vector<int>> t{Name{"Table"}};
 }

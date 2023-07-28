@@ -305,32 +305,32 @@ set_property(TEST bad_op_tuple_op_tuple_t PROPERTY PASS_REGULAR_EXPRESSION
   "note: the expression ‘\\(\\.\\.\\. && tuple_compatible<ARGS>\\).*evaluated to ‘false’")
 
 foreach (bad_table_frag_test IN ITEMS seq_array seq_tuple seq_vector tuple_as table_as table_frag delegated atom table tuple sequence_a sequence_v non_class) 
-  cet_test(bad_table_${bad_table_test}_t COMPILE_ONLY LIBRARIES PRIVATE fhiclcpp::types)
+  cet_test(bad_table_frag_${bad_table_frag_test}_t COMPILE_ONLY LIBRARIES PRIVATE fhiclcpp::types)
 endforeach()
-# set_property(TEST bad_table_frag_seq_array_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-# set_property(TEST bad_table_frag_seq_tuple_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-# set_property(TEST bad_table_frag_seq_vector_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-# set_property(TEST bad_table_frag_tuple_as_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-# set_property(TEST bad_table_frag_table_as_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-# set_property(TEST bad_table_frag_table_frag_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-# set_property(TEST bad_table_frag_delegated_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-# set_property(TEST bad_table_frag_atom_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-# set_property(TEST bad_table_frag_table_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-# set_property(TEST bad_table_frag_tuple_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-# set_property(TEST bad_table_frag_sequence_a_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-# set_property(TEST bad_table_frag_sequence_v_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-# set_property(TEST bad_table_frag_non_class_t PROPERTY PASS_REGULAR_EXPRESSION
-#   "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'")
-#
+set_property(TEST bad_table_frag_seq_array_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+set_property(TEST bad_table_frag_seq_tuple_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+set_property(TEST bad_table_frag_seq_vector_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+set_property(TEST bad_table_frag_tuple_as_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+set_property(TEST bad_table_frag_table_as_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+set_property(TEST bad_table_frag_table_frag_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+set_property(TEST bad_table_frag_delegated_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+set_property(TEST bad_table_frag_atom_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+set_property(TEST bad_table_frag_table_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+set_property(TEST bad_table_frag_tuple_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+set_property(TEST bad_table_frag_sequence_a_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+set_property(TEST bad_table_frag_sequence_v_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+set_property(TEST bad_table_frag_non_class_t PROPERTY PASS_REGULAR_EXPRESSION
+  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’")
+

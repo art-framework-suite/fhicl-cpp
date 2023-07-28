@@ -6,5 +6,5 @@ using namespace fhicl;
 int
 main()
 {
-  [[maybe_unused]] Table<TableAs<int>> t{Name{"Table"}, 1};
+  [[maybe_unused]] Table<TableAs<int>> t{Name{"Table"}};
 }
