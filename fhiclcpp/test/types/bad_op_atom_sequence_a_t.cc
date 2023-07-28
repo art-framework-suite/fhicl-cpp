@@ -1,5 +1,5 @@
-#include "fhicl/types/Sequence.h"
 #include "fhicl/types/OptionalAtom.h"
+#include "fhicl/types/Sequence.h"
 
 using namespace fhicl;
 

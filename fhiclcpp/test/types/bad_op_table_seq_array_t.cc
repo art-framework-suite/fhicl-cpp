@@ -3,6 +3,8 @@
 
 using namespace fhicl;
 
-int main(){
+int
+main()
+{
   [[maybe_unused]] OptionalTable<array<int, 3>> ot{1};
 }

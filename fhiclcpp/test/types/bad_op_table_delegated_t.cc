@@ -1,8 +1,11 @@
+#include "fhiclcpp/types/DelegatedParameter.h"
 #include "fhiclcpp/types/OptionalTable.h"
-#include "fhiclcpp/types/DelegatedParameter.h" 
 
 using namespace fhicl;
 
-int main(){
-  [[maybe_unused]] OptionalTable<DelegatedParameter> ot{Name {"OptionalTable"}, 1};
+int
+main()
+{
+  [[maybe_unused]] OptionalTable<DelegatedParameter> ot{Name{"OptionalTable"},
+                                                        1};
 }

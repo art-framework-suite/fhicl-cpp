@@ -1,5 +1,5 @@
-#include "fhicl/types/Table.h"
 #include "fhicl/types/OptionalAtom.h"
+#include "fhicl/types/Table.h"
 
 using namespace fhicl;
 

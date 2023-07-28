@@ -1,5 +1,5 @@
-#include "fhicl/types/TableAs.h"
 #include "fhicl/types/Atom.h"
+#include "fhicl/types/TableAs.h"
 
 using namespace fhicl;
 

@@ -1,5 +1,5 @@
-#include "fhicl/types/TableAs.h"
 #include "fhicl/types/OptionalTable.h"
+#include "fhicl/types/TableAs.h"
 
 using namespace fhicl;
 

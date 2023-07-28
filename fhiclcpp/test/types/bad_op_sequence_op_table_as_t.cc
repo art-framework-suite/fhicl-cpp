@@ -3,9 +3,13 @@
 
 using namespace fhicl;
 
-int main() {
+int
+main()
+{
   // vector version
-  [[maybe_unused]] OptionalSequence<OptionalTableAs<int>> os{Name{"OptionalSequence"}, 1};
+  [[maybe_unused]] OptionalSequence<OptionalTableAs<int>> os{
+    Name{"OptionalSequence"}};
   // array version
-  [[maybe_unused]] OptionalSequence<OptionalTableAs<int>, 3> os_2{Name{"OptionalSequence2"}, 1};
+  [[maybe_unused]] OptionalSequence<OptionalTableAs<int>, 3> os_2{
+    Name{"OptionalSequence2"}};
 }

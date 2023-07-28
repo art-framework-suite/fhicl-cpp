@@ -1,8 +1,10 @@
 #include "fhiclcpp/types/Table.h"
-#include <vector> 
+#include <vector>
 
 using namespace fhicl;
 
-int main(){
-  [[maybe_unused]] Table<std::vector<int>> t{Name {"Table"}, 1};
+int
+main()
+{
+  [[maybe_unused]] Table<std::vector<int>> t{Name{"Table"}, 1};
 }

@@ -157,6 +157,8 @@ namespace fhicl {
       return false;
     }
 
+    struct fhicl_optional_tag {};
+
     bool
     hasValue() const noexcept
     {
