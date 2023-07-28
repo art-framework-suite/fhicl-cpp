@@ -1,6 +1,6 @@
+#include "fhiclcpp/types/Atom.h"
 #include "fhiclcpp/types/OptionalTableAs.h"
 #include "fhiclcpp/types/Tuple.h"
-#include "fhiclcpp/types/Atom.h"
 
 using namespace fhicl;
 
@@ -30,9 +30,9 @@ struct PersonConfig {
   Atom<unsigned> age{Name{"age"}};
 };
 
-
 int
 main()
 {
-  [[maybe_unused]] Tuple<int, char, OptionalTableAs<Person, PersonConfig>> t{Name{"Tuple"}};
+  [[maybe_unused]] Tuple<int, char, OptionalTableAs<Person, PersonConfig>> t{
+    Name{"Tuple"}};
 }

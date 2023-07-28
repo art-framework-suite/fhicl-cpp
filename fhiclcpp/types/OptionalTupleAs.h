@@ -6,8 +6,8 @@
 #include "fhiclcpp/types/OptionalTuple.h"
 #include "fhiclcpp/types/detail/NameStackRegistry.h"
 #include "fhiclcpp/types/detail/ParameterBase.h"
-#include "fhiclcpp/types/detail/type_traits_error_msgs.h"
 #include "fhiclcpp/types/detail/ParameterWalker.h"
+#include "fhiclcpp/types/detail/type_traits_error_msgs.h"
 
 #include <memory>
 #include <string>

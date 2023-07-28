@@ -6,5 +6,6 @@ using namespace fhicl;
 int
 main()
 {
-  [[maybe_unused]] OptionalTuple<int, char, OptionalTable<int>> ot{Name{"OptionalTuple"}};
+  [[maybe_unused]] OptionalTuple<int, char, OptionalTable<int>> ot{
+    Name{"OptionalTuple"}};
 }

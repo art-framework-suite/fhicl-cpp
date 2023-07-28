@@ -1,5 +1,5 @@
-#include "fhiclcpp/types/TableFragment.h"
 #include "fhiclcpp/types/TableAs.h"
+#include "fhiclcpp/types/TableFragment.h"
 
 using namespace fhicl;
 

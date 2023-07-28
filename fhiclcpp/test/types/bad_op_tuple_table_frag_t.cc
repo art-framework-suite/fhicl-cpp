@@ -1,9 +1,9 @@
-#include "fhiclcpp/types/TableFragment.h"
 #include "fhiclcpp/types/OptionalTuple.h"
+#include "fhiclcpp/types/TableFragment.h"
 
 using namespace fhicl;
 
-class A{};
+class A {};
 
 int
 main()

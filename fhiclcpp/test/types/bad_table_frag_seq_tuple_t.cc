@@ -6,5 +6,6 @@ using namespace fhicl;
 int
 main()
 {
-  [[maybe_unused]] TableFragment<std::tuple<int, char, float>> tf{Name{"TableFragment"}};
+  [[maybe_unused]] TableFragment<std::tuple<int, char, float>> tf{
+    Name{"TableFragment"}};
 }

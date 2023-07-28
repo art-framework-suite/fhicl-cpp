@@ -6,5 +6,6 @@ using namespace fhicl;
 int
 main()
 {
-  [[maybe_unused]] TableFragment<DelegatedParameter> tf{Name{"TableFragment"}, 1};
+  [[maybe_unused]] TableFragment<DelegatedParameter> tf{Name{"TableFragment"},
+                                                        1};
 }
