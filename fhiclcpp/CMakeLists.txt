@@ -5,7 +5,6 @@ find_package(SQLite3 REQUIRED)
 find_package(TBB REQUIRED EXPORT)
 find_package(cetlib REQUIRED EXPORT)
 find_package(cetlib_except REQUIRED EXPORT)
-find_package(hep_concurrency REQUIRED EXPORT)
 
 cet_make_library(HEADERS_TARGET WITH_STATIC_LIBRARY
   SOURCE
@@ -33,7 +32,6 @@ cet_make_library(HEADERS_TARGET WITH_STATIC_LIBRARY
     PUBLIC
       art_plugin_support::support_macros
       cetlib::cetlib
-      hep_concurrency::hep_concurrency
       cetlib_except::cetlib_except
       Boost::headers
     PRIVATE
