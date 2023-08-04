@@ -249,7 +249,6 @@ fcldir	-
 product		version		qual	flags		<table_format=2>
 cetlib		v3_17_01	-
 cetmodules	v3_22_01	-	only_for_build
->>>>>>> develop
 end_product_list
 ####################################
 
