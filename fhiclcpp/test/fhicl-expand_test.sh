@@ -1,8 +1,8 @@
 #!/bin/bash
 
-TEST_PGM=fhicl-expand
+TEST_PGM=$1
 TEST_ARGS="--lookup-policy=nonabsolute"
-WORKDIR=`mktemp -d ${TMPDIR:-/tmp}/${TEST_PGM}.XXXXXXXXXX`
+WORKDIR=`mktemp -d ${TMPDIR:-/tmp}/$(basename $TEST_PGM).XXXXXXXXXX`
 [[ -n "$WORKDIR" ]] && [[ -d "$WORKDIR" ]] || [[ -w "$WORKDIR" ]] || exit 1
 
 # Clean up if we're not debugging.
