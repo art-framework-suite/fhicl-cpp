@@ -1,6 +1,6 @@
 include(CetMake)
 
-find_package(Boost COMPONENTS headers REQUIRED EXPORT)
+find_package(Boost REQUIRED EXPORT)
 find_package(SQLite3 REQUIRED)
 find_package(TBB REQUIRED EXPORT)
 find_package(cetlib REQUIRED EXPORT)
