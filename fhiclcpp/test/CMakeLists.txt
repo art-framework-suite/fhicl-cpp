@@ -118,6 +118,7 @@ cet_test(traits_t LIBRARIES PRIVATE cetlib::cetlib)
 cet_test(ParameterSetRegistry_t USE_BOOST_UNIT
   LIBRARIES PRIVATE
     fhiclcpp::fhiclcpp
+    hep_concurrency::simultaneous_function_spawner
     SQLite::SQLite3
     Threads::Threads
 )
