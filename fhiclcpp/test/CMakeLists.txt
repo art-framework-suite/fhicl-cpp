@@ -35,13 +35,15 @@ cet_test(get_via_t USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 cet_test(equalTest USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 cet_test(failer LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 cet_make_exec(NAME fhicl-config_t NO_INSTALL LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
-cet_test(fhicl-expand_test.sh PREBUILT)
-cet_test(fhicl-expand_test_path.sh PREBUILT)
+cet_test(fhicl-expand_test.sh PREBUILT TEST_ARGS $<TARGET_FILE:fhicl-expand>)
+cet_test(fhicl-expand_test_path.sh PREBUILT TEST_ARGS $<TARGET_FILE:fhicl-expand>)
 cet_test(issue_0923_t.sh PREBUILT
+  TEST_ARGS $<TARGET_FILE:fhicl-config_t>
   DATAFILES issue_0923_ref.txt
   DEPENDENCIES fhicl-config_t
   TEST_PROPERTIES
   ENVIRONMENT FHICL_FILE_PATH=${CMAKE_CURRENT_SOURCE_DIR})
+
 cet_test(key_assembler_t USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 cet_test(parse_document_test USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 cet_test(parse_value_string_test USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
