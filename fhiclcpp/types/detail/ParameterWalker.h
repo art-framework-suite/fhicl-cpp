@@ -26,17 +26,17 @@
 
   Heuristically, it looks like:
 
-      for ( auto p : parameters ) {
+      for (auto p : parameters) {
+         if (!psw.before_action(p))
+             return;
 
-         psw.before_action(p)
-
-         if ( is_table(param) ) {
+         if (is_table(param)) {
              cast_from(p,t)
          *** psw.enter_table(t)
              descend_into_table ...
              psw.exit_table(t)
          }
-         else if ( is_sequence(param) ) {
+         else if (is_sequence(param)) {
              cast_from(p,s)
          *** psw.enter_sequence(s)
              loop_through_sequence ...
@@ -52,7 +52,6 @@
          }
 
          psw.after_action(p)
-
       }
 
   The actions that are to be taken per parameter category (table,
@@ -193,6 +192,10 @@ namespace fhicl::detail {
 
     do_after_action(p);
   }
+
+  // Explicit instantiations to avoid code bloat
+  extern template class ParameterWalker<tt::const_flavor::require_const>;
+  extern template class ParameterWalker<tt::const_flavor::require_non_const>;
 }
 
 #endif /* fhiclcpp_types_detail_ParameterWalker_h */

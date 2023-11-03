@@ -99,5 +99,8 @@ cet_test(validate_ParameterSet_t
   DATAFILES validate_ParameterSet_t.fcl
 )
 
+cet_test(validate_large_sequence_t
+  LIBRARIES PRIVATE fhiclcpp::types)
+
 cet_test(tables_in_parallel_t LIBRARIES PRIVATE
     fhiclcpp::types hep_concurrency::simultaneous_function_spawner)

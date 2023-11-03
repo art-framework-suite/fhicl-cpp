@@ -1,11 +1,10 @@
 include(CetMake)
 
-find_package(Boost COMPONENTS headers REQUIRED PUBLIC)
-find_package(SQLite3 PRIVATE REQUIRED)
-find_package(TBB REQUIRED PUBLIC)
-find_package(cetlib REQUIRED PUBLIC)
-find_package(cetlib_except REQUIRED PUBLIC)
-find_package(hep_concurrency REQUIRED PUBLIC)
+find_package(Boost COMPONENTS headers REQUIRED EXPORT)
+find_package(SQLite3 REQUIRED)
+find_package(TBB REQUIRED EXPORT)
+find_package(cetlib REQUIRED EXPORT)
+find_package(cetlib_except REQUIRED EXPORT)
 
 cet_make_library(HEADERS_TARGET WITH_STATIC_LIBRARY
   SOURCE
@@ -27,13 +26,12 @@ cet_make_library(HEADERS_TARGET WITH_STATIC_LIBRARY
     ParameterSetID.cc
     ParameterSetRegistry.cc
     parse.cc
-    parse_shims.cc
+    parse_shims_opts.cc
     Protection.cc
   LIBRARIES
     PUBLIC
       art_plugin_support::support_macros
       cetlib::cetlib
-      hep_concurrency::hep_concurrency
       cetlib_except::cetlib_except
       Boost::headers
     PRIVATE
@@ -50,4 +48,7 @@ install_headers(SUBDIRS detail)
 install_source(SUBDIRS detail)
 
 add_subdirectory(types)
-add_subdirectory(test)
+
+if (BUILD_TESTING)
+  add_subdirectory(test)
+endif()

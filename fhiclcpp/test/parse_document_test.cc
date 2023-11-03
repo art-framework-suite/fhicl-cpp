@@ -31,8 +31,7 @@ BOOST_AUTO_TEST_SUITE(document_test)
 BOOST_AUTO_TEST_CASE(empty_document)
 {
   std::string document;
-  auto const tbl = parse_document(document);
-  auto const pset = ParameterSet::make(tbl);
+  auto const pset = ParameterSet::make(document);
   BOOST_TEST(pset.is_empty());
 }
 
@@ -40,8 +39,7 @@ BOOST_AUTO_TEST_CASE(nonempty_document)
 {
   std::string document = "a: 1\n"
                          "b: 2\n";
-  auto const tbl = parse_document(document);
-  auto const pset = ParameterSet::make(tbl);
+  auto const pset = ParameterSet::make(document);
   BOOST_TEST(!pset.is_empty());
   BOOST_TEST(pset.get<int>("a") == 1);
   BOOST_TEST(pset.get<int>("b") == 2);
@@ -86,8 +84,7 @@ BOOST_AUTO_TEST_CASE(overridden_prolog_document)
                          "END_PROLOG\n"
                          "a: 2\n"
                          "t.a: @local::t.b\n";
-  auto const tbl = parse_document(document);
-  auto const pset = ParameterSet::make(tbl);
+  auto const pset = ParameterSet::make(document);
   BOOST_TEST(pset.get<int>("a") == 2);
   BOOST_REQUIRE_NO_THROW(pset.get<ParameterSet>("t"));
   BOOST_TEST_REQUIRE(!pset.get<ParameterSet>("t").is_empty());
@@ -171,7 +168,9 @@ BOOST_AUTO_TEST_CASE(nil_value)
   BOOST_TEST(pset.get<nil_t>("a") == nil_t{});
   BOOST_TEST(pset.get<nil_t>("t.a") == nil_t{});
   BOOST_CHECK_THROW(pset.get<string>("a"), fhicl::exception);
+  BOOST_CHECK_THROW(pset.get<double>("a", 14.), fhicl::exception);
   BOOST_CHECK_THROW(pset.get<string>("t.a"), fhicl::exception);
+  BOOST_CHECK_THROW(pset.get_if_present<string>("a"), fhicl::exception);
   BOOST_TEST(pset.get<string>("b") == "nil");
   BOOST_TEST(pset.get<string>("t.b") == "nil");
   BOOST_TEST(pset.get<string>("c") == "@nil");

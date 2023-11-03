@@ -121,19 +121,22 @@ namespace fhicl::detail {
   void decode_tuple(std::any const&, U& tuple); // tuple-type decoding
 
   template <typename T, std::size_t SIZE>
-  void decode(std::any const& a, std::array<T, SIZE>& result) // std::array
+  void
+  decode(std::any const& a, std::array<T, SIZE>& result) // std::array
   {
     decode_tuple(a, result);
   }
 
   template <typename KEY, typename VALUE>
-  void decode(std::any const& a, std::pair<KEY, VALUE>& result) // std::pair
+  void
+  decode(std::any const& a, std::pair<KEY, VALUE>& result) // std::pair
   {
     decode_tuple(a, result);
   }
 
   template <typename... ARGS>
-  void decode(std::any const& a, std::tuple<ARGS...>& result) // std::tuple
+  void
+  decode(std::any const& a, std::tuple<ARGS...>& result) // std::tuple
   {
     decode_tuple(a, result);
   }
@@ -245,8 +248,8 @@ fhicl::detail::decode(std::any const& a, std::complex<T>& result)
 {
   std::complex<ldbl> via;
   decode(a, via);
-  result = std::complex<T>{boost::numeric_cast<T>(via.real()),
-                           boost::numeric_cast<T>(via.imag())};
+  result = {boost::numeric_cast<T>(via.real()),
+            boost::numeric_cast<T>(via.imag())};
 }
 
 //====================================================================
@@ -256,9 +259,6 @@ void
 fhicl::detail::decode(std::any const& a, std::vector<T>& result)
 {
   if (a.type() == typeid(std::string)) {
-    typedef fhicl::extended_value extended_value;
-    typedef extended_value::sequence_t sequence_t;
-
     std::string str;
     decode(a, str);
 
@@ -269,7 +269,7 @@ fhicl::detail::decode(std::any const& a, std::vector<T>& result)
         << str << "\nat or before:\n"
         << unparsed;
 
-    sequence_t const& seq = sequence_t(xval);
+    auto const& seq = fhicl::extended_value::sequence_t(xval);
     result.clear();
     T via;
     for (auto const& e : seq) {
@@ -293,29 +293,26 @@ fhicl::detail::decode(std::any const& a, std::vector<T>& result)
 }
 
 //====================================================================
-// per-entry decode base
-template <typename TUPLE>
-void
-fhicl::detail::per_entry<0, TUPLE>::decode_tuple_entry(
-  fhicl::detail::ps_sequence_t const& vec,
-  TUPLE& result)
-{
-  std::tuple_element_t<0, TUPLE> result_elem;
-  decode(vec.at(0), result_elem);
-  std::get<0>(result) = result_elem;
-}
-
 // per-entry decode
-template <unsigned IENTRY, typename TUPLE>
-void
-fhicl::detail::per_entry<IENTRY, TUPLE>::decode_tuple_entry(
-  fhicl::detail::ps_sequence_t const& vec,
-  TUPLE& result)
-{
-  std::tuple_element_t<IENTRY, TUPLE> result_elem;
-  decode(vec.at(IENTRY), result_elem);
-  std::get<IENTRY>(result) = result_elem;
-  per_entry<IENTRY - 1, TUPLE>::decode_tuple_entry(vec, result);
+
+namespace fhicl::detail {
+  template <typename TUPLE, size_t I>
+  auto
+  decode_entry(ps_sequence_t const& vec)
+  {
+    std::tuple_element_t<I, TUPLE> result_elem;
+    decode(vec.at(I), result_elem);
+    return result_elem;
+  }
+
+  template <typename TUPLE, size_t... I>
+  void
+  decode_tuple_entries(ps_sequence_t const& vec,
+                       TUPLE& result,
+                       std::index_sequence<I...>)
+  {
+    ((std::get<I>(result) = decode_entry<TUPLE, I>(vec)), ...);
+  }
 }
 
 // tuple-type support
@@ -344,7 +341,8 @@ fhicl::detail::decode_tuple(std::any const& a, U& result)
     throw std::length_error(errmsg.str());
   }
 
-  per_entry<TUPLE_SIZE - 1, U>::decode_tuple_entry(seq, result);
+  decode_tuple_entries(seq, result, std::make_index_sequence<TUPLE_SIZE>());
+  //  per_entry<TUPLE_SIZE - 1, U>::decode_tuple_entry(seq, result);
 }
 
 //====================================================================

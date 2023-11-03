@@ -37,7 +37,8 @@ assert_cmp(bool exp, std::string const op)
 }
 
 int
-main() try {
+main()
+try {
   // Walter's old templates did not specialize for char, therefore
   // is_int<char> and is_uint<char> were both false.
   char x = -1;
@@ -160,7 +161,7 @@ main() try {
     tt::is_numeric<unsigned long long const>::value, "is_numeric");
   // Walter's old templates did not specialize for int64_t or uint64_t,
   // meaning that is_int and is_uint were platform-dependent (hinging on
-  // whether int64_t was typedef'd to long or to long long).
+  // whether int64_t was type-aliased to long or to long long).
   assert_cmp<int64_t>(tt::is_int<int64_t>::value, "is_int");
   assert_cmp<int64_t>(!tt::is_uint<int64_t>::value, "is_uint");
   assert_cmp<int64_t>(tt::is_numeric<int64_t>::value, "is_numeric");

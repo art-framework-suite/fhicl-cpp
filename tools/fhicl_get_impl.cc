@@ -228,7 +228,8 @@ interpreted according to the user-specified command-line.
 }
 
 int
-fhicl::detail::fhicl_get_impl(int argc, char** argv) try {
+fhicl::detail::fhicl_get_impl(int argc, char** argv)
+try {
   supported_types_t const printer_for_types{};
   auto const maybe_opts = process_arguments(argc, argv, printer_for_types);
 

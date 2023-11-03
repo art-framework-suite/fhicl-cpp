@@ -13,6 +13,27 @@
 
 //====================================================================
 
+fhicl::detail::ValidateThenSet::ValidateThenSet(
+  ParameterSet const& pset,
+  std::set<std::string> const& keysToIgnore)
+  : pset_{pset}
+  , ignorableKeys_{keysToIgnore}
+  , userKeys_{pset.get_all_keys()}
+  , missingParameters_{}
+{
+  cet::sort_all(userKeys_);
+}
+
+fhicl::detail::ValidateThenSet::~ValidateThenSet() = default;
+
+void
+fhicl::detail::ValidateThenSet::enter_table(TableBase&)
+{}
+
+void
+fhicl::detail::ValidateThenSet::atom(AtomBase&)
+{}
+
 bool
 fhicl::detail::ValidateThenSet::before_action(ParameterBase& p)
 {
@@ -23,10 +44,24 @@ fhicl::detail::ValidateThenSet::before_action(ParameterBase& p)
   // Check that key exists; allow defaulted or optional keys to be
   // absent.
   std::string const& k = strip_first_containing_name(p.key());
-  if (!pset_.has_key(k) && !cet::search_all(ignorableKeys_, k)) {
-    if (!p.has_default() && !p.is_optional()) {
+  if (!pset_.has_key(k) and !cet::search_all(ignorableKeys_, k)) {
+    if (!p.has_default() and !p.is_optional()) {
       missingParameters_.emplace_back(&p);
     }
+    return false;
+  }
+
+  // Sometimes we are able to short-circuit walking the parameters
+  // that belong to a sequence.  This is especially helpful for
+  // sequences with many entries of atomic type.
+  if (is_sequence(p.parameter_type()) and p.preset_value(pset_)) {
+    // Remove all entries that match the sequence key and any elements
+    // of that sequence.
+    auto erase_from =
+      std::remove_if(userKeys_.begin(), userKeys_.end(), [&k](auto const& e) {
+        return e.find(k + '[') == 0ull or e == k;
+      });
+    userKeys_.erase(erase_from, userKeys_.cend());
     return false;
   }
 
@@ -38,7 +73,7 @@ fhicl::detail::ValidateThenSet::before_action(ParameterBase& p)
 void
 fhicl::detail::ValidateThenSet::after_action(ParameterBase& p)
 {
-  p.set_value(pset_, true);
+  p.set_value(pset_);
 }
 
 //====================================================================

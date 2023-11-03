@@ -1,8 +1,6 @@
 #ifndef fhiclcpp_detail_ParameterSetImplHelpers_h
 #define fhiclcpp_detail_ParameterSetImplHelpers_h
 
-#include "fhiclcpp/coding.h"
-
 #include <any>
 #include <string>
 #include <vector>
@@ -14,20 +12,11 @@ namespace fhicl::detail {
 
   class Keys {
   public:
-    Keys(std::vector<std::string> const& keys, std::string const& last)
-      : tables_{keys}, last_{last}
-    {}
+    Keys(std::vector<std::string> const& keys, std::string const& last);
+    ~Keys();
 
-    auto const&
-    tables() const noexcept
-    {
-      return tables_;
-    }
-    auto const&
-    last() const noexcept
-    {
-      return last_;
-    }
+    std::vector<std::string> const& tables() const noexcept;
+    std::string const& last() const noexcept;
 
   private:
     std::vector<std::string> tables_;
@@ -42,20 +31,11 @@ namespace fhicl::detail {
   class SequenceKey {
   public:
     SequenceKey(std::string const& name,
-                std::vector<std::size_t> const& indices)
-      : name_{name}, indices_{indices}
-    {}
+                std::vector<std::size_t> const& indices);
+    ~SequenceKey();
 
-    auto const&
-    name() const noexcept
-    {
-      return name_;
-    }
-    auto const&
-    indices() const noexcept
-    {
-      return indices_;
-    }
+    std::string const& name() const noexcept;
+    std::vector<std::size_t> const& indices() const noexcept;
 
   private:
     std::string name_;
@@ -67,27 +47,9 @@ namespace fhicl::detail {
   //===============================================================
   // find_an_any
 
-  using cit_size_t = std::vector<std::size_t>::const_iterator;
-
-  inline bool
-  find_an_any(cit_size_t it, cit_size_t const cend, std::any& a)
-  {
-    if (it == cend) {
-      // If we got this far, that means the element must exist,
-      // otherwise the previous recursive 'find_parameter' call would
-      // have returned false.
-      return true;
-    }
-
-    auto const seq = std::any_cast<ps_sequence_t>(a);
-
-    if (*it >= seq.size())
-      return false;
-
-    a = seq[*it];
-
-    return find_an_any(++it, cend, a);
-  }
+  bool find_an_any(std::vector<std::size_t>::const_iterator it,
+                   std::vector<std::size_t>::const_iterator const cend,
+                   std::any& a);
 }
 
 #endif /* fhiclcpp_detail_ParameterSetImplHelpers_h */

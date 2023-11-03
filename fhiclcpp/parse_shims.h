@@ -25,12 +25,9 @@ namespace shims {
   BOOST_SPIRIT_TERMINAL(catchall)
 }
 
-namespace boost {
-  namespace spirit {
-    template <>
-    struct use_terminal<::boost::spirit::qi::domain, shims::tag::catchall>
-      : mpl::true_ {};
-  }
+namespace boost::spirit {
+  template <>
+  struct use_terminal<qi::domain, shims::tag::catchall> : mpl::true_ {};
 }
 
 namespace shims {
@@ -46,7 +43,7 @@ namespace shims {
     : ::boost::spirit::qi::primitive_parser<catchall_parser> {
     template <typename Context, typename Iterator>
     struct attribute {
-      typedef std::string type;
+      using type = std::string;
     };
 
     // do the parse:
@@ -92,19 +89,16 @@ namespace shims {
   };
 }
 
-namespace boost {
-  namespace spirit {
-    namespace qi {
-      template <typename Modifiers>
-      struct make_primitive<shims::tag::catchall, Modifiers> {
-        typedef shims::catchall_parser result_type;
-        result_type operator()(unused_type, unused_type) const
-        {
-          return result_type();
-        }
-      };
+namespace boost::spirit::qi {
+  template <typename Modifiers>
+  struct make_primitive<shims::tag::catchall, Modifiers> {
+    using result_type = shims::catchall_parser;
+    result_type
+    operator()(unused_type, unused_type) const
+    {
+      return result_type();
     }
-  }
+  };
 }
 #endif /* fhiclcpp_parse_shims_h */
 

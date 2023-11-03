@@ -17,6 +17,7 @@
 #include <memory>
 #include <string>
 #include <type_traits>
+#include <variant>
 
 namespace fhicl {
 
@@ -102,25 +103,35 @@ namespace fhicl {
     auto
     operator()() const
     {
+      if (auto value = std::get_if<value_type>(&value_)) {
+        return *value;
+      }
       value_type result = {{tt::return_type<T>()}};
-      cet::transform_all(
-        value_, result.begin(), [](auto const& elem) { return (*elem)(); });
+      cet::transform_all(std::get<ftype>(value_),
+                         result.begin(),
+                         [](auto const& elem) { return (*elem)(); });
       return result;
     }
 
     auto
     operator()(std::size_t const i) const
     {
-      return (*value_.at(i))();
+      if (auto value = std::get_if<value_type>(&value_)) {
+        return value->at(i);
+      }
+      return (*std::get<ftype>(value_).at(i))();
     }
 
   private:
-    ftype value_;
+    std::variant<ftype, value_type> value_;
 
     std::size_t
     get_size() const noexcept override
     {
-      return value_.size();
+      if (auto value = std::get_if<value_type>(&value_)) {
+        return value->size();
+      }
+      return std::get<ftype>(value_).size();
     }
 
     void
@@ -133,18 +144,33 @@ namespace fhicl {
     do_walk_elements(
       detail::ParameterWalker<tt::const_flavor::require_non_const>& pw) override
     {
-      cet::for_all(value_, [&pw](auto& e) { pw.walk_over(*e); });
+      // We only enter here if we do not have a preset value.
+      cet::for_all(std::get<ftype>(value_),
+                   [&pw](auto& e) { pw.walk_over(*e); });
     }
 
     void
     do_walk_elements(detail::ParameterWalker<tt::const_flavor::require_const>&
                        pw) const override
     {
-      cet::for_all(value_, [&pw](auto const& e) { pw.walk_over(*e); });
+      // We only enter here if we do not have a preset value.
+      cet::for_all(std::get<ftype>(value_),
+                   [&pw](auto const& e) { pw.walk_over(*e); });
+    }
+
+    bool
+    do_preset_value(fhicl::ParameterSet const& ps) override
+    {
+      if constexpr (std::is_same_v<tt::fhicl_type<T>, Atom<T>>) {
+        auto const trimmed_key = detail::strip_first_containing_name(key());
+        value_ = ps.get<value_type>(trimmed_key);
+        return true;
+      }
+      return false;
     }
 
     void
-    do_set_value(fhicl::ParameterSet const&, bool /*trimParents*/) override
+    do_set_value(fhicl::ParameterSet const&) override
     {}
   };
 
@@ -182,30 +208,39 @@ namespace fhicl {
     auto
     operator()() const
     {
+      if (auto value = std::get_if<value_type>(&value_)) {
+        return *value;
+      }
       value_type result;
-      cet::transform_all(value_, std::back_inserter(result), [](auto const& e) {
-        return (*e)();
-      });
+      cet::transform_all(std::get<ftype>(value_),
+                         std::back_inserter(result),
+                         [](auto const& e) { return (*e)(); });
       return result;
     }
 
     auto
     operator()(std::size_t const i) const
     {
-      return (*value_.at(i))();
+      if (auto value = std::get_if<value_type>(&value_)) {
+        return value->at(i);
+      }
+      return (*std::get<ftype>(value_).at(i))();
     }
 
   private:
-    ftype value_;
+    std::variant<ftype, value_type> value_;
 
     void
     do_prepare_elements_for_validation(std::size_t const n) override
     {
+      // We only enter here if we do not have a preset value.
+      auto& value = std::get<ftype>(value_);
+
       // For an unbounded sequence, we need to resize it so that any
       // nested parameters of the elements can be checked.
-      if (n < value_.size()) {
-        value_.resize(n);
-      } else if (n > value_.size()) {
+      if (n < value.size()) {
+        value.resize(n);
+      } else if (n > value.size()) {
         std::string key_fragment{key()};
         // When emplacing a new element, do not include in the key
         // argument the current name-stack stem--it will automatically
@@ -219,8 +254,8 @@ namespace fhicl {
           key_fragment.replace(0ul, pos, "");
         }
 
-        for (auto i = value_.size(); i != n; ++i) {
-          value_.push_back(std::make_shared<tt::fhicl_type<T>>(
+        for (auto i = value.size(); i != n; ++i) {
+          value.push_back(std::make_shared<tt::fhicl_type<T>>(
             Name::sequence_element(key_fragment, i)));
         }
       }
@@ -229,25 +264,43 @@ namespace fhicl {
     std::size_t
     get_size() const noexcept override
     {
-      return value_.size();
+      if (auto value = std::get_if<value_type>(&value_)) {
+        return value->size();
+      }
+      return std::get<ftype>(value_).size();
     }
 
     void
     do_walk_elements(
       detail::ParameterWalker<tt::const_flavor::require_non_const>& pw) override
     {
-      cet::for_all(value_, [&pw](auto& e) { pw.walk_over(*e); });
+      // We only enter here if we do not have a preset value.
+      cet::for_all(std::get<ftype>(value_),
+                   [&pw](auto& e) { pw.walk_over(*e); });
     }
 
     void
     do_walk_elements(detail::ParameterWalker<tt::const_flavor::require_const>&
                        pw) const override
     {
-      cet::for_all(value_, [&pw](auto const& e) { pw.walk_over(*e); });
+      // We only enter here if we do not have a preset value.
+      cet::for_all(std::get<ftype>(value_),
+                   [&pw](auto const& e) { pw.walk_over(*e); });
+    }
+
+    bool
+    do_preset_value(fhicl::ParameterSet const& ps) override
+    {
+      if constexpr (std::is_same_v<tt::fhicl_type<T>, Atom<T>>) {
+        auto const trimmed_key = detail::strip_first_containing_name(key());
+        value_ = ps.get<value_type>(trimmed_key);
+        return true;
+      }
+      return false;
     }
 
     void
-    do_set_value(fhicl::ParameterSet const&, bool /*trimParents*/) override
+    do_set_value(fhicl::ParameterSet const&) override
     {}
   };
 }
@@ -281,10 +334,11 @@ namespace fhicl {
                    par_type::SEQ_ARRAY,
                    detail::AlwaysUse()}
     , RegisterIfTableMember{this}
-    , value_{{nullptr}}
+    , value_{ftype{nullptr}}
   {
+    auto& value = std::get<ftype>(value_);
     for (std::size_t i{}; i != N; ++i) {
-      value_.at(i) =
+      value.at(i) =
         std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(i));
     }
     NameStackRegistry::end_of_ctor();
@@ -300,10 +354,11 @@ namespace fhicl {
                    par_type::SEQ_ARRAY,
                    maybeUse}
     , RegisterIfTableMember{this}
-    , value_{{nullptr}}
+    , value_{ftype{nullptr}}
   {
+    auto& value = std::get<ftype>(value_);
     for (std::size_t i{}; i != N; ++i) {
-      value_.at(i) =
+      value.at(i) =
         std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(i));
     }
     NameStackRegistry::end_of_ctor();
@@ -325,11 +380,12 @@ namespace fhicl {
                    par_type::SEQ_ARRAY,
                    detail::AlwaysUse()}
     , RegisterIfTableMember{this}
-    , value_{{nullptr}}
+    , value_{ftype{nullptr}}
   {
     std::size_t i{};
+    auto& value = std::get<ftype>(value_);
     for (auto const& arg : defaults) {
-      value_.at(i) =
+      value.at(i) =
         std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(i), arg);
       ++i;
     }
@@ -347,11 +403,12 @@ namespace fhicl {
                    par_type::SEQ_ARRAY,
                    maybeUse}
     , RegisterIfTableMember{this}
-    , value_{{nullptr}}
+    , value_{ftype{nullptr}}
   {
     std::size_t i{};
+    auto& value = std::get<ftype>(value_);
     for (auto const& arg : defaults) {
-      value_.at(i) =
+      value.at(i) =
         std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(i), arg);
       ++i;
     }
@@ -374,7 +431,8 @@ namespace fhicl {
                    par_type::SEQ_VECTOR,
                    detail::AlwaysUse()}
     , RegisterIfTableMember{this}
-    , value_{{std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(0ul))}}
+    , value_{
+        ftype{std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(0ul))}}
   {
     NameStackRegistry::end_of_ctor();
   }
@@ -389,7 +447,8 @@ namespace fhicl {
                    par_type::SEQ_VECTOR,
                    maybeUse}
     , RegisterIfTableMember{this}
-    , value_{{std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(0ul))}}
+    , value_{
+        ftype{std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(0ul))}}
   {
     NameStackRegistry::end_of_ctor();
   }
@@ -413,8 +472,9 @@ namespace fhicl {
   {
     static_assert(!tt::is_table_v<T>, NO_DEFAULTS_FOR_TABLE);
     std::size_t i{};
+    auto& value = std::get<ftype>(value_);
     for (auto const& t : defaults) {
-      value_.push_back(
+      value.push_back(
         std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(i), t));
       ++i;
     }
@@ -435,8 +495,9 @@ namespace fhicl {
   {
     static_assert(!tt::is_table_v<T>, NO_DEFAULTS_FOR_TABLE);
     std::size_t i{};
+    auto& value = std::get<ftype>(value_);
     for (auto const& t : defaults) {
-      value_.emplace_back(
+      value.emplace_back(
         std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(i), t));
       ++i;
     }

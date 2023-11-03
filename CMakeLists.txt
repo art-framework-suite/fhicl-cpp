@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.18.2 FATAL_ERROR)
 
 find_package(cetmodules 2.13.00 REQUIRED)
-project(fhiclcpp VERSION 4.15.03 LANGUAGES CXX C)
+project(fhiclcpp VERSION 4.18.02 LANGUAGES CXX C)
 
 # cetbuildtools contains our cmake modules ### MIGRATE-ACTION-REQUIRED: remove
 
 include(CetCMakeEnv)
 cet_cmake_env()
 
-cet_set_compiler_flags(DIAGS VIGILANT
+cet_set_compiler_flags(DIAGS VIGILANT DWARF_VER 4
   WERROR
   NO_UNDEFINED
   EXTRA_FLAGS -pedantic
@@ -34,10 +34,10 @@ endif()
 
 cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
-find_package(Boost PRIVATE COMPONENTS program_options REQUIRED)
-find_package(SQLite3 PRIVATE REQUIRED)
-find_package(cetlib PRIVATE REQUIRED)
-find_package(cetlib_except PRIVATE REQUIRED)
+find_package(Boost COMPONENTS program_options REQUIRED)
+find_package(SQLite3 REQUIRED)
+find_package(cetlib REQUIRED)
+find_package(cetlib_except REQUIRED)
 
 # source code
 add_subdirectory(fhiclcpp)

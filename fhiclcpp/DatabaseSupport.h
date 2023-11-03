@@ -6,13 +6,7 @@
 
 #include "fhiclcpp/fwd.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-typedef struct sqlite3 sqlite3;
-#ifdef __cplusplus
-}
-#endif
+struct sqlite3;
 
 namespace fhicl {
   // Given a ParameterSet, return two vectors of strings:

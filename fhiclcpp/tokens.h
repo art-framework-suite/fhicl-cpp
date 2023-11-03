@@ -543,7 +543,8 @@ namespace boost {
       struct make_primitive<fhicl::tag::real, Modifiers> {
         using result_type = fhicl::real_parser;
 
-        result_type operator()(unused_type, unused_type) const
+        result_type
+        operator()(unused_type, unused_type) const
         {
           return result_type{};
         }
@@ -554,7 +555,8 @@ namespace boost {
       struct make_primitive<fhicl::tag::uint, Modifiers> {
         using result_type = fhicl::uint_parser;
 
-        result_type operator()(unused_type, unused_type) const
+        result_type
+        operator()(unused_type, unused_type) const
         {
           return result_type{};
         }
@@ -565,7 +567,8 @@ namespace boost {
       struct make_primitive<fhicl::tag::hex, Modifiers> {
         using result_type = fhicl::hex_parser;
 
-        result_type operator()(unused_type, unused_type) const
+        result_type
+        operator()(unused_type, unused_type) const
         {
           return result_type{};
         }
@@ -576,7 +579,8 @@ namespace boost {
       struct make_primitive<fhicl::tag::dbid, Modifiers> {
         using result_type = fhicl::dbid_parser;
 
-        result_type operator()(unused_type, unused_type) const
+        result_type
+        operator()(unused_type, unused_type) const
         {
           return result_type{};
         }
@@ -587,7 +591,8 @@ namespace boost {
       struct make_primitive<fhicl::tag::bin, Modifiers> {
         using result_type = fhicl::bin_parser;
 
-        result_type operator()(unused_type, unused_type) const
+        result_type
+        operator()(unused_type, unused_type) const
         {
           return result_type{};
         }
@@ -598,7 +603,8 @@ namespace boost {
       struct make_primitive<fhicl::tag::ass, Modifiers> {
         using result_type = fhicl::ass_parser;
 
-        result_type operator()(unused_type, unused_type) const
+        result_type
+        operator()(unused_type, unused_type) const
         {
           return result_type{};
         }
@@ -609,7 +615,8 @@ namespace boost {
       struct make_primitive<fhicl::tag::dss, Modifiers> {
         using result_type = fhicl::dss_parser;
 
-        result_type operator()(unused_type, unused_type) const
+        result_type
+        operator()(unused_type, unused_type) const
         {
           return result_type{};
         }
@@ -620,7 +627,8 @@ namespace boost {
       struct make_primitive<fhicl::tag::binding, Modifiers> {
         using result_type = fhicl::binding_parser;
 
-        result_type operator()(unused_type, unused_type) const
+        result_type
+        operator()(unused_type, unused_type) const
         {
           return result_type{};
         }

@@ -4,7 +4,8 @@ cet_enable_asserts()
 cet_test_env("FHICL_FILE_PATH=.")
 
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-find_package(Threads REQUIRED PRIVATE)
+find_package(Threads REQUIRED)
+find_package(hep_concurrency REQUIRED)
 
 # Put everything in a different export set.
 cet_register_export_set(SET_NAME Testing NAMESPACE fhiclcpp_test SET_DEFAULT)
@@ -117,6 +118,7 @@ cet_test(traits_t LIBRARIES PRIVATE cetlib::cetlib)
 cet_test(ParameterSetRegistry_t USE_BOOST_UNIT
   LIBRARIES PRIVATE
     fhiclcpp::fhiclcpp
+    hep_concurrency::simultaneous_function_spawner
     SQLite::SQLite3
     Threads::Threads
 )

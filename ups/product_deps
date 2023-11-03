@@ -87,7 +87,7 @@
 #>  define_pythonpath
 ####################################
 parent		fhiclcpp
-defaultqual	e19
+defaultqual	e20
 ####################################
 
 ####################################
@@ -247,8 +247,8 @@ fcldir	-
 #
 ####################################
 product		version		qual	flags		<table_format=2>
-cetlib		v3_13_04	-
-cetmodules	v2_21_01	-	only_for_build
+cetlib		v3_18_00	-
+cetmodules	v3_22_02	-	only_for_build
 end_product_list
 ####################################
 
@@ -304,12 +304,18 @@ end_product_list
 #
 ####################################
 qualifier	cetlib		notes
-c7:debug	c7:debug
-c7:prof		c7:prof
-e19:debug	e19:debug
-e19:prof	e19:prof
+c14:debug	c14:debug
+c14:prof	c14:prof
+c15:debug	c15:debug
+c15:prof	c15:prof
 e20:debug	e20:debug
 e20:prof	e20:prof
+e26:debug	e26:debug
+e26:prof	e26:prof
+e27:debug	e27:debug
+e27:prof	e27:prof
+e28:debug	e28:debug
+e28:prof	e28:prof
 end_qualifier_list
 ####################################
 

@@ -8,6 +8,7 @@
 #include "fhiclcpp/types/Sequence.h"
 #include "fhiclcpp/types/Table.h"
 #include "fhiclcpp/types/Tuple.h"
+#include "fhiclcpp/types/detail/validationException.h"
 
 #include <string>
 
@@ -26,7 +27,7 @@ namespace {
   {
     auto const ps = ParameterSet::make(cfg);
     Table<Config> validatedConfig{Name("validatedConfig")};
-    validatedConfig.validate_ParameterSet(ps);
+    validatedConfig.validate(ps);
     return validatedConfig;
   }
 }

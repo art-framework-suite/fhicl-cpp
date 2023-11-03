@@ -49,22 +49,34 @@ namespace shims {
               class Distance = std::ptrdiff_t,
               class Pointer = TT*,
               class Reference = TT&>
-    struct iter : std::iterator<Category, TT, Distance, Pointer, Reference> {
+    struct iter {
       using type = TT;
+      using iterator_category = Category;
+      using value_type = TT;
+      using difference_type = Distance;
+      using pointer = Pointer;
+      using reference = Reference;
 
-      iter(typename mapmap_t::iterator it) { _iters.mapmap_iter = it; }
-      iter(typename listmap_t::iterator it) { _iters.listmap_iter = it; }
+      iter(typename mapmap_t::iterator it) noexcept { _iters.mapmap_iter = it; }
+      iter(typename listmap_t::iterator it) noexcept
+      {
+        _iters.listmap_iter = it;
+      }
 
-      TT& operator*()
+      TT&
+      operator*() noexcept
       {
         return isSnippetMode() ? *_iters.listmap_iter : *_iters.mapmap_iter;
       }
 
-      TT* operator->()
+      TT*
+      operator->() noexcept
       {
         return isSnippetMode() ? &*_iters.listmap_iter : &*_iters.mapmap_iter;
       }
-      TT const* operator->() const
+
+      TT const*
+      operator->() const noexcept
       {
         return isSnippetMode() ? &*_iters.listmap_iter : &*_iters.mapmap_iter;
       }
@@ -77,7 +89,7 @@ namespace shims {
       }
 
       bool
-      operator==(iter other) const
+      operator==(iter other) const noexcept
       {
         return isSnippetMode() ?
                  _iters.listmap_iter == other._iters.listmap_iter :
@@ -85,21 +97,21 @@ namespace shims {
       }
 
       bool
-      operator!=(iter other) const
+      operator!=(iter other) const noexcept
       {
         return !operator==(other);
       }
 
       template <typename II>
-      std::enable_if_t<std::is_same_v<typename mapmap_t::iterator, II>, II> get(
-        II)
+      std::enable_if_t<std::is_same_v<typename mapmap_t::iterator, II>, II>
+      get(II)
       {
         return _iters.mapmap_iter;
       }
 
       template <typename II>
       std::enable_if_t<std::is_same_v<typename listmap_t::iterator, II>, II>
-        get(II)
+      get(II)
       {
         return _iters.listmap_iter;
       }
@@ -110,7 +122,7 @@ namespace shims {
           std::is_same_v<std::remove_const_t<typename IIL::type>,
                          std::remove_const_t<typename IIR::type>>,
         bool>
-      operator==(IIL, IIR);
+      operator==(IIL, IIR) noexcept;
 
       template <typename IIL, typename IIR>
       friend std::enable_if_t<
@@ -118,73 +130,72 @@ namespace shims {
           std::is_same_v<std::remove_const_t<typename IIL::type>,
                          std::remove_const_t<typename IIR::type>>,
         bool>
-      operator!=(IIL, IIR);
+      operator!=(IIL, IIR) noexcept;
 
     private:
       iterator_tuple _iters;
     };
 
-    using iterator = iter<iterator_tag, std::pair<const Key, T>>;
-    using const_iterator = iter<iterator_tag, const std::pair<const Key, T>>;
+    using iterator = iter<iterator_tag, std::pair<Key const, T>>;
+    using const_iterator = iter<iterator_tag, std::pair<Key const, T> const>;
 
     struct maps_tuple {
       mapmap_t mapmap;
       listmap_t listmap;
     };
 
-    T& operator[](Key const& key)
+    T&
+    operator[](Key const& key)
     {
       if (isSnippetMode()) {
-        for (auto& element : _maps.listmap) {
-          if (element.first == key)
-            return element.second;
+        for (auto& [stored_key, value] : _maps.listmap) {
+          if (stored_key == key)
+            return value;
         }
-        _maps.listmap.emplace_back(std::make_pair(key, T{}));
+        _maps.listmap.emplace_back(key, T{});
         return _maps.listmap.back().second;
-      } else {
-        return _maps.mapmap[key];
       }
+      return _maps.mapmap[key];
     }
 
     iterator
-    begin()
+    begin() noexcept
     {
       return isSnippetMode() ? iterator{std::begin(_maps.listmap)} :
                                iterator{std::begin(_maps.mapmap)};
     }
 
     const_iterator
-    begin() const
+    begin() const noexcept
     {
-      maps_tuple& maps = *const_cast<maps_tuple*>(&_maps);
+      auto& maps = const_cast<maps_tuple&>(_maps);
       return isSnippetMode() ? const_iterator{std::begin(maps.listmap)} :
                                const_iterator{std::begin(maps.mapmap)};
     }
 
     const_iterator
-    cbegin() const
+    cbegin() const noexcept
     {
       return begin();
     }
 
     iterator
-    end()
+    end() noexcept
     {
       return isSnippetMode() ? iterator{std::end(_maps.listmap)} :
                                iterator{std::end(_maps.mapmap)};
     }
 
     const_iterator
-    end() const
+    end() const noexcept
     {
-      maps_tuple& maps = *const_cast<maps_tuple*>(&_maps);
-
+      auto& maps = const_cast<maps_tuple&>(_maps);
       return isSnippetMode() ? const_iterator{std::end(maps.listmap)} :
                                const_iterator{std::end(maps.mapmap)};
     }
 
     const_iterator
-    cend() const
+    cend() const noexcept
     {
       return end();
     }
@@ -273,13 +284,13 @@ namespace shims {
     }
 
     bool
-    empty() const
+    empty() const noexcept
     {
       return isSnippetMode() ? _maps.listmap.empty() : _maps.mapmap.empty();
     }
 
     size_type
-    size() const
+    size() const noexcept
     {
       return isSnippetMode() ? _maps.listmap.size() : _maps.mapmap.size();
     }
@@ -289,9 +300,8 @@ namespace shims {
     {
       if (isSnippetMode()) {
         return _maps.listmap.erase(it.get(typename listmap_t::iterator{}));
-      } else {
-        return _maps.mapmap.erase(it.get(typename mapmap_t::iterator{}));
       }
+      return _maps.mapmap.erase(it.get(typename mapmap_t::iterator{}));
     }
 
     iterator
@@ -324,7 +334,7 @@ namespace shims {
                      std::is_same_v<std::remove_const_t<typename IIL::type>,
                                     std::remove_const_t<typename IIR::type>>,
                    bool>
-  operator==(IIL left, IIR right)
+  operator==(IIL left, IIR right) noexcept
   {
     return isSnippetMode() ?
              left._iters.listmap_iter == right._iters.listmap_iter :
@@ -336,7 +346,7 @@ namespace shims {
                      std::is_same_v<std::remove_const_t<typename IIL::type>,
                                     std::remove_const_t<typename IIR::type>>,
                    bool>
-  operator!=(IIL left, IIR right)
+  operator!=(IIL left, IIR right) noexcept
   {
     return !operator==(left, right);
   }

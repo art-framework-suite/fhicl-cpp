@@ -331,7 +331,7 @@ hex(std::string const& from)
 BOOST_AUTO_TEST_CASE(Custom)
 {
   BOOST_TEST(pset.get<std::string>("n") == "0x123");
-  unsigned u;
+  unsigned u{};
   BOOST_TEST(pset.get_if_present("n", u, hex));
   BOOST_TEST(pset.get<unsigned>("n", hex) == u);
   BOOST_TEST(pset.get<unsigned>("n", hex), (((1u) * 16u + 2u) * 16u + 3u));

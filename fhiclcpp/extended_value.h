@@ -41,7 +41,8 @@ public:
   using sequence_t = std::vector<extended_value>;
   using table_t = shims::map<std::string, extended_value>;
 
-  extended_value() = default;
+  extended_value();
+  ~extended_value();
 
   extended_value(bool const in_prolog,
                  value_tag const tag,
@@ -51,7 +52,7 @@ public:
     : in_prolog{in_prolog}
     , tag{tag}
     , value{value}
-    , src_info{move(src)}
+    , src_info{std::move(src)}
     , protection{protection}
   {}
 
@@ -59,7 +60,7 @@ public:
                  value_tag const tag,
                  std::any const value,
                  std::string src = {})
-    : in_prolog{in_prolog}, tag{tag}, value{value}, src_info{move(src)}
+    : in_prolog{in_prolog}, tag{tag}, value{value}, src_info{std::move(src)}
   {}
 
   bool

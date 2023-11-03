@@ -26,13 +26,13 @@
 //
 // Assuming these criteria are met, a 'MyType' object will be returned
 // upon calling the operator() function of the fhicl::TableAs object.
-// the 'MyType' object will be returned.
 // ====================================================================
 
 #include "fhiclcpp/type_traits.h"
 #include "fhiclcpp/types/ConfigPredicate.h"
 #include "fhiclcpp/types/OptionalTable.h"
 #include "fhiclcpp/types/detail/ParameterBase.h"
+#include "fhiclcpp/types/detail/maybe_insert.h"
 #include "fhiclcpp/types/detail/type_traits_error_msgs.h"
 
 #include <memory>
@@ -70,21 +70,24 @@ namespace fhicl {
     {
       via_type via;
       return tableObj_(via) ? convert(via) :
-                              tableObj_.has_default() ?
+             tableObj_.has_default() ?
                               *t_ :
                               throw fhicl::exception(
                                 cant_find); // fix this exception category!
     }
 
+    // Allow implicit conversion from TableAs to ParameterBase to
+    // access metadata of underlying fhicl-cpp type.
+    operator detail::ParameterBase const&() const noexcept { return tableObj_; }
+
     //=================================================================
     // expert only
 
-    operator detail::ParameterBase&()
-    {
-      return tableObj_;
-    } // Allows implicit conversion from
-      // TableAs to ParameterBase (necessary
-      // for ParameterWalker)
+    // The non-const conversion operator from is necessary for the
+    // ParameterWalker to iterate through a sequence of TableAs
+    // objects.
+    operator detail::ParameterBase&() noexcept { return tableObj_; }
+
   private:
     OptionalTable<Config> tableObj_;
     std::shared_ptr<T>
@@ -147,6 +150,8 @@ namespace fhicl {
     tableObj_.set_par_style(par_style::DEFAULT_CONDITIONAL);
   }
 
+  //===============================================================================
+
   template <typename T, typename Config>
   Comment
   TableAs<T, Config>::conversion_comment(Comment&& comment) const
@@ -163,61 +168,6 @@ namespace fhicl {
     return Comment{oss.str().c_str()};
   }
 
-  //=================================================================
-  // metaprogramming necessary for determining if provided type 'T'
-  // has an 'std::ostream& operator<<(std::ostream&, T const&)' defined
-
-  namespace has_insertion_operator_impl {
-    typedef char no;
-    typedef char yes[2];
-
-    struct any_t {
-      template <typename T>
-      any_t(T const&);
-    };
-
-    no operator<<(std::ostream const&, any_t const&);
-
-    yes& test(std::ostream&);
-    no test(no);
-
-    template <typename T>
-    struct has_insertion_operator {
-      static std::ostream& s;
-      static T const& t;
-      static bool const value = sizeof(test(s << t)) == sizeof(yes);
-    };
-  }
-
-  template <typename T>
-  struct has_insertion_operator
-    : has_insertion_operator_impl::has_insertion_operator<T> {};
-
-  struct NoInsert {
-    template <typename T>
-    std::string
-    operator()(T const&)
-    {
-      return "     A default value is present, but it cannot be\n"
-             "     printed out since no 'operator<<' overload has\n"
-             "     been provided for the above type.";
-    }
-  };
-
-  struct YesInsert {
-    template <typename T>
-    std::string
-    operator()(T const& t)
-    {
-      std::ostringstream os;
-      os << "     with a default value of:\n"
-         << "        " << t;
-      return os.str();
-    }
-  };
-
-  //===============================================================================
-
   template <typename T, typename Config>
   Comment
   TableAs<T, Config>::conversion_comment(Comment&& comment, T const& t) const
@@ -226,16 +176,13 @@ namespace fhicl {
     std::string const name{"        '" +
                            cet::demangle_symbol(typeid(T).name()) + "'"};
 
-    std::conditional_t<has_insertion_operator<T>::value, YesInsert, NoInsert>
-      stringified_default;
-
     std::string const user_comment{
       comment.value.empty() ? "" : "\n\n" + comment.value};
 
     std::ostringstream oss;
     oss << preface << '\n'
         << name << '\n'
-        << stringified_default(t) << user_comment;
+        << detail::maybe_insert(t) << user_comment;
     return Comment{oss.str().c_str()};
   }
 }

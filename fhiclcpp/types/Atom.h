@@ -48,7 +48,7 @@ namespace fhicl {
     auto const&
     operator()() const
     {
-      return *value_;
+      return value_;
     }
 
     // Expert-only
@@ -56,10 +56,10 @@ namespace fhicl {
     using value_type = T;
 
   private:
-    std::shared_ptr<T> value_;
+    value_type value_{};
 
     std::string get_stringified_value() const override;
-    void do_set_value(fhicl::ParameterSet const&, bool const) override;
+    void do_set_value(fhicl::ParameterSet const& pset) override;
   };
 }
 
@@ -76,7 +76,6 @@ namespace fhicl {
                par_style::REQUIRED,
                detail::AlwaysUse()}
     , RegisterIfTableMember{this}
-    , value_{std::make_shared<T>()}
   {
     NameStackRegistry::end_of_ctor();
   }
@@ -88,7 +87,6 @@ namespace fhicl {
                par_style::REQUIRED_CONDITIONAL,
                maybeUse}
     , RegisterIfTableMember{this}
-    , value_{std::make_shared<T>()}
   {
     NameStackRegistry::end_of_ctor();
   }
@@ -100,7 +98,7 @@ namespace fhicl {
                par_style::DEFAULT,
                detail::AlwaysUse()}
     , RegisterIfTableMember{this}
-    , value_{std::make_shared<T>(dflt_value)}
+    , value_{dflt_value}
   {
     NameStackRegistry::end_of_ctor();
   }
@@ -115,7 +113,7 @@ namespace fhicl {
                par_style::DEFAULT_CONDITIONAL,
                maybeUse}
     , RegisterIfTableMember{this}
-    , value_{std::make_shared<T>(dflt_value)}
+    , value_{dflt_value}
   {
     NameStackRegistry::end_of_ctor();
   }
@@ -136,7 +134,7 @@ namespace fhicl {
     std::stringstream oss;
     if (has_default()) {
       using namespace detail::yes_defaults;
-      oss << maybe_quotes<T>(*value_);
+      oss << maybe_quotes<T>(value_);
     } else {
       using namespace detail::no_defaults;
       oss << expected_types<T>();
@@ -146,16 +144,14 @@ namespace fhicl {
 
   template <typename T>
   void
-  Atom<T>::do_set_value(fhicl::ParameterSet const& pset, bool const trimParent)
+  Atom<T>::do_set_value(fhicl::ParameterSet const& pset)
   {
-    std::string const& rkey = key();
-    std::string const& key =
-      trimParent ? detail::strip_first_containing_name(rkey) : rkey;
-
-    if (has_default())
-      pset.get_if_present<T>(key, *value_);
-    else
-      value_ = std::make_shared<T>(pset.get<T>(key));
+    auto const trimmed_key = detail::strip_first_containing_name(key());
+    if (has_default()) {
+      // Override default value if the key is present
+      pset.get_if_present<T>(trimmed_key, value_);
+    } else
+      value_ = pset.get<T>(trimmed_key);
   }
 }
 

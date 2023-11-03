@@ -6,28 +6,12 @@
 
 #include "fhiclcpp/parse.h"
 
-#ifdef __ICC
-#pragma warning(push, disable : 780)
-#endif
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wshadow"
-#pragma GCC diagnostic ignored "-Wstrict-aliasing"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#include "boost/spirit/include/phoenix_bind.hpp"
-#include "boost/spirit/include/phoenix_operator.hpp"
+#include "boost/phoenix/bind.hpp"
+#include "boost/phoenix/operator.hpp"
 #include "boost/spirit/include/qi.hpp"
 #include "boost/spirit/include/qi_no_skip.hpp"
 #include "boost/spirit/include/support_istream_iterator.hpp"
-#ifdef __clang__
-#pragma clang diagnostic ignored "-Wpedantic"
-#else
-#pragma GCC diagnostic ignored "-Wpedantic"
-#endif
 #include "boost/spirit/repository/home/qi/primitive/iter_pos.hpp"
-#pragma GCC diagnostic pop
-#ifdef __ICC
-#pragma warning(pop)
-#endif
 
 #include "cetlib/canonical_number.h"
 #include "cetlib/canonical_string.h"
@@ -227,7 +211,8 @@ namespace {
                  extended_value& value,
                  table_t& t,
                  iter_t const pos,
-                 cet::includer const& s) try {
+                 cet::includer const& s)
+  try {
     map_insert(name, m, value, t);
   }
   catch (fhicl::exception& e) {
@@ -264,7 +249,8 @@ namespace {
   map_erase_loc(std::string const& name,
                 table_t& t,
                 iter_t const pos,
-                cet::includer const& s) try {
+                cet::includer const& s)
+  try {
     map_erase(name, t);
   }
   catch (fhicl::exception& e) {
@@ -332,7 +318,8 @@ namespace {
 
   private:
     extended_value
-    local_lookup(std::string const& name, iter_t const pos) try {
+    local_lookup(std::string const& name, iter_t const pos)
+    try {
       extended_value result = tbl.find(name);
       result.set_prolog(in_prolog);
       result.set_src_info(sref.src_whereis(pos));
@@ -447,7 +434,8 @@ namespace {
     }
 
     void
-    tbl_erase(std::string const& name, iter_t const pos) try {
+    tbl_erase(std::string const& name, iter_t const pos)
+    try {
       tbl.erase(name, in_prolog);
     }
     catch (fhicl::exception& e) {
@@ -460,7 +448,8 @@ namespace {
     tbl_insert(std::string const& name,
                binding_modifier const m,
                extended_value& value,
-               iter_t const pos) try {
+               iter_t const pos)
+    try {
       set_protection(name, m, value);
       tbl.insert(name, value);
     }
