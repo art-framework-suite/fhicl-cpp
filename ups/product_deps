@@ -247,7 +247,9 @@ fcldir	-
 #
 ####################################
 product		version		qual	flags		<table_format=2>
-cetlib		v3_18_00	-
+cetlib		v3_18_02
+tbb		v2021_9_0
+hep_concurrency	v1_09_02	-	only_for_build
 cetmodules	v3_22_02	-	only_for_build
 end_product_list
 ####################################
@@ -303,19 +305,19 @@ end_product_list
 #   case it is optional.
 #
 ####################################
-qualifier	cetlib		notes
-c14:debug	c14:debug
-c14:prof	c14:prof
-c15:debug	c15:debug
-c15:prof	c15:prof
-e20:debug	e20:debug
-e20:prof	e20:prof
-e26:debug	e26:debug
-e26:prof	e26:prof
-e27:debug	e27:debug
-e27:prof	e27:prof
-e28:debug	e28:debug
-e28:prof	e28:prof
+qualifier	tbb	cetlib		hep_concurrency	notes
+c14:debug	c14	c14:debug       c14:debug
+c14:prof	c14	c14:prof        c14:prof
+c15:debug	c15	c15:debug       c15:debug
+c15:prof	c15	c15:prof        c15:prof
+e20:debug	e20	e20:debug       e20:debug
+e20:prof	e20	e20:prof        e20:prof
+e26:debug	e26	e26:debug       e26:debug
+e26:prof	e26	e26:prof        e26:prof
+e27:debug	e27	e27:debug       e27:debug
+e27:prof	e27	e27:prof        e27:prof
+e28:debug	e28	e28:debug       e28:debug
+e28:prof	e28	e28:prof	e28:prof
 end_qualifier_list
 ####################################
 
