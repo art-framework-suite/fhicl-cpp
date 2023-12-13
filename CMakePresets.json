@@ -76,7 +76,7 @@
             },
             "fhiclcpp_UPS_BUILD_ONLY_DEPENDENCIES_INIT" : {
                "type" : "STRING",
-               "value" : "cetmodules"
+               "value" : "cetmodules;hep_concurrency"
             },
             "fhiclcpp_UPS_PRODUCT_FLAVOR_INIT" : {
                "type" : "STRING",
