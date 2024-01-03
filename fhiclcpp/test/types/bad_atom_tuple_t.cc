@@ -1,5 +1,5 @@
-#include "fhicl/types/Atom.h"
-#include "fhicl/types/Tuple.h"
+#include "fhiclcpp/types/Atom.h"
+#include "fhiclcpp/types/Tuple.h"
 
 using namespace fhicl;
 

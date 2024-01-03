@@ -1,5 +1,5 @@
-#include "fhicl/types/Atom.h"
-#include "fhicl/types/DelegatedParameter.h"
+#include "fhiclcpp/types/Atom.h"
+#include "fhiclcpp/types/DelegatedParameter.h"
 
 using namespace fhicl;
 

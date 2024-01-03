@@ -1,5 +1,5 @@
-#include "fhicl/types/OptionalTable.h"
-#include "fhicl/types/TableFragment.h"
+#include "fhiclcpp/types/OptionalTable.h"
+#include "fhiclcpp/types/TableFragment.h"
 
 using namespace fhicl;
 

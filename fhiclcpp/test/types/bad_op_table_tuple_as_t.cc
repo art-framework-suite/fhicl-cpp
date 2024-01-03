@@ -1,5 +1,5 @@
-#include "fhicl/types/OptionalTable.h"
-#include "fhicl/types/TupleAs.h"
+#include "fhiclcpp/types/OptionalTable.h"
+#include "fhiclcpp/types/TupleAs.h"
 
 using namespace fhicl;
 
