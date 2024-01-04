@@ -250,7 +250,7 @@ product		version		qual	flags		<table_format=2>
 cetlib		v3_18_02
 tbb		v2021_9_0
 hep_concurrency	v1_09_02	-	only_for_build
-cetmodules	v3_22_02	-	only_for_build
+cetmodules	v3_23_01	-	only_for_build
 end_product_list
 ####################################
 
