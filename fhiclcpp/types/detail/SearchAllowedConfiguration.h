@@ -48,8 +48,7 @@
 
 namespace fhicl::detail {
 
-  class SearchAllowedConfiguration
-    : public ParameterWalker<tt::const_flavor::require_const> {
+  class SearchAllowedConfiguration : public ConstParameterWalker {
   public:
     static bool supports_key(ParameterBase const& pb,
                              std::string const& searched_for_key);

@@ -1,7 +1,6 @@
 #ifndef fhiclcpp_types_OptionalTableAs_h
 #define fhiclcpp_types_OptionalTableAs_h
 
-#include "fhiclcpp/type_traits.h"
 #include "fhiclcpp/types/ConfigPredicate.h"
 #include "fhiclcpp/types/OptionalTable.h"
 #include "fhiclcpp/types/detail/ParameterBase.h"
@@ -21,9 +20,8 @@ namespace fhicl {
   public:
     explicit OptionalTableAs(Name&& name);
     explicit OptionalTableAs(Name&& name, Comment&& comment);
-    explicit OptionalTableAs(Name&& name,
-                             Comment&& comment,
-                             std::function<bool()> maybeUse);
+    template <fhicl::maybe_use_param F>
+    explicit OptionalTableAs(Name&& name, Comment&& comment, F maybeUse);
 
     std::optional<T>
     operator()() const
@@ -54,6 +52,10 @@ namespace fhicl {
     // Allow implicit conversion from TableAs to ParameterBase to
     // access metadata of underlying fhicl-cpp type.
     operator detail::ParameterBase const&() const noexcept { return tableObj_; }
+
+    // Expert
+    struct fhicl_type_tag {};
+    struct fhicl_optional_tag {};
 
   private:
     OptionalTable<Config> tableObj_;
@@ -89,9 +91,10 @@ namespace fhicl {
   {}
 
   template <typename T, typename Config>
+  template <fhicl::maybe_use_param F>
   OptionalTableAs<T, Config>::OptionalTableAs(Name&& name,
                                               Comment&& comment,
-                                              std::function<bool()> maybeUse)
+                                              F maybeUse)
     : tableObj_{std::move(name),
                 conversion_comment(std::move(comment)),
                 maybeUse}

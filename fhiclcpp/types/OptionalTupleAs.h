@@ -6,6 +6,7 @@
 #include "fhiclcpp/types/OptionalTuple.h"
 #include "fhiclcpp/types/detail/NameStackRegistry.h"
 #include "fhiclcpp/types/detail/ParameterBase.h"
+#include "fhiclcpp/types/detail/ParameterWalker.h"
 #include "fhiclcpp/types/detail/type_traits_error_msgs.h"
 
 #include <memory>
@@ -26,9 +27,8 @@ namespace fhicl {
   public:
     explicit OptionalTupleAs(Name&& name);
     explicit OptionalTupleAs(Name&& name, Comment&& comment);
-    explicit OptionalTupleAs(Name&& name,
-                             Comment&& comment,
-                             std::function<bool()> maybeUse);
+    template <fhicl::maybe_use_param F>
+    explicit OptionalTupleAs(Name&& name, Comment&& comment, F maybeUse);
 
     std::optional<T>
     operator()() const
@@ -55,6 +55,10 @@ namespace fhicl {
     {
       return tupleObj_.hasValue();
     }
+
+    // Expert
+    struct fhicl_type_tag {};
+    struct fhicl_optional_tag {};
 
   private:
     OptionalTuple<ARGS...> tupleObj_;
@@ -90,9 +94,10 @@ namespace fhicl {
   {}
 
   template <typename T, typename... ARGS>
+  template <fhicl::maybe_use_param F>
   OptionalTupleAs<T(ARGS...)>::OptionalTupleAs(Name&& name,
                                                Comment&& comment,
-                                               std::function<bool()> maybeUse)
+                                               F maybeUse)
     : tupleObj_{std::move(name),
                 conversion_comment(std::move(comment)),
                 maybeUse}

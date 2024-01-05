@@ -43,14 +43,6 @@ namespace fhicl::detail {
     return maybeUse_();
   }
 
-  ParameterBase::ParameterBase(Name const& name,
-                               Comment const& comment,
-                               par_style const vt,
-                               par_type const type,
-                               std::function<bool()> maybeUse)
-    : mdata_{name, comment, vt, type}, maybeUse_{std::move(maybeUse)}
-  {}
-
   ParameterBase::~ParameterBase() = default;
 
   // Modifiers

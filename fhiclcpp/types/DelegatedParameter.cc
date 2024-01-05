@@ -12,15 +12,16 @@ namespace fhicl {
     : DelegateBase{std::move(name),
                    std::move(comment),
                    par_style::REQUIRED,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     NameStackRegistry::end_of_ctor();
   }
 
+  template <fhicl::maybe_use_param F>
   DelegatedParameter::DelegatedParameter(Name&& name,
                                          Comment&& comment,
-                                         std::function<bool()> maybeUse)
+                                         F maybeUse)
     : DelegateBase{std::move(name),
                    std::move(comment),
                    par_style::REQUIRED_CONDITIONAL,

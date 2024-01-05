@@ -113,8 +113,6 @@ target_compile_definitions(table_t_snippet_iterator_t PRIVATE SNIPPET_MODE=true)
 
 cet_test(seq_of_seq_t LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 
-cet_test(traits_t LIBRARIES PRIVATE cetlib::cetlib)
-
 cet_test(ParameterSetRegistry_t USE_BOOST_UNIT
   LIBRARIES PRIVATE
     fhiclcpp::fhiclcpp
@@ -148,3 +146,8 @@ cet_test(parse_shimmeddocument_test USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::f
 cet_test(fhicl-get-test USE_BOOST_UNIT
   LIBRARIES PRIVATE fhiclcpp::tools
   DATAFILES fhicl-get-t.fcl)
+
+cet_test(bad_map_shim COMPILE_ONLY LIBRARIES PRIVATE fhiclcpp::fhiclcpp
+  TEST_PROPERTIES
+  PASS_REGULAR_EXPRESSION
+  "the expression ‘!\\(same_as<IIL, IIR>\\).*’ evaluated to ‘false’")

@@ -3,6 +3,7 @@
 
 #include "cetlib_except/demangle.h"
 
+#include <concepts>
 #include <ostream>
 #include <string>
 #include <typeinfo>
@@ -36,7 +37,7 @@ namespace fhicl::detail::yes_defaults {
   inline std::ostream&
   operator<<(std::ostream& os, maybe_quotes<T>&& mq)
   {
-    if constexpr (std::is_floating_point_v<T>) {
+    if constexpr (std::floating_point<T>) {
       return os << std::showpoint << mq.value;
     } else {
       return os << mq.value;

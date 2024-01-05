@@ -9,13 +9,6 @@
 
 namespace fhicl::detail {
 
-  TableBase::TableBase(Name const& name,
-                       Comment const& comment,
-                       par_style const vt,
-                       std::function<bool()> maybeUse)
-    : ParameterBase{name, comment, vt, par_type::TABLE, std::move(maybeUse)}
-  {}
-
   TableBase::~TableBase() = default;
 
   void

@@ -20,29 +20,23 @@
 namespace fhicl {
 
   //========================================================
-  template <typename T>
+  template <table_or_atom_compatible T>
   class Atom final : public detail::AtomBase,
                      private detail::RegisterIfTableMember {
   public:
-    static_assert(!tt::is_sequence_type_v<T>, NO_STD_CONTAINERS);
-    static_assert(!tt::is_fhicl_type_v<T>, NO_NESTED_FHICL_TYPES_IN_ATOM);
-    static_assert(!tt::is_table_fragment_v<T>, NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!tt::is_delegated_parameter_v<T>, NO_DELEGATED_PARAMETERS);
-
     //=====================================================
     // User-friendly
     // ... c'tors
     explicit Atom(Name&& name);
     explicit Atom(Name&& name, Comment&& comment);
-    explicit Atom(Name&& name, Comment&& comment, std::function<bool()> useIf);
+    template <fhicl::maybe_use_param F>
+    explicit Atom(Name&& name, Comment&& comment, F useIf);
 
     // ... c'tors supporting defaults
     explicit Atom(Name&& name, T const& dflt_value);
     explicit Atom(Name&& name, Comment&& comment, T const& dflt_value);
-    explicit Atom(Name&& name,
-                  Comment&& comment,
-                  std::function<bool()> useIf,
-                  T const& dflt_value);
+    template <fhicl::maybe_use_param F>
+    explicit Atom(Name&& name, Comment&& comment, F useIf, T const& dflt_value);
 
     // ... Accessors
     auto const&
@@ -69,19 +63,20 @@ namespace fhicl {
 
 namespace fhicl {
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   Atom<T>::Atom(Name&& name, Comment&& comment)
     : AtomBase{std::move(name),
                std::move(comment),
                par_style::REQUIRED,
-               detail::AlwaysUse()}
+               detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
-  Atom<T>::Atom(Name&& name, Comment&& comment, std::function<bool()> maybeUse)
+  template <table_or_atom_compatible T>
+  template <fhicl::maybe_use_param F>
+  Atom<T>::Atom(Name&& name, Comment&& comment, F maybeUse)
     : AtomBase{std::move(name),
                std::move(comment),
                par_style::REQUIRED_CONDITIONAL,
@@ -91,23 +86,21 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   Atom<T>::Atom(Name&& name, Comment&& comment, T const& dflt_value)
     : AtomBase{std::move(name),
                std::move(comment),
                par_style::DEFAULT,
-               detail::AlwaysUse()}
+               detail::AlwaysUse}
     , RegisterIfTableMember{this}
     , value_{dflt_value}
   {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
-  Atom<T>::Atom(Name&& name,
-                Comment&& comment,
-                std::function<bool()> maybeUse,
-                T const& dflt_value)
+  template <table_or_atom_compatible T>
+  template <maybe_use_param F>
+  Atom<T>::Atom(Name&& name, Comment&& comment, F maybeUse, T const& dflt_value)
     : AtomBase{std::move(name),
                std::move(comment),
                par_style::DEFAULT_CONDITIONAL,
@@ -118,16 +111,16 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   Atom<T>::Atom(Name&& name) : Atom{std::move(name), Comment("")}
   {}
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   Atom<T>::Atom(Name&& name, T const& dflt_value)
     : Atom{std::move(name), Comment(""), dflt_value}
   {}
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   std::string
   Atom<T>::get_stringified_value() const
   {
@@ -142,7 +135,7 @@ namespace fhicl {
     return oss.str();
   }
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   void
   Atom<T>::do_set_value(fhicl::ParameterSet const& pset)
   {

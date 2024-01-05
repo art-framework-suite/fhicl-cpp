@@ -37,7 +37,7 @@ namespace fhicl {
     Atom<bool> flag{Name("flag")};
 
     bool
-    flag_is_true() const
+    flag_is_true() const noexcept
     {
       return flag();
     }
@@ -58,10 +58,9 @@ namespace fhicl {
       OptionalAtom<std::string> boxName{Name("boxName")};
       Atom<std::string> material{Name("material")};
     };
-    Table<BoxParameters> boxParams{
-      Name("parameters"),
-      Comment("Used if \"shape: box\"."),
-      MaybeUseFunction([this]() { return shape() == "box"; })};
+    Table<BoxParameters> boxParams{Name("parameters"),
+                                   Comment("Used if \"shape: box\"."),
+                                   [this]() { return shape() == "box"; }};
 
     struct SphereParameters {
       Atom<int> radius{Name("radius")};
@@ -69,7 +68,7 @@ namespace fhicl {
     Table<SphereParameters> sphereParams{
       Name("parameters"),
       Comment("Used if \"shape: sphere\"."),
-      MaybeUseFunction([this]() { return shape() == "sphere"; })};
+      [this]() { return shape() == "sphere"; }};
   };
 }
 
