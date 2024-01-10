@@ -7,6 +7,10 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 find_package(hep_concurrency REQUIRED)
 
+# Quote alternatives under different locales (used for regular expression testing)
+set(open_quote "('|‘)")
+set(close_quote "('|’)")
+
 # Put everything in a different export set.
 cet_register_export_set(SET_NAME Testing NAMESPACE fhiclcpp_test SET_DEFAULT)
 
@@ -152,4 +156,4 @@ cet_test(fhicl-get-test USE_BOOST_UNIT
 cet_test(bad_map_shim COMPILE_ONLY LIBRARIES PRIVATE fhiclcpp::fhiclcpp
   TEST_PROPERTIES
   PASS_REGULAR_EXPRESSION
-  "the expression ‘!\\(same_as<IIL, IIR>\\).*’ evaluated to ‘false’")
+  "the expression ${open_quote}!\\(same_as<IIL, IIR>\\).*${close_quote} evaluated to ${open_quote}false${close_quote}")

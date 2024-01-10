@@ -106,10 +106,10 @@ cet_test(tables_in_parallel_t LIBRARIES PRIVATE
   fhiclcpp::types hep_concurrency::simultaneous_function_spawner)
 
 set(test_exp_table_frag
-  "note: the expression ‘!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ‘false’"
+  "note: the expression ${open_quote}!\\(\\(is_stl_sequence<T>\\) || \\(is_fhicl_type<T>\\) || \\(is_fhicl_table_fragment<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to ${open_quote}false${close_quote}"
 )
 set(test_exp_atom_table
-  "note: the expression ‘!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'"
+  "note: the expression ${open_quote}!\\(\\(is_sequence_type_param<T>\\) || \\(is_fhicl_type_param<T>\\) || \\(is_table_fragment_param<T>\\) || \\(is_delegated_param<T>\\)\\).*evaluated to 'false'"
 )
 foreach (bad_test IN ITEMS
     atom delegated non_class seq_array seq_tuple seq_vector sequence_a sequence_v table table_as table_frag tuple tuple_as
@@ -134,10 +134,10 @@ foreach (bad_test IN ITEMS
   )
 endforeach()
 set(test_exp_sequence
-  "note: the expression ‘!\\(\\(is_optional_param<T>\\) || \\(is_delegated_param<T>\\) || \\(is_fhicl_table_fragment<T>\\)\\).*evaluated to ‘false’"
+  "note: the expression ${open_quote}!\\(\\(is_optional_param<T>\\) || \\(is_delegated_param<T>\\) || \\(is_fhicl_table_fragment<T>\\)\\).*evaluated to ${open_quote}false${close_quote}"
 )
 set(test_exp_tuple
-  "note: the expression ‘\\(\\.\\.\\. && tuple_compatible<ARGS>\\).*evaluated to ‘false’"
+  "note: the expression ${open_quote}\\(\\.\\.\\. && tuple_compatible<ARGS>\\).*evaluated to ${open_quote}false${close_quote}"
 )
 foreach (bad_test IN ITEMS
     delegated op_atom op_delegated op_sequence op_table op_table_as op_tuple op_tuple_as table_frag
