@@ -143,9 +143,15 @@ fhicl::ParameterSetRegistry::exportTo(sqlite3* db)
     &oStmt,
     nullptr);
   throwOnSQLiteFailure(db);
-  for (auto const& p : instance_().registry_) {
-    std::string id(p.first.to_string());
-    std::string psBlob(p.second.to_compact_string());
+
+  for (auto const& [hash, ps] : instance_().registry_) {
+    std::string id(hash.to_string());
+    // Calling to_compact_string() may add elements to registry_.  It
+    // is not necessary to find the ones we add to the registry as
+    // they will be looped through when going through the in-memory
+    // database entries below.  std::map::insert also guarantees that
+    // adding entries do not invalidate existing iterators.
+    std::string psBlob(ps.to_compact_string());
     sqlite3_bind_text(oStmt, 1, id.c_str(), id.size() + 1, SQLITE_STATIC);
     throwOnSQLiteFailure(db);
     sqlite3_bind_text(

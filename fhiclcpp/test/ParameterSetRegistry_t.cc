@@ -11,9 +11,9 @@
 
 #include <atomic>
 #include <functional>
+#include <map>
 #include <mutex>
 #include <string>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -28,8 +28,7 @@ BOOST_AUTO_TEST_SUITE(ParameterSetRegistry_t)
 
 BOOST_AUTO_TEST_CASE(Typedefs)
 {
-  using ctype =
-    unordered_map<ParameterSetID, ParameterSet, detail::HashParameterSetID>;
+  using ctype = map<ParameterSetID, ParameterSet>;
   static_assert(is_same_v<ctype, ParameterSetRegistry::collection_type>);
   static_assert(is_same_v<ParameterSetID, ParameterSetRegistry::key_type>);
   static_assert(is_same_v<ParameterSet, ParameterSetRegistry::mapped_type>);

@@ -12,8 +12,8 @@
 #include "fhiclcpp/exception.h"
 #include "fhiclcpp/fwd.h"
 
+#include <map>
 #include <mutex>
-#include <unordered_map>
 
 struct sqlite3;
 struct sqlite3_stmt;
@@ -23,19 +23,10 @@ namespace fhicl {
   class ParameterSetRegistry;
 
   namespace detail {
-    class HashParameterSetID;
     void throwOnSQLiteFailure(int rc, char* msg = nullptr);
     void throwOnSQLiteFailure(sqlite3* db, char* msg = nullptr);
   }
 }
-
-class fhicl::detail::HashParameterSetID {
-public:
-  size_t operator()(ParameterSetID const& id) const;
-
-private:
-  std::hash<std::string> hash_;
-};
 
 class fhicl::ParameterSetRegistry {
 public:
@@ -46,8 +37,8 @@ public:
   ~ParameterSetRegistry();
 
   // Type aliases.
-  using collection_type = std::
-    unordered_map<ParameterSetID, ParameterSet, detail::HashParameterSetID>;
+  //  - The collection type MUST NOT invalidate iterators upon insertion.
+  using collection_type = std::map<ParameterSetID, ParameterSet>;
   using key_type = collection_type::key_type;
   using mapped_type = collection_type::mapped_type;
   using value_type = collection_type::value_type;
@@ -201,12 +192,6 @@ fhicl::ParameterSetRegistry::instance_() -> ParameterSetRegistry&
 {
   static ParameterSetRegistry s_registry;
   return s_registry;
-}
-
-inline size_t
-fhicl::detail::HashParameterSetID::operator()(ParameterSetID const& id) const
-{
-  return hash_(id.to_string());
 }
 
 #endif /* fhiclcpp_ParameterSetRegistry_h */
