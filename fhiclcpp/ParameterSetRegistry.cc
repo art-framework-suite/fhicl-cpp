@@ -143,9 +143,22 @@ fhicl::ParameterSetRegistry::exportTo(sqlite3* db)
     &oStmt,
     nullptr);
   throwOnSQLiteFailure(db);
-  for (auto const& p : instance_().registry_) {
+
+  // Calling to_compact_string() can insert entries into the registry
+  // container.  If that insertion causes a rehash, the iterators are
+  // invalidated.  We therefore need to start over in that case and
+  // make sure we can get through the entire list without causing a
+  // rehash.
+  while (std::any_of(get().begin(), get().end(), [oStmt, db](auto const& p) {
+    // The rehash threshold is defined by the STL
+    //    [container.requirements.unord.req.general]
+    auto const current_rehash_threshold =
+      get().max_load_factor() * get().bucket_count();
     std::string id(p.first.to_string());
     std::string psBlob(p.second.to_compact_string());
+    if (get().size() > current_rehash_threshold) {
+      return true;
+    }
     sqlite3_bind_text(oStmt, 1, id.c_str(), id.size() + 1, SQLITE_STATIC);
     throwOnSQLiteFailure(db);
     sqlite3_bind_text(
@@ -159,6 +172,8 @@ fhicl::ParameterSetRegistry::exportTo(sqlite3* db)
     default:
       throwOnSQLiteFailure(db);
     }
+    return false;
+  })) {
   }
 
   sqlite3* const primaryDB{instance_().primaryDB_};
