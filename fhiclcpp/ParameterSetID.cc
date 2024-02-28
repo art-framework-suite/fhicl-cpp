@@ -81,7 +81,7 @@ ParameterSetID::invalidate() noexcept
 void
 ParameterSetID::reset(ParameterSet const& ps)
 {
-  auto const& hash = ps.to_string();
+  auto const hash = ps.to_string();
   sha1 sha{hash.c_str()};
 
   id_ = sha.digest();
