@@ -55,6 +55,9 @@ namespace fhicl {
       return false;
     }
 
+    // Expert
+    struct fhicl_optional_tag {};
+
   private:
     void
     do_set_value(fhicl::ParameterSet const& pset) override

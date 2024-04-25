@@ -15,10 +15,11 @@
 namespace fhicl::detail {
   class TableBase : public ParameterBase {
   public:
+    template <fhicl::maybe_use_param F>
     TableBase(Name const& name,
               Comment const& comment,
               par_style vt,
-              std::function<bool()> maybeUse);
+              F maybeUse);
     ~TableBase();
 
     void print_allowed_configuration(
@@ -27,6 +28,8 @@ namespace fhicl::detail {
     std::vector<cet::exempt_ptr<ParameterBase>> const& members() const;
     void validate(ParameterSet const& pset,
                   std::set<std::string> const& ignorable_keys = {});
+
+    struct fhicl_table_tag {};
 
   protected:
     void finalize_members();
@@ -48,6 +51,14 @@ namespace fhicl::detail {
   // Insertion operator
   std::ostream& operator<<(std::ostream& os, TableBase const& t);
 }
+
+template <fhicl::maybe_use_param F>
+fhicl::detail::TableBase::TableBase(Name const& name,
+                                    Comment const& comment,
+                                    par_style const vt,
+                                    F maybeUse)
+  : ParameterBase{name, comment, vt, par_type::TABLE, std::move(maybeUse)}
+{}
 
 #endif /* fhiclcpp_types_detail_TableBase_h */
 

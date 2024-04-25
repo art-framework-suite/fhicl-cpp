@@ -7,12 +7,14 @@
 namespace fhicl::detail {
   class DelegateBase : public ParameterBase {
   public:
+    template <fhicl::maybe_use_param F>
     DelegateBase(Name const& name,
                  Comment const& comment,
                  par_style const vt,
-                 std::function<bool()> maybeUse)
+                 F maybeUse)
       : ParameterBase{name, comment, vt, par_type::DELEGATE, maybeUse}
     {}
+    struct fhicl_delegate_tag {};
   };
 }
 

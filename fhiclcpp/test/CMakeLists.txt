@@ -7,6 +7,10 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 find_package(hep_concurrency REQUIRED)
 
+# Quote alternatives under different locales (used for regular expression testing)
+set(open_quote "('|‘)")
+set(close_quote "('|’)")
+
 # Put everything in a different export set.
 cet_register_export_set(SET_NAME Testing NAMESPACE fhiclcpp_test SET_DEFAULT)
 
@@ -35,13 +39,15 @@ cet_test(get_via_t USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 cet_test(equalTest USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 cet_test(failer LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 cet_make_exec(NAME fhicl-config_t NO_INSTALL LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
-cet_test(fhicl-expand_test.sh PREBUILT)
-cet_test(fhicl-expand_test_path.sh PREBUILT)
+cet_test(fhicl-expand_test.sh PREBUILT TEST_ARGS $<TARGET_FILE:fhicl-expand>)
+cet_test(fhicl-expand_test_path.sh PREBUILT TEST_ARGS $<TARGET_FILE:fhicl-expand>)
 cet_test(issue_0923_t.sh PREBUILT
+  TEST_ARGS $<TARGET_FILE:fhicl-config_t>
   DATAFILES issue_0923_ref.txt
   DEPENDENCIES fhicl-config_t
   TEST_PROPERTIES
   ENVIRONMENT FHICL_FILE_PATH=${CMAKE_CURRENT_SOURCE_DIR})
+
 cet_test(key_assembler_t USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 cet_test(parse_document_test USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 cet_test(parse_value_string_test USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
@@ -113,8 +119,6 @@ target_compile_definitions(table_t_snippet_iterator_t PRIVATE SNIPPET_MODE=true)
 
 cet_test(seq_of_seq_t LIBRARIES PRIVATE fhiclcpp::fhiclcpp)
 
-cet_test(traits_t LIBRARIES PRIVATE cetlib::cetlib)
-
 cet_test(ParameterSetRegistry_t USE_BOOST_UNIT
   LIBRARIES PRIVATE
     fhiclcpp::fhiclcpp
@@ -148,3 +152,8 @@ cet_test(parse_shimmeddocument_test USE_BOOST_UNIT LIBRARIES PRIVATE fhiclcpp::f
 cet_test(fhicl-get-test USE_BOOST_UNIT
   LIBRARIES PRIVATE fhiclcpp::tools
   DATAFILES fhicl-get-t.fcl)
+
+cet_test(bad_map_shim COMPILE_ONLY LIBRARIES PRIVATE fhiclcpp::fhiclcpp
+  TEST_PROPERTIES
+  PASS_REGULAR_EXPRESSION
+  "the expression ${open_quote}!\\(same_as<IIL, IIR>\\).*${close_quote} evaluated to ${open_quote}false${close_quote}")

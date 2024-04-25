@@ -2,6 +2,7 @@
 #define fhiclcpp_stdmap_shims_h
 
 #include <algorithm>
+#include <concepts>
 #include <iostream>
 #include <iterator>
 #include <list>
@@ -23,18 +24,18 @@ namespace shims {
     using mapmap_t = std::map<const Key, T, Compare, Allocator>;
     using listmap_t = std::list<std::pair<const Key, T>, Allocator>;
 
-    static_assert(std::is_same_v<typename mapmap_t::key_type,
-                                 typename listmap_t::value_type::first_type>,
+    static_assert(std::same_as<typename mapmap_t::key_type,
+                               typename listmap_t::value_type::first_type>,
                   "type mismatch for key_type");
-    static_assert(std::is_same_v<typename mapmap_t::mapped_type,
-                                 typename listmap_t::value_type::second_type>,
+    static_assert(std::same_as<typename mapmap_t::mapped_type,
+                               typename listmap_t::value_type::second_type>,
                   "type mismatch for mapped_type");
-    static_assert(std::is_same_v<typename mapmap_t::value_type,
-                                 typename listmap_t::value_type>,
+    static_assert(std::same_as<typename mapmap_t::value_type,
+                               typename listmap_t::value_type>,
                   "type mismatch for value_type");
-    static_assert(std::is_same_v<typename mapmap_t::size_type,
-                                 typename listmap_t::size_type>,
-                  "type mismatch for size_type");
+    static_assert(
+      std::same_as<typename mapmap_t::size_type, typename listmap_t::size_type>,
+      "type mismatch for size_type");
 
     using size_type = typename mapmap_t::size_type;
 
@@ -103,34 +104,32 @@ namespace shims {
       }
 
       template <typename II>
-      std::enable_if_t<std::is_same_v<typename mapmap_t::iterator, II>, II>
+        requires std::same_as<typename mapmap_t::iterator, II>
+      II
       get(II)
       {
         return _iters.mapmap_iter;
       }
 
       template <typename II>
-      std::enable_if_t<std::is_same_v<typename listmap_t::iterator, II>, II>
+        requires std::same_as<typename listmap_t::iterator, II>
+      II
       get(II)
       {
         return _iters.listmap_iter;
       }
 
       template <typename IIL, typename IIR>
-      friend std::enable_if_t<
-        !std::is_same_v<IIL, IIR> &&
-          std::is_same_v<std::remove_const_t<typename IIL::type>,
-                         std::remove_const_t<typename IIR::type>>,
-        bool>
-      operator==(IIL, IIR) noexcept;
+        requires(!std::same_as<IIL, IIR>) &&
+                std::same_as<std::remove_const_t<typename IIL::type>,
+                             std::remove_const_t<typename IIR::type>>
+      friend bool operator==(IIL, IIR) noexcept;
 
       template <typename IIL, typename IIR>
-      friend std::enable_if_t<
-        !std::is_same_v<IIL, IIR> &&
-          std::is_same_v<std::remove_const_t<typename IIL::type>,
-                         std::remove_const_t<typename IIR::type>>,
-        bool>
-      operator!=(IIL, IIR) noexcept;
+        requires(!std::same_as<IIL, IIR>) &&
+                std::same_as<std::remove_const_t<typename IIL::type>,
+                             std::remove_const_t<typename IIR::type>>
+      friend bool operator!=(IIL, IIR) noexcept;
 
     private:
       iterator_tuple _iters;
@@ -330,10 +329,9 @@ namespace shims {
     maps_tuple _maps;
   };
   template <typename IIL, typename IIR>
-  std::enable_if_t<!std::is_same_v<IIL, IIR> &&
-                     std::is_same_v<std::remove_const_t<typename IIL::type>,
-                                    std::remove_const_t<typename IIR::type>>,
-                   bool>
+    requires(!std::same_as<IIL, IIR>) &&
+            std::same_as<std::remove_const_t<typename IIL::type>,
+                         std::remove_const_t<typename IIR::type>> bool
   operator==(IIL left, IIR right) noexcept
   {
     return isSnippetMode() ?
@@ -342,10 +340,9 @@ namespace shims {
   }
 
   template <typename IIL, typename IIR>
-  std::enable_if_t<!std::is_same_v<IIL, IIR> &&
-                     std::is_same_v<std::remove_const_t<typename IIL::type>,
-                                    std::remove_const_t<typename IIR::type>>,
-                   bool>
+    requires(!std::same_as<IIL, IIR>) &&
+            std::same_as<std::remove_const_t<typename IIL::type>,
+                         std::remove_const_t<typename IIR::type>> bool
   operator!=(IIL left, IIR right) noexcept
   {
     return !operator==(left, right);

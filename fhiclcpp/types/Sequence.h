@@ -20,6 +20,7 @@
 #include <variant>
 
 namespace fhicl {
+  namespace detail {}
 
   namespace sequence_detail {
 
@@ -71,14 +72,10 @@ namespace fhicl {
   //==================================================================
   // e.g. Sequence<int,4> ====> std::array<int,4>
   //
-  template <typename T, std::size_t N = -1ull>
+  template <sequence_compatible T, std::size_t N = -1ull>
   class Sequence final : public detail::SequenceBase,
                          private detail::RegisterIfTableMember {
   public:
-    static_assert(!tt::is_table_fragment_v<T>, NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!tt::is_optional_parameter_v<T>, NO_OPTIONAL_TYPES);
-    static_assert(!tt::is_delegated_parameter_v<T>, NO_DELEGATED_PARAMETERS);
-
     using default_type =
       sequence_detail::ValueHolder<typename tt::fhicl_type<T>::default_type>;
     using ftype = std::array<std::shared_ptr<tt::fhicl_type<T>>, N>;
@@ -141,8 +138,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(
-      detail::ParameterWalker<tt::const_flavor::require_non_const>& pw) override
+    do_walk_elements(detail::ParameterWalker& pw) override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -150,8 +146,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(detail::ParameterWalker<tt::const_flavor::require_const>&
-                       pw) const override
+    do_walk_elements(detail::ConstParameterWalker& pw) const override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -161,7 +156,7 @@ namespace fhicl {
     bool
     do_preset_value(fhicl::ParameterSet const& ps) override
     {
-      if constexpr (std::is_same_v<tt::fhicl_type<T>, Atom<T>>) {
+      if constexpr (fhicl::atom_ish<T>) {
         auto const trimmed_key = detail::strip_first_containing_name(key());
         value_ = ps.get<value_type>(trimmed_key);
         return true;
@@ -177,14 +172,10 @@ namespace fhicl {
   //==================================================================
   // e.g. Sequence<int> ====> std::vector<int>
   //
-  template <typename T>
+  template <sequence_compatible T>
   class Sequence<T, -1ull> final : public detail::SequenceBase,
                                    private detail::RegisterIfTableMember {
   public:
-    static_assert(!tt::is_table_fragment_v<T>, NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!tt::is_optional_parameter_v<T>, NO_OPTIONAL_TYPES);
-    static_assert(!tt::is_delegated_parameter_v<T>, NO_DELEGATED_PARAMETERS);
-
     using default_type = std::vector<typename tt::fhicl_type<T>::default_type>;
     using ftype = std::vector<std::shared_ptr<tt::fhicl_type<T>>>;
     using value_type = std::vector<tt::return_type<T>>;
@@ -271,8 +262,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(
-      detail::ParameterWalker<tt::const_flavor::require_non_const>& pw) override
+    do_walk_elements(detail::ParameterWalker& pw) override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -280,8 +270,7 @@ namespace fhicl {
     }
 
     void
-    do_walk_elements(detail::ParameterWalker<tt::const_flavor::require_const>&
-                       pw) const override
+    do_walk_elements(detail::ConstParameterWalker& pw) const override
     {
       // We only enter here if we do not have a preset value.
       cet::for_all(std::get<ftype>(value_),
@@ -291,7 +280,7 @@ namespace fhicl {
     bool
     do_preset_value(fhicl::ParameterSet const& ps) override
     {
-      if constexpr (std::is_same_v<tt::fhicl_type<T>, Atom<T>>) {
+      if constexpr (fhicl::atom_ish<T>) {
         auto const trimmed_key = detail::strip_first_containing_name(key());
         value_ = ps.get<value_type>(trimmed_key);
         return true;
@@ -322,17 +311,17 @@ namespace fhicl {
   // e.g. Sequence<int,4> ====> std::array<int,4>
   //
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   Sequence<T, N>::Sequence(Name&& name) : Sequence{std::move(name), Comment("")}
   {}
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   Sequence<T, N>::Sequence(Name&& name, Comment&& comment)
     : SequenceBase{std::move(name),
                    std::move(comment),
                    par_style::REQUIRED,
                    par_type::SEQ_ARRAY,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
     , value_{ftype{nullptr}}
   {
@@ -344,7 +333,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   Sequence<T, N>::Sequence(Name&& name,
                            Comment&& comment,
                            std::function<bool()> maybeUse)
@@ -365,12 +354,12 @@ namespace fhicl {
   }
 
   // c'tors that support defaults
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   Sequence<T, N>::Sequence(Name&& name, default_type const& defaults)
     : Sequence{std::move(name), Comment{""}, defaults}
   {}
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   Sequence<T, N>::Sequence(Name&& name,
                            Comment&& comment,
                            default_type const& defaults)
@@ -378,7 +367,7 @@ namespace fhicl {
                    std::move(comment),
                    par_style::DEFAULT,
                    par_type::SEQ_ARRAY,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
     , value_{ftype{nullptr}}
   {
@@ -392,7 +381,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T, std::size_t N>
+  template <sequence_compatible T, std::size_t N>
   Sequence<T, N>::Sequence(Name&& name,
                            Comment&& comment,
                            std::function<bool()> maybeUse,
@@ -418,18 +407,18 @@ namespace fhicl {
   //==================================================================
   // e.g. Sequence<int> ====> std::vector<int>
   //
-  template <typename T>
+  template <sequence_compatible T>
   Sequence<T, -1ull>::Sequence(Name&& name)
     : Sequence{std::move(name), Comment{""}}
   {}
 
-  template <typename T>
+  template <sequence_compatible T>
   Sequence<T, -1ull>::Sequence(Name&& name, Comment&& comment)
     : SequenceBase{std::move(name),
                    std::move(comment),
                    par_style::REQUIRED,
                    par_type::SEQ_VECTOR,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
     , value_{
         ftype{std::make_shared<tt::fhicl_type<T>>(Name::sequence_element(0ul))}}
@@ -437,7 +426,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
+  template <sequence_compatible T>
   Sequence<T, -1ull>::Sequence(Name&& name,
                                Comment&& comment,
                                std::function<bool()> maybeUse)
@@ -454,12 +443,12 @@ namespace fhicl {
   }
 
   // c'tors that support defaults
-  template <typename T>
+  template <sequence_compatible T>
   Sequence<T, -1ull>::Sequence(Name&& name, default_type const& defaults)
     : Sequence{std::move(name), Comment{""}, defaults}
   {}
 
-  template <typename T>
+  template <sequence_compatible T>
   Sequence<T, -1ull>::Sequence(Name&& name,
                                Comment&& comment,
                                default_type const& defaults)
@@ -467,10 +456,10 @@ namespace fhicl {
                    std::move(comment),
                    par_style::DEFAULT,
                    par_type::SEQ_VECTOR,
-                   detail::AlwaysUse()}
+                   detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
-    static_assert(!tt::is_table_v<T>, NO_DEFAULTS_FOR_TABLE);
+    static_assert(!fhicl::is_fhicl_table<T>, NO_DEFAULTS_FOR_TABLE);
     std::size_t i{};
     auto& value = std::get<ftype>(value_);
     for (auto const& t : defaults) {
@@ -481,7 +470,7 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
+  template <sequence_compatible T>
   Sequence<T, -1ull>::Sequence(Name&& name,
                                Comment&& comment,
                                std::function<bool()> maybeUse,
@@ -493,7 +482,7 @@ namespace fhicl {
                    maybeUse}
     , RegisterIfTableMember{this}
   {
-    static_assert(!tt::is_table_v<T>, NO_DEFAULTS_FOR_TABLE);
+    static_assert(!fhicl::is_fhicl_table<T>, NO_DEFAULTS_FOR_TABLE);
     std::size_t i{};
     auto& value = std::get<ftype>(value_);
     for (auto const& t : defaults) {

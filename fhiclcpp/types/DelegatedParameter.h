@@ -17,9 +17,8 @@ namespace fhicl {
   public:
     explicit DelegatedParameter(Name&& name);
     explicit DelegatedParameter(Name&& name, Comment&& comment);
-    explicit DelegatedParameter(Name&& name,
-                                Comment&& comment,
-                                std::function<bool()> maybeUse);
+    template <fhicl::maybe_use_param F>
+    explicit DelegatedParameter(Name&& name, Comment&& comment, F maybeUse);
 
     // A DelegatedParameter object must be present.  Therefore, it is
     // safe and correct to call 'pset.get' with no default.

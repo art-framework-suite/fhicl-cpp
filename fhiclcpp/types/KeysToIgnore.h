@@ -10,14 +10,6 @@
 namespace fhicl {
   namespace detail {
 
-    template <typename T>
-    std::set<std::string>
-    ensure_callable()
-    {
-      static_assert(tt::is_callable<T>::value);
-      return T{}();
-    }
-
     inline std::set<std::string>&
     concatenate_keys(std::set<std::string>& keys)
     {
@@ -34,16 +26,16 @@ namespace fhicl {
 
   } // detail
 
-  template <typename H, typename... T>
+  template <keys_to_ignore_provider... T>
   struct KeysToIgnore {
     std::set<std::string>
     operator()()
     {
-      std::set<std::string> keys_to_ignore{detail::ensure_callable<H>()};
-      return detail::concatenate_keys(keys_to_ignore,
-                                      detail::ensure_callable<T>()...);
+      std::set<std::string> result;
+      return detail::concatenate_keys(result, T{}()...);
     }
   };
+
 }
 
 #endif /* fhiclcpp_types_KeysToIgnore_h */

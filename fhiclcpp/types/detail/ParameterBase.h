@@ -26,6 +26,7 @@
 // clang-format on
 
 #include "fhiclcpp/fwd.h"
+#include "fhiclcpp/type_traits.h"
 #include "fhiclcpp/types/ConfigPredicate.h"
 #include "fhiclcpp/types/detail/ParameterArgumentTypes.h"
 #include "fhiclcpp/types/detail/ParameterMetadata.h"
@@ -35,11 +36,12 @@ namespace fhicl::detail {
   //========================================================
   class ParameterBase {
   public:
+    template <fhicl::maybe_use_param F>
     ParameterBase(Name const& name,
                   Comment const& comment,
                   par_style const vt,
                   par_type const type,
-                  std::function<bool()> maybeUse = AlwaysUse());
+                  F maybeUse = AlwaysUse);
     virtual ~ParameterBase();
 
     std::string const& key() const;
@@ -56,6 +58,8 @@ namespace fhicl::detail {
     bool preset_value(fhicl::ParameterSet const& ps);
     void set_par_style(par_style const vt);
 
+    struct fhicl_type_tag {};
+
   private:
     virtual bool do_preset_value(fhicl::ParameterSet const&);
     virtual void do_set_value(fhicl::ParameterSet const&) = 0;
@@ -64,6 +68,15 @@ namespace fhicl::detail {
     std::function<bool()> maybeUse_;
   };
 }
+
+template <fhicl::maybe_use_param F>
+fhicl::detail::ParameterBase::ParameterBase(Name const& name,
+                                            Comment const& comment,
+                                            par_style const vt,
+                                            par_type const type,
+                                            F maybeUse)
+  : mdata_{name, comment, vt, type}, maybeUse_{std::move(maybeUse)}
+{}
 
 #endif /* fhiclcpp_types_detail_ParameterBase_h */
 

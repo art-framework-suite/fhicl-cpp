@@ -20,23 +20,17 @@
 namespace fhicl {
 
   //========================================================
-  template <typename T>
+  template <table_or_atom_compatible T>
   class OptionalTable final : public detail::TableBase,
                               private detail::RegisterIfTableMember {
   public:
-    static_assert(!tt::is_sequence_type_v<T>, NO_STD_CONTAINERS);
-    static_assert(!tt::is_fhicl_type_v<T>, NO_NESTED_FHICL_TYPES_IN_TABLE);
-    static_assert(!tt::is_table_fragment_v<T>, NO_NESTED_TABLE_FRAGMENTS);
-    static_assert(!tt::is_delegated_parameter_v<T>, NO_DELEGATED_PARAMETERS);
-
     //=====================================================
     // User-friendly
     // ... c'tors
     explicit OptionalTable(Name&& name);
     explicit OptionalTable(Name&& name, Comment&& comment);
-    explicit OptionalTable(Name&& name,
-                           Comment&& comment,
-                           std::function<bool()> maybeUse);
+    template <fhicl::maybe_use_param F>
+    explicit OptionalTable(Name&& name, Comment&& comment, F maybeUse);
     OptionalTable(ParameterSet const& pset,
                   std::set<std::string> const& keysToIgnore);
 
@@ -72,6 +66,7 @@ namespace fhicl {
 
     //=====================================================
     // Expert-only
+    struct fhicl_optional_tag {};
     using value_type = T;
 
     OptionalTable();
@@ -83,27 +78,26 @@ namespace fhicl {
   //=====================================================
   // Implementation
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   OptionalTable<T>::OptionalTable(Name&& name)
     : OptionalTable{std::move(name), Comment("")}
   {}
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   OptionalTable<T>::OptionalTable(Name&& name, Comment&& comment)
     : TableBase{std::move(name),
                 std::move(comment),
                 par_style::OPTIONAL,
-                detail::AlwaysUse()}
+                detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     finalize_members();
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
-  OptionalTable<T>::OptionalTable(Name&& name,
-                                  Comment&& comment,
-                                  std::function<bool()> maybeUse)
+  template <table_or_atom_compatible T>
+  template <fhicl::maybe_use_param F>
+  OptionalTable<T>::OptionalTable(Name&& name, Comment&& comment, F maybeUse)
     : TableBase{std::move(name),
                 std::move(comment),
                 par_style::OPTIONAL_CONDITIONAL,
@@ -114,13 +108,13 @@ namespace fhicl {
     NameStackRegistry::end_of_ctor();
   }
 
-  template <typename T>
+  template <table_or_atom_compatible T>
   OptionalTable<T>::OptionalTable(ParameterSet const& pset,
                                   std::set<std::string> const& keysToIgnore)
     : TableBase{Name("<top_level>"),
                 Comment(""),
                 par_style::OPTIONAL,
-                detail::AlwaysUse()}
+                detail::AlwaysUse}
     , RegisterIfTableMember{this}
   {
     finalize_members();
