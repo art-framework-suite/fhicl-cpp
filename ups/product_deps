@@ -247,9 +247,9 @@ fcldir	-
 #
 ####################################
 product		version		qual	flags		<table_format=2>
-cetlib		v3_18_02
+cetlib		v3_19_00
 tbb		v2021_9_0
-hep_concurrency	v1_09_02	-	only_for_build
+hep_concurrency	v1_10_00	-	only_for_build
 cetmodules	v3_25_00	-	only_for_build
 end_product_list
 ####################################
