@@ -4,6 +4,8 @@
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/ParameterSetRegistry.h"
 
+#include <cassert>
+
 void
 fhicl::decompose_fhicl(std::string const& filename,
                        std::vector<std::string>& records,
