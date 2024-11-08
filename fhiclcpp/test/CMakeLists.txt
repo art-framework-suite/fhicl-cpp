@@ -57,12 +57,14 @@ cet_test(to_indented_string_annotated_test LIBRARIES PRIVATE fhiclcpp::fhiclcpp
     issue-7788/to_indented_string_annotated_test.fcl
     issue-7788/to_indented_string_annotated_prolog.fcl
   REF "${CMAKE_CURRENT_SOURCE_DIR}/issue-7788/to_indented_string_annotated_test-ref.txt"
+  OUTPUT_FILTERS cetlib::filter-output
 )
 cet_test(to_indented_string_prefix_annotated_test LIBRARIES PRIVATE fhiclcpp::fhiclcpp
   DATAFILES
     issue-7788/to_indented_string_annotated_test.fcl
     issue-7788/to_indented_string_annotated_prolog.fcl
   REF "${CMAKE_CURRENT_SOURCE_DIR}/to_indented_string_prefix_annotated_test-ref.txt"
+  OUTPUT_FILTERS cetlib::filter-output
 )
 cet_test(to_string_test LIBRARIES PRIVATE fhiclcpp::fhiclcpp
   TEST_PROPERTIES

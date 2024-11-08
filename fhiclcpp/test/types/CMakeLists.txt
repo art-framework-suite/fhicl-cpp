@@ -68,9 +68,11 @@ foreach (test IN ITEMS
     print_allowed_configuration_t
     print_allowed_configuration_tableFragment_t
     print_tupleAs_t
-)
+  )
   cet_test(${test} LIBRARIES PRIVATE fhiclcpp::types
-    REF "${CMAKE_CURRENT_SOURCE_DIR}/${test}-ref.txt")
+    REF "${CMAKE_CURRENT_SOURCE_DIR}/${test}-ref.txt"
+    OUTPUT_FILTERS cetlib::filter-output
+  )
 endforeach()
 
 foreach (test IN ITEMS
@@ -90,12 +92,14 @@ endforeach()
 cet_test(conditional_t USE_BOOST_UNIT
   LIBRARIES PRIVATE fhiclcpp::types fhiclcpp::fhiclcpp
   REF "${CMAKE_CURRENT_SOURCE_DIR}/conditional_t-ref.txt"
+  OUTPUT_FILTERS cetlib::filter-output
   DATAFILES cond_01_t.fcl cond_02_t.fcl cond_03_t.fcl
 )
 
 cet_test(validate_ParameterSet_t
   LIBRARIES PRIVATE fhiclcpp::types fhiclcpp::fhiclcpp
   REF "${CMAKE_CURRENT_SOURCE_DIR}/validate_ParameterSet_t-ref.txt"
+  OUTPUT_FILTERS cetlib::filter-output
   DATAFILES validate_ParameterSet_t.fcl
 )
 
