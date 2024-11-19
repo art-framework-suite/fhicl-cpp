@@ -36,7 +36,7 @@ cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
 find_package(Boost COMPONENTS program_options REQUIRED)
 find_package(SQLite3 REQUIRED)
-find_package(cetlib 3.20.00 REQUIRED) # For cetlib::filter-output
+find_package(cetlib 3.20.00-pre0 REQUIRED) # For cetlib::filter-output
 find_package(cetlib_except REQUIRED)
 
 # source code
