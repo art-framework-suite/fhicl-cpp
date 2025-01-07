@@ -44,4 +44,4 @@ add_subdirectory(fhiclcpp)
 add_subdirectory(tools)
 
 # packaging utility
-cet_cmake_config(CONFIG_POST_TARGET_VARS config/fhiclcpp-augment-FHICLCPP.cmake)
+cet_cmake_config()
