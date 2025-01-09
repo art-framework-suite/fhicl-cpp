@@ -80,8 +80,7 @@ namespace fhicl::detail {
   ps_atom_t encode(std::complex<T> const&); // complex
   template <class T>
   ps_sequence_t encode(std::vector<T> const&); // sequence
-  template <class T>
-    requires(!std::is_arithmetic_v<T>)
+  template <non_numeric T>
   std::string encode(T const&); // none of the above
 
   // ----------------------------------------------------------------------
