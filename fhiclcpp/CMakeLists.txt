@@ -1,5 +1,7 @@
 include(CetMakeLibrary)
 include(CetRegisterExportSet)
+include(InstallHeaders)
+include(InstallSource)
 
 find_package(Boost REQUIRED EXPORT)
 find_package(SQLite3 REQUIRED)
