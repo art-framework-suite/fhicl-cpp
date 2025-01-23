@@ -1,5 +1,7 @@
 include(CetMake)
 include(CetMakeCompletions)
+include(InstallHeaders)
+include(InstallSource)
 
 cet_make_library(SOURCE fhicl_get_impl.cc
   LIBRARIES PRIVATE
