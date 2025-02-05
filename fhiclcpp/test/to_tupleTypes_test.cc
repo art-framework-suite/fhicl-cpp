@@ -66,7 +66,7 @@ main()
   try {
     auto const err0 = pset.get<std::array<std::string, 3>>("vec0");
   }
-  catch (const fhicl::exception& e) {
+  catch (fhicl::exception const& e) {
     std::cout << e.what() << std::endl;
   }
 
@@ -106,7 +106,7 @@ main()
   try {
     auto const err1 = pset.get<std::pair<std::string, std::string>>("pair3");
   }
-  catch (const fhicl::exception& e) {
+  catch (fhicl::exception const& e) {
     std::cout << e.what() << std::endl;
   }
 
@@ -150,7 +150,7 @@ main()
       pset.get<std::vector<std::tuple<std::size_t, std::string, unsigned>>>(
         "tup2");
   }
-  catch (const fhicl::exception& e) {
+  catch (fhicl::exception const& e) {
     std::cout << e.what() << std::endl;
   }
 

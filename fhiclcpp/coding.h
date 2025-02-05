@@ -346,7 +346,8 @@ fhicl::detail::decode_tuple(std::any const& a, U& result)
 //====================================================================
 template <class T> // none of the above
   requires(!std::is_arithmetic_v<T>)
-void fhicl::detail::decode(std::any const& a, T& result)
+void
+fhicl::detail::decode(std::any const& a, T& result)
 {
   result = std::any_cast<T>(a);
 }

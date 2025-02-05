@@ -51,7 +51,8 @@ namespace {
     bool flag_;
   };
 
-  std::ostream& operator<< [[maybe_unused]] (std::ostream& os, RefS const& refs)
+  std::ostream& operator<<
+    [[maybe_unused]] (std::ostream & os, RefS const& refs)
   {
     os << " Atom: " << refs.i_ << " Sequence: [ " << refs.sj_ << ", "
        << refs.sk_ << " ]"
@@ -66,7 +67,7 @@ namespace {
     Tuple<int, string, bool> tuple{Name("tuple")};
 
     bool
-    operator==(const RefS& refs) const
+    operator==(RefS const& refs) const
     {
       return this->atom() == refs.i_ && this->sequence(0) == refs.sj_ &&
              this->sequence(1) == refs.sk_ &&
@@ -76,7 +77,7 @@ namespace {
     }
   };
 
-  std::ostream& operator<< [[maybe_unused]] (std::ostream& os, S const& s)
+  std::ostream& operator<< [[maybe_unused]] (std::ostream & os, S const& s)
   {
     os << " Atom: " << s.atom() << " Sequence: [ " << s.sequence(0) << ", "
        << s.sequence(1) << " ]"

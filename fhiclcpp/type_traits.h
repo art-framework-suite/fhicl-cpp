@@ -24,18 +24,14 @@ namespace fhicl {
     concept numeric = std::is_arithmetic_v<T>;
 
     template <typename T>
-    concept non_numeric = !
-    numeric<T>;
+    concept non_numeric = !numeric<T>;
 
   }
 
   template <typename T>
-  concept keys_to_ignore_provider =
-    requires(T t) {
-      {
-        std::invoke(std::forward<T>(t))
-        } -> std::same_as<std::set<std::string>>;
-    };
+  concept keys_to_ignore_provider = requires(T t) {
+    { std::invoke(std::forward<T>(t)) } -> std::same_as<std::set<std::string>>;
+  };
 
   template <typename T>
   concept maybe_use_param = std::convertible_to<T, std::function<bool()>>;
@@ -240,10 +236,8 @@ namespace fhicl {
 
   template <typename T>
   concept atom_ish = requires {
-                       {
-                         Atom<T>{}
-                         } -> std::same_as<tt::fhicl_type<T>>;
-                     };
+    { Atom<T>{} } -> std::same_as<tt::fhicl_type<T>>;
+  };
 
 }
 

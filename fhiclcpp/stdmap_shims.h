@@ -18,11 +18,11 @@ namespace shims {
   template <class Key,
             class T,
             class Compare = std::less<Key>,
-            class Allocator = std::allocator<std::pair<const Key, T>>>
+            class Allocator = std::allocator<std::pair<Key const, T>>>
   class map {
   public:
-    using mapmap_t = std::map<const Key, T, Compare, Allocator>;
-    using listmap_t = std::list<std::pair<const Key, T>, Allocator>;
+    using mapmap_t = std::map<Key const, T, Compare, Allocator>;
+    using listmap_t = std::list<std::pair<Key const, T>, Allocator>;
 
     static_assert(std::same_as<typename mapmap_t::key_type,
                                typename listmap_t::value_type::first_type>,
@@ -331,7 +331,8 @@ namespace shims {
   template <typename IIL, typename IIR>
     requires(!std::same_as<IIL, IIR>) &&
             std::same_as<std::remove_const_t<typename IIL::type>,
-                         std::remove_const_t<typename IIR::type>> bool
+                         std::remove_const_t<typename IIR::type>>
+  bool
   operator==(IIL left, IIR right) noexcept
   {
     return isSnippetMode() ?
@@ -342,7 +343,8 @@ namespace shims {
   template <typename IIL, typename IIR>
     requires(!std::same_as<IIL, IIR>) &&
             std::same_as<std::remove_const_t<typename IIL::type>,
-                         std::remove_const_t<typename IIR::type>> bool
+                         std::remove_const_t<typename IIR::type>>
+  bool
   operator!=(IIL left, IIR right) noexcept
   {
     return !operator==(left, right);
