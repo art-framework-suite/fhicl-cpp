@@ -35,6 +35,6 @@ main()
 {
   [[maybe_unused]] OptionalTuple<int,
                                  char,
-                                 OptionalTableAs<Person, PersonConfig>>
-    ot{Name{"OptionalTuple"}};
+                                 OptionalTableAs<Person, PersonConfig>> ot{
+    Name{"OptionalTuple"}};
 }

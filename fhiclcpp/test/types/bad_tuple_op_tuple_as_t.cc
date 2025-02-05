@@ -15,6 +15,6 @@ main()
 {
   [[maybe_unused]] Tuple<int,
                          char,
-                         OptionalTupleAs<ThreeNumbers(int, int, int)>>
-    t{Name{"Tuple"}};
+                         OptionalTupleAs<ThreeNumbers(int, int, int)>> t{
+    Name{"Tuple"}};
 }
