@@ -15,6 +15,7 @@
 #include <concepts>
 #include <mutex>
 #include <unordered_map>
+#include <utility>
 
 struct sqlite3;
 struct sqlite3_stmt;
@@ -130,7 +131,7 @@ fhicl::ParameterSetRegistry::put(FwdIt b, FwdIt const e) -> void
 {
   // No lock here -- it will be acquired by 3.
   for (; b != e; ++b) {
-    (void)put(*b);
+    std::ignore = put(*b);
   }
 }
 
